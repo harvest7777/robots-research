@@ -18,6 +18,7 @@ from typing import NewType
 
 from .capability import Capability
 from .position import Position
+from .time import Time
 from .zone import ZoneId
 
 
@@ -27,17 +28,6 @@ from .zone import ZoneId
 
 TaskId = NewType("TaskId", int)
 """Opaque identifier for tasks. Hashable and comparable."""
-
-
-@dataclass(frozen=True)
-class Time:
-    """
-    Immutable value object representing a point in simulation time.
-
-    This is a pure value type with no scheduling or execution logic.
-    """
-
-    tick: int
 
 
 class TaskType(Enum):
