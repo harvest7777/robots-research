@@ -49,3 +49,8 @@ class Zone:
     def contains(self, pos: Position) -> bool:
         """Return True if this zone contains `pos`."""
         return pos in self._positions
+
+    @property
+    def cells(self) -> frozenset[Position]:
+        """Return the positions covered by this zone."""
+        return self._positions

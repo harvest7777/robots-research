@@ -14,6 +14,7 @@ Core invariant:
 - **No overlap**: at most one object may occupy a grid cell at a time.
 """
 from .position import Position
+from .zone import Zone, ZoneId
 
 class Environment:
     """Discrete grid environment enforcing no-overlap occupancy."""
@@ -29,6 +30,17 @@ class Environment:
         self._height = height  # rows
         self._grid = [[None for _ in range(width)]
                       for _ in range(height)]
+        self._zones: dict[ZoneId, Zone] = {}
+
+    @property
+    def width(self) -> int:
+        """Return the width (number of columns) of the environment."""
+        return self._width
+
+    @property
+    def height(self) -> int:
+        """Return the height (number of rows) of the environment."""
+        return self._height
 
     def __repr__(self) -> str:
         """
@@ -68,7 +80,8 @@ class Environment:
         This is a read-only query of the environment's internal grid representation:
         it does not mutate state.
         """
-        self._validate_position(pos)
+        if not self._position_in_bounds(pos):
+            raise IndexError(f"Invalid position {pos}")
         return self._grid[pos.y][pos.x]
 
     def is_empty(self, pos: Position) -> bool:
@@ -90,25 +103,58 @@ class Environment:
           if the target cell is already occupied, raises `ValueError`.
         - Otherwise writes `obj` into the backing grid cell: `self._grid[y][x] = obj`.
         """
-        self._validate_position(pos)
+        if not self._position_in_bounds(pos):
+            raise IndexError(f"Invalid position {pos}")
         if self._grid[pos.y][pos.x] is not None:
             raise ValueError("Position occupied")
         self._grid[pos.y][pos.x] = obj
 
-    def _validate_position(self, pos: Position) -> None:
+    def add_zone(self, zone: Zone) -> None:
         """
-        Validate that a `Position` maps to a valid grid cell.
+        Add a Zone to the Environment while enforcing spatial invariants.
+
+        Invariants enforced:
+        - All zone cells must be within environment bounds.
+        - Zones must not overlap with each other.
+
+        This method is atomic: if any validation fails, the environment state
+        remains unchanged.
+
+        Raises:
+            ValueError: If zone ID already exists or zones would overlap.
+            IndexError: If any zone position is out of bounds.
+        """
+        # Step 1: Validate zone identity - reject duplicate zone IDs
+        if zone.id in self._zones:
+            raise ValueError(f"Zone with id {zone.id} already exists")
+
+        # Step 2: Validate all zone positions are within bounds
+        for pos in zone.cells:
+            if not self._position_in_bounds(pos):
+                raise IndexError(f"Zone position {pos} is out of bounds for zone id {zone.id}")
+
+        # Step 3: Validate zones do not overlap with existing zones
+        for existing_zone in self._zones.values():
+            if zone.cells & existing_zone.cells:
+                raise ValueError(
+                    f"Zone {zone.id} overlaps with existing zone {existing_zone.id}"
+                )
+
+        # All validations passed - commit the zone
+        self._zones[zone.id] = zone
+
+    def _position_in_bounds(self, pos: Position) -> bool:
+        """
+        Check whether a Position maps to a valid grid cell.
 
         Mapping convention:
         - The grid uses a top-left origin: `(0, 0)` is the top-left cell.
         - `pos.x` is the column index (increases to the right).
         - `pos.y` is the row index (increases downward).
 
-        This method uses that mapping and checks the resulting `(row=y, col=x)`
-        is in-bounds for the environment grid.
+        Returns True if the position is within grid bounds, False otherwise.
         """
-        if not (0 <= pos.x < self._width and 0 <= pos.y < self._height):
-            raise IndexError(f"Invalid position {pos}")
+        return 0 <= pos.x < self._width and 0 <= pos.y < self._height
 
 
 if __name__ == "__main__":
