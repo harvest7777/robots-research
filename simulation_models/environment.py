@@ -16,6 +16,13 @@ Core invariant:
 from .position import Position
 from .zone import Zone, ZoneId
 
+class Obstacle:
+    """Marker object representing an impassable obstacle on the grid."""
+
+    def __str__(self) -> str:
+        return "#"
+
+
 class Environment:
     """Discrete grid environment enforcing no-overlap occupancy."""
 
@@ -31,6 +38,7 @@ class Environment:
         self._grid = [[None for _ in range(width)]
                       for _ in range(height)]
         self._zones: dict[ZoneId, Zone] = {}
+        self._obstacles: set[Position] = set()
 
     @property
     def width(self) -> int:
@@ -108,6 +116,24 @@ class Environment:
         if self._grid[pos.y][pos.x] is not None:
             raise ValueError("Position occupied")
         self._grid[pos.y][pos.x] = obj
+
+    @property
+    def obstacles(self) -> frozenset[Position]:
+        """Return the set of obstacle positions."""
+        return frozenset(self._obstacles)
+
+    def add_obstacle(self, pos: Position) -> None:
+        """
+        Add an obstacle at the given position.
+
+        Raises:
+            IndexError: If position is out of bounds.
+            ValueError: If position is already occupied.
+        """
+        if pos in self._obstacles:
+            return  # Already an obstacle here, no-op
+        self.place(pos, Obstacle())
+        self._obstacles.add(pos)
 
     def add_zone(self, zone: Zone) -> None:
         """
