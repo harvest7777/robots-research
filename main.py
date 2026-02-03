@@ -1,3 +1,5 @@
+import time
+
 from simulation_models import (
     Environment,
     Robot,
@@ -5,6 +7,7 @@ from simulation_models import (
     TaskType,
     Simulation,
     NearestFeasibleCoordinator,
+    SimulationView,
 )
 
 
@@ -44,16 +47,6 @@ def main():
              required_capabilities={"repair", "collect_data"}, duration_est_s=120),
     ]
 
-    print("=== Distributed Task Allocation Simulation ===\n")
-    print(f"Environment: {env.width}x{env.height} grid")
-    print(f"Robots: {len(robots)}")
-    for r in robots:
-        print(f"  - {r.id}: pos=({r.x}, {r.y}), speed={r.speed_mps}m/s, caps={r.capabilities}")
-    print(f"\nTasks: {len(tasks)}")
-    for t in tasks:
-        print(f"  - {t.id}: {t.task_type.value} at ({t.x}, {t.y}), "
-              f"requires={t.required_capabilities}, duration={t.duration_est_s}s")
-
     # Run simulation
     sim = Simulation(
         env=env,
@@ -63,10 +56,26 @@ def main():
         dt=1.0,
     )
 
-    print("\n--- Running simulation ---\n")
-    results = sim.run(max_steps=500)
+    # Create view
+    view = SimulationView(sim)
 
-    print("=== Results ===")
+    # Run simulation with animated view
+    max_steps = 500
+    frame_delay = 0.5
+
+    try:
+        for _ in range(max_steps):
+            view.render(header="=== Distributed Task Allocation Simulation ===", scale=10)
+            if sim.is_done():
+                break
+            sim.step()
+            time.sleep(frame_delay)
+    finally:
+        view.cleanup_display()
+
+    results = sim.metrics.summary(robots)
+
+    print("\n\n=== Results ===")
     print(f"Makespan: {results['makespan_s']:.1f}s")
     print(f"Avg task completion time: {results['avg_task_completion_time_s']:.1f}s")
     print(f"Total travel distance: {results['total_travel_distance_m']:.1f}m")

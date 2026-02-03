@@ -5,6 +5,7 @@ from .workload import WorkloadGenerator
 from .coordinator import Coordinator, Assignment, NearestFeasibleCoordinator
 from .simulation import Simulation
 from .metrics import SimulationMetrics
+from .view import SimulationView
 
 __all__ = [
     "Environment",
@@ -21,4 +22,5 @@ __all__ = [
     "NearestFeasibleCoordinator",
     "Simulation",
     "SimulationMetrics",
+    "SimulationView",
 ]
