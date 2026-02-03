@@ -15,7 +15,9 @@ It is intentionally simple: it specifies **what reads/writes what** and **when**
 ## Data Flow (what each model reads/writes)
 
 ## What researchers implement/test (explicit)
+
 Researchers primarily implement/test the **Coordinator / Allocator policy** (i.e., the coordination strategy):
+
 - **Reactive** (nearest-feasible)
 - **Centralized** (greedy / matching)
 - **Market-based** (auction / contract-net)
@@ -24,7 +26,9 @@ Researchers primarily implement/test the **Coordinator / Allocator policy** (i.e
 The simulation engine stays fixed and is responsible for applying assignments, simulating motion through obstacles, executing tasks, and logging metrics.
 
 ## Assignment object (Coordinator output)
+
 An `Assignment` is a **pure data record** returned by the Coordinator. The Simulation Engine applies it.
+
 - **Required fields**:
   - `robot_id`: which robot should take the task
   - `task_id`: which task to assign
@@ -60,6 +64,7 @@ An `Assignment` is a **pure data record** returned by the Coordinator. The Simul
 - **Hard rule**: Coordinator does not move robots or advance task progress; it only proposes assignments.
 
 ### Simulation Engine (applies assignments)
+
 - **Reads**: `list[Assignment]`
 - **Writes**:
   - `task.status`: `unassigned -> assigned`
