@@ -22,7 +22,7 @@
   - **APIs/Fields**:
     - `distance(a, b)` (Euclidean or Manhattan)
     - `is_free(x, y)` / `is_path_free(a, b)`
-    - `zones[]`, `stations[]` (positions)
+    - `zones[]`, `stations[]` (positions) (future)
 
 #### 2) Robot Model (Agent)
 
