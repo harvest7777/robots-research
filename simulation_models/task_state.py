@@ -1,0 +1,100 @@
+"""
+Task runtime state (mutable).
+
+`Task` is an immutable definition (intent/constraints). `TaskState` is the per-run,
+mutable state owned by the Simulation engine:
+- lifecycle status (unassigned -> assigned -> in_progress -> done/failed)
+- which robots are currently assigned
+- when the task started and completed (in simulation `Time` ticks)
+- how much work has been applied so far (linear progress in ticks)
+
+Separation of concerns:
+- Coordinator produces `Assignment`s.
+- Simulation applies `Assignment`s and mutates `TaskState`.
+- `TaskState` does not decide *when* progress happens; it only records it.
+"""
+
+from dataclasses import dataclass, field
+from enum import Enum
+
+from simulation_models.assignment import RobotId
+from simulation_models.task import TaskId
+from simulation_models.time import Time
+
+
+class TaskStatus(Enum):
+    """Lifecycle status of a task within a single simulation run."""
+
+    UNASSIGNED = "unassigned"
+    ASSIGNED = "assigned"
+    IN_PROGRESS = "in_progress"
+    DONE = "done"
+    FAILED = "failed"
+
+
+@dataclass
+class TaskState:
+    """
+    Mutable runtime state for a `Task`.
+
+    This is intentionally minimal. It does not store task intent (duration,
+    capabilities, etc.)—that lives on `Task`.
+    """
+
+    task_id: TaskId
+    status: TaskStatus = TaskStatus.UNASSIGNED
+
+    # Current assignment (task-centric view; supports multi-robot tasks).
+    assigned_robot_ids: set[RobotId] = field(default_factory=set)
+
+    # Progress bookkeeping (opaque simulation ticks).
+    work_done: Time = Time(0)
+
+    # Key timestamps (opaque simulation ticks).
+    started_at: Time | None = None
+    completed_at: Time | None = None
+
+    def set_assignment(self, robot_ids: set[RobotId]) -> None:
+        """
+        Replace the current assignment with `robot_ids`.
+
+        Use this "snapshot" style to both assign and unassign:
+        - assign: pass a non-empty set
+        - unassign: pass an empty set
+        """
+        self.assigned_robot_ids = set(robot_ids)
+
+        if not self.assigned_robot_ids and self.status in (TaskStatus.UNASSIGNED, TaskStatus.ASSIGNED):
+            self.status = TaskStatus.UNASSIGNED
+            return
+
+        if self.assigned_robot_ids and self.status == TaskStatus.UNASSIGNED:
+            self.status = TaskStatus.ASSIGNED
+
+    def make_progress(self, dt: Time, t_now: Time) -> None:
+        """
+        Record linear progress for `dt` ticks.
+
+        This method does NOT decide *why* progress is happening (robot location,
+        constraints, etc.). The Simulation calls it when appropriate.
+        """
+        if self.status in (TaskStatus.DONE, TaskStatus.FAILED):
+            return
+
+        if self.started_at is None:
+            self.started_at = t_now
+
+        self.status = TaskStatus.IN_PROGRESS
+        self.work_done = self.work_done.advance(dt)
+
+    def mark_done(self, t_now: Time) -> None:
+        """Mark task complete and clear assignment."""
+        self.status = TaskStatus.DONE
+        self.completed_at = t_now
+        self.assigned_robot_ids.clear()
+
+    def mark_failed(self, t_now: Time) -> None:
+        """Mark task failed and clear assignment."""
+        self.status = TaskStatus.FAILED
+        self.completed_at = t_now
+        self.assigned_robot_ids.clear()

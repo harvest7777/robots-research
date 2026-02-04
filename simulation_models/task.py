@@ -77,7 +77,7 @@ class Task:
     id: TaskId
     type: TaskType
     priority: int
-    estimated_duration: timedelta
+    required_work_time: Time 
     spatial_constraint: SpatialConstraint | None = None
     required_capabilities: frozenset[Capability] = frozenset()
     dependencies: frozenset[TaskId] = frozenset()
