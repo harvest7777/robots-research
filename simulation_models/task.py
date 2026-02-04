@@ -14,14 +14,17 @@ Design principles:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import timedelta
 from enum import Enum
-from typing import NewType
+from typing import NewType, TYPE_CHECKING
 
 from .capability import Capability
 from .position import Position
 from .time import Time
 from .zone import ZoneId
+
+if TYPE_CHECKING:
+    from .assignment import RobotId
+    from .task_state import TaskState
 
 
 # -----------------------------------------------------------------------------
@@ -84,3 +87,61 @@ class Task:
     required_capabilities: frozenset[Capability] = frozenset()
     dependencies: frozenset[TaskId] = frozenset()
     deadline: Time | None = None
+
+    def set_assignment(self, state: TaskState, robot_ids: set[RobotId]) -> None:
+        """
+        Replace the current assignment on `state` with `robot_ids`.
+
+        This is a task-centric view of assignment that supports multi-robot tasks.
+        The Simulation engine decides when to call this (based on Coordinator output).
+        """
+        # Import locally to avoid import cycles at module import time.
+        from .task_state import TaskStatus
+
+        state.assigned_robot_ids = set(robot_ids)
+
+        if not state.assigned_robot_ids and state.status in (TaskStatus.UNASSIGNED, TaskStatus.ASSIGNED):
+            state.status = TaskStatus.UNASSIGNED
+            return
+
+        if state.assigned_robot_ids and state.status == TaskStatus.UNASSIGNED:
+            state.status = TaskStatus.ASSIGNED
+
+    def apply_work(self, state: TaskState, dt: Time, t_now: Time) -> None:
+        """
+        Apply linear work for `dt` ticks to `state`.
+
+        This method does NOT decide *why* work is happening (robot location, comms,
+        etc.). The Simulation engine calls it only when task constraints are satisfied.
+
+        When accumulated work reaches `required_work_time`, the task is marked done.
+        """
+        from .task_state import TaskStatus
+
+        if state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+            return
+
+        if state.started_at is None:
+            state.started_at = t_now
+
+        state.status = TaskStatus.IN_PROGRESS
+        state.work_done = state.work_done.advance(dt)
+
+        if state.work_done.tick >= self.required_work_time.tick:
+            self.mark_done(state, t_now)
+
+    def mark_done(self, state: TaskState, t_now: Time) -> None:
+        """Mark the task complete on `state` and clear assignment."""
+        from .task_state import TaskStatus
+
+        state.status = TaskStatus.DONE
+        state.completed_at = t_now
+        state.assigned_robot_ids.clear()
+
+    def mark_failed(self, state: TaskState, t_now: Time) -> None:
+        """Mark the task failed on `state` and clear assignment."""
+        from .task_state import TaskStatus
+
+        state.status = TaskStatus.FAILED
+        state.completed_at = t_now
+        state.assigned_robot_ids.clear()
