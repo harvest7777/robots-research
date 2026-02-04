@@ -8,6 +8,8 @@ Do NOT convert Time to floats, seconds, or wall-clock time.
 Do NOT assume real-world units.
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 
 

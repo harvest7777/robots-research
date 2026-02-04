@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from .load_environment import load_environment
 from .load_simulation import load_simulation
 

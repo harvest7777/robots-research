@@ -11,6 +11,8 @@ Design principles:
 - Task is serializable and replayable (IDs, enums, value objects only)
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import timedelta
 from enum import Enum

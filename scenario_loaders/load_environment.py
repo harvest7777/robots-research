@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from simulation_models.environment import Environment

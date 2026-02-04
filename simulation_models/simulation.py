@@ -8,3 +8,5 @@ and a function that assigns tasks
 
 am i missing something here?
 """
+
+from __future__ import annotations

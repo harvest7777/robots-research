@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-
-
 """
 Grid coordinate conventions
 
@@ -15,6 +12,10 @@ Therefore:
 - **left** means `x - 1`
 - **right** means `x + 1`
 """
+
+from __future__ import annotations
+
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)

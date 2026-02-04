@@ -2,7 +2,12 @@
 Robot Execution Model
 
 A Robot is a physical actor that executes movement and work.
-It updates its own physical state (position, battery) but:
+
+This module separates:
+- `Robot`: immutable robot definition (capabilities, speed)
+- `RobotState`: mutable runtime state (position, battery)
+
+The robot updates runtime state but:
 - Does NOT own tasks
 - Does NOT make decisions
 - Does NOT enforce invariants
@@ -10,11 +15,14 @@ It updates its own physical state (position, battery) but:
 The robot is a dumb executor. All coordination lives in the Simulation.
 """
 
+from __future__ import annotations
+
 import math
 
 from simulation_models.assignment import RobotId
 from simulation_models.capability import Capability
 from simulation_models.position import Position
+from simulation_models.robot_state import RobotState
 from simulation_models.time import Time
 
 
@@ -26,11 +34,11 @@ _DRAIN_IDLE_PER_TICK = 0.0005  # per tick idle
 
 class Robot:
     """
-    A physical actor that executes actions.
+    Immutable robot definition + execution model.
 
     The robot:
     - Executes movement and work
-    - Updates physical state (position, battery)
+    - Updates physical state via `RobotState` (position, battery)
     - Does NOT know what a task is
     - Does NOT decide what to work on
 
@@ -40,30 +48,16 @@ class Robot:
     def __init__(
         self,
         id: RobotId,
-        position: Position,
         capabilities: frozenset[Capability],
         speed: float,
-        battery_level: float = 1.0,
     ) -> None:
         self._id = id
-        self._x = float(position.x)
-        self._y = float(position.y)
         self._capabilities = capabilities
         self._speed = speed
-        self._battery_level = battery_level
 
     @property
     def id(self) -> RobotId:
         return self._id
-
-    @property
-    def position(self) -> Position:
-        """Current position as discrete grid coordinates."""
-        return Position(int(self._x), int(self._y))
-
-    @property
-    def battery_level(self) -> float:
-        return self._battery_level
 
     @property
     def capabilities(self) -> frozenset[Capability]:
@@ -73,17 +67,17 @@ class Robot:
     def speed(self) -> float:
         return self._speed
 
-    def move_towards(self, target: Position, dt: Time) -> None:
+    def move_towards(self, state: RobotState, target: Position, dt: Time) -> None:
         """
         Move in a straight line toward the target.
 
         Distance moved is proportional to speed * dt.
-        Updates position and drains battery.
+        Updates position and drains battery on `state`.
 
         Does NOT check collisions or bounds.
         """
-        dx = target.x - self._x
-        dy = target.y - self._y
+        dx = target.x - state.x
+        dy = target.y - state.y
         distance_to_target = math.sqrt(dx * dx + dy * dy)
 
         if distance_to_target == 0:
@@ -93,19 +87,19 @@ class Robot:
 
         if distance_to_target <= max_distance:
             # Close enough to reach target
-            self._x = float(target.x)
-            self._y = float(target.y)
+            state.x = float(target.x)
+            state.y = float(target.y)
             distance_moved = distance_to_target
         else:
             # Move towards target by max_distance
             ratio = max_distance / distance_to_target
-            self._x += dx * ratio
-            self._y += dy * ratio
+            state.x += dx * ratio
+            state.y += dy * ratio
             distance_moved = max_distance
 
-        self._battery_level -= distance_moved * _DRAIN_MOVE_PER_UNIT
+        state.battery_level -= distance_moved * _DRAIN_MOVE_PER_UNIT
 
-    def work(self, dt: Time) -> None:
+    def work(self, state: RobotState, dt: Time) -> None:
         """
         Apply work effort for dt time units.
 
@@ -115,12 +109,12 @@ class Robot:
 
         Drains battery proportional to dt.
         """
-        self._battery_level -= dt.tick * _DRAIN_WORK_PER_TICK
+        state.battery_level -= dt.tick * _DRAIN_WORK_PER_TICK
 
-    def idle(self, dt: Time) -> None:
+    def idle(self, state: RobotState, dt: Time) -> None:
         """
         Robot is idle for dt time units.
 
         Applies minimal idle battery drain.
         """
-        self._battery_level -= dt.tick * _DRAIN_IDLE_PER_TICK
+        state.battery_level -= dt.tick * _DRAIN_IDLE_PER_TICK

@@ -12,6 +12,8 @@ Assignments are:
 Assignments contain NO execution state (no times, progress, status, history).
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import NewType
 

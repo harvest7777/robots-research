@@ -14,6 +14,8 @@ Design notes:
   the robot can charge others, not that it is currently charging)
 """
 
+from __future__ import annotations
+
 from enum import Enum
 
 

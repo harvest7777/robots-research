@@ -13,6 +13,8 @@ Coordinate / indexing conventions:
 Core invariant:
 - **No overlap**: at most one object may occupy a grid cell at a time.
 """
+from __future__ import annotations
+
 from .position import Position
 from .zone import Zone, ZoneId
 

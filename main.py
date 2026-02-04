@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 
 from scenario_loaders import load_simulation
