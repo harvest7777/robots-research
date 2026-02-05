@@ -46,6 +46,38 @@
     "charging": "Areas where robots can recharge their batteries."
   },
 
+  "robots": [
+    {
+      "_comment": "Robot definition - immutable description of a robot's capabilities.",
+
+      "id": 1,
+      "_id_comment": "Required. Non-negative integer. Must be unique across all robots.",
+
+      "capabilities": ["vision", "sensing"],
+      "_capabilities_comment": "Required. Array of: vision, manipulation, sensing, repair, charging.",
+
+      "speed": 1.0,
+      "_speed_comment": "Required. Positive number. Movement speed in grid units per tick."
+    }
+  ],
+  "_robots_comment": "Optional. Array of robot definitions.",
+
+  "robot_states": [
+    {
+      "_comment": "Robot runtime state - mutable physical state for a robot.",
+
+      "robot_id": 1,
+      "_robot_id_comment": "Required. Non-negative integer. Must match a robot id.",
+
+      "position": [0, 0],
+      "_position_comment": "Required. [x, y] starting position. Can be floats for sub-cell precision.",
+
+      "battery_level": 1.0,
+      "_battery_level_comment": "Optional. Float between 0.0 and 1.0. Default: 1.0 (fully charged)."
+    }
+  ],
+  "_robot_states_comment": "Optional. Array of robot runtime states. One per robot.",
+
   "tasks": [
     {
       "_comment": "Task definition - immutable description of what needs to be done.",

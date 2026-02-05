@@ -3,6 +3,30 @@
     "width": 10,
     "height": 10
   },
+  "robots": [
+    {
+      "id": 1,
+      "capabilities": ["vision", "sensing"],
+      "speed": 1.0
+    },
+    {
+      "id": 2,
+      "capabilities": ["manipulation"],
+      "speed": 0.8
+    }
+  ],
+  "robot_states": [
+    {
+      "robot_id": 1,
+      "position": [0, 0],
+      "battery_level": 1.0
+    },
+    {
+      "robot_id": 2,
+      "position": [9, 9],
+      "battery_level": 0.75
+    }
+  ],
   "tasks": [
     {
       "id": 1,

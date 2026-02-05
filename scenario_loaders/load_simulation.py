@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any
 
 from .load_environment import load_environment
+from .load_robot_states import load_robot_states
+from .load_robots import load_robots
 from .load_task_states import load_task_states
 from .load_tasks import load_tasks
 from .load_zones import load_zones
@@ -44,5 +46,13 @@ def load_simulation(path: str | Path) -> None:
 
     if "task_states" in raw:
         task_states = load_task_states(raw["task_states"])
+
+    if "robots" in raw:
+        robots = load_robots(raw["robots"])
+        print(robots)
+
+    if "robot_states" in raw:
+        robot_states = load_robot_states(raw["robot_states"])
+        print(robot_states)
 
     return None
