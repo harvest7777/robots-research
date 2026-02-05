@@ -44,5 +44,84 @@
     "loading": "Areas for loading/unloading cargo or materials.",
     "restricted": "Areas robots should avoid or require special permissions to enter.",
     "charging": "Areas where robots can recharge their batteries."
+  },
+
+  "tasks": [
+    {
+      "_comment": "Task definition - immutable description of what needs to be done.",
+
+      "id": 1,
+      "_id_comment": "Required. Non-negative integer. Must be unique across all tasks.",
+
+      "type": "routine_inspection",
+      "_type_comment": "Required. One of: routine_inspection, anomaly_investigation, preventive_maintenance, emergency_response, pickup.",
+
+      "priority": 5,
+      "_priority_comment": "Required. Integer. Higher values = more important.",
+
+      "required_work_time": 100,
+      "_required_work_time_comment": "Required. Non-negative integer. Simulation ticks needed to complete.",
+
+      "spatial_constraint": {
+        "target": [3, 3],
+        "_target_comment": "Required. Either [x, y] position or zone_id integer.",
+        "max_distance": 0,
+        "_max_distance_comment": "Optional. Non-negative integer. 0 = exact position, >0 = within distance. Default: 0."
+      },
+      "_spatial_constraint_comment": "Optional. Where the task must be performed.",
+
+      "required_capabilities": ["vision", "sensing"],
+      "_required_capabilities_comment": "Optional. Array of: vision, manipulation, sensing, repair, charging.",
+
+      "dependencies": [2],
+      "_dependencies_comment": "Optional. Array of task_id integers that must complete before this task.",
+
+      "deadline": 1000,
+      "_deadline_comment": "Optional. Non-negative integer. Simulation tick by which task must complete."
+    }
+  ],
+  "_tasks_comment": "Optional. Array of task definitions.",
+
+  "task_states": [
+    {
+      "_comment": "Task runtime state - mutable execution state for a task.",
+
+      "task_id": 1,
+      "_task_id_comment": "Required. Non-negative integer. Must match a task id.",
+
+      "status": "unassigned",
+      "_status_comment": "Optional. One of: unassigned, assigned, in_progress, done, failed. Default: unassigned.",
+
+      "assigned_robot_ids": [1, 2],
+      "_assigned_robot_ids_comment": "Optional. Array of robot_id integers currently assigned.",
+
+      "work_done": 50,
+      "_work_done_comment": "Optional. Non-negative integer. Ticks of work completed. Default: 0.",
+
+      "started_at": 100,
+      "_started_at_comment": "Optional. Non-negative integer. Tick when task started.",
+
+      "completed_at": 200,
+      "_completed_at_comment": "Optional. Non-negative integer. Tick when task completed."
+    }
+  ],
+  "_task_states_comment": "Optional. Array of task runtime states. One per task.",
+
+  "_task_types": {
+    "_comment": "Reference for available task types.",
+    "routine_inspection": "Regular scheduled inspection of equipment or areas.",
+    "anomaly_investigation": "Investigating detected anomalies or alerts.",
+    "preventive_maintenance": "Scheduled maintenance to prevent failures.",
+    "emergency_response": "Urgent response to critical situations.",
+    "pickup": "Retrieving and transporting items."
+  },
+
+  "_capabilities": {
+    "_comment": "Reference for available robot capabilities.",
+    "vision": "Optical sensing for inspection and navigation.",
+    "manipulation": "Physical interaction with objects (gripping, moving).",
+    "sensing": "Environmental data collection (temperature, pressure, etc.).",
+    "repair": "Ability to perform maintenance and repairs.",
+    "charging": "Ability to transfer power to other robots."
   }
 }

@@ -2,5 +2,39 @@
   "environment": {
     "width": 10,
     "height": 10
-  }
+  },
+  "tasks": [
+    {
+      "id": 1,
+      "type": "routine_inspection",
+      "priority": 5,
+      "required_work_time": 100,
+      "spatial_constraint": {
+        "target": [3, 3],
+        "max_distance": 0
+      },
+      "required_capabilities": ["vision"]
+    },
+    {
+      "id": 2,
+      "type": "pickup",
+      "priority": 3,
+      "required_work_time": 50,
+      "spatial_constraint": {
+        "target": [7, 7]
+      },
+      "required_capabilities": ["manipulation"],
+      "dependencies": [1]
+    }
+  ],
+  "task_states": [
+    {
+      "task_id": 1,
+      "status": "unassigned"
+    },
+    {
+      "task_id": 2,
+      "status": "unassigned"
+    }
+  ]
 }

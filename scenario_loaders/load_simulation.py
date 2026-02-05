@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import Any
 
 from .load_environment import load_environment
+from .load_task_states import load_task_states
+from .load_tasks import load_tasks
 from .load_zones import load_zones
 
 
@@ -36,4 +38,11 @@ def load_simulation(path: str | Path) -> None:
             zones = load_zones(env_raw["zones"])
             for zone in zones:
                 env.add_zone(zone)
+
+    if "tasks" in raw:
+        tasks = load_tasks(raw["tasks"])
+
+    if "task_states" in raw:
+        task_states = load_task_states(raw["task_states"])
+
     return None
