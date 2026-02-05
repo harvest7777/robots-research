@@ -5,17 +5,17 @@ from pathlib import Path
 from typing import Any
 
 from .load_environment import load_environment
+from .load_zones import load_zones
 
 
-def load_simulation(path: str | Path) -> dict[str, Any]:
+def load_simulation(path: str | Path) -> None:
     """Load a simulation scenario from a JSON file.
 
     Args:
         path: Path to the simulation scenario JSON file.
 
     Returns:
-        Dictionary containing loaded simulation components.
-        Currently returns: {"environment": Environment}
+        # TODO: Make this return an actual Simulation, returns None now.
 
     Raises:
         FileNotFoundError: If the file does not exist.
@@ -28,9 +28,14 @@ def load_simulation(path: str | Path) -> dict[str, Any]:
     with open(path) as f:
         raw = json.load(f)
 
-    result: dict[str, Any] = {}
-
     if "environment" in raw:
-        result["environment"] = load_environment(raw["environment"])
+        env_raw = raw["environment"]
+        env = load_environment(env_raw)
 
-    return result
+        if "zones" in env_raw:
+            zones = load_zones(env_raw["zones"])
+            for zone in zones:
+                env.add_zone(zone)
+
+
+    return None
