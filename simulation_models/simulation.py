@@ -88,4 +88,3 @@ class Simulation:
 
         # Run assignment algorithm
         self.current_assignments = self.assignment_algorithm(self.tasks, self.robots)
-        print(self.current_assignments)
