@@ -1,0 +1,33 @@
+{
+  "environment": {
+    "width": 15,
+    "height": 10,
+    "obstacles": [
+      [7, 4],
+      [7, 5],
+      [7, 6]
+    ],
+    "zones": [
+      {
+        "id": 1,
+        "type": "inspection",
+        "positions": [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]]
+      },
+      {
+        "id": 2,
+        "type": "charging",
+        "positions": [[13, 8], [14, 8], [13, 9], [14, 9]]
+      },
+      {
+        "id": 3,
+        "type": "loading",
+        "positions": [[10, 0], [11, 0], [12, 0], [13, 0], [14, 0]]
+      },
+      {
+        "id": 4,
+        "type": "restricted",
+        "positions": [[5, 5], [6, 5], [5, 6], [6, 6]]
+      }
+    ]
+  }
+}

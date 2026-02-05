@@ -1,0 +1,48 @@
+{
+  "_comment": "SCENARIO TEMPLATE - This file documents the expected structure for scenario JSON files.",
+  "_instructions": "Copy this file, remove all _comment fields, and fill in actual values.",
+
+  "environment": {
+    "_comment": "Defines the simulation grid and its contents.",
+
+    "width": 20,
+    "_width_comment": "Required. Positive integer. Grid width in cells.",
+
+    "height": 15,
+    "_height_comment": "Required. Positive integer. Grid height in cells.",
+
+    "obstacles": [
+      [5, 3],
+      [5, 4]
+    ],
+    "_obstacles_comment": "Optional. Array of [x, y] positions. Cells robots cannot occupy.",
+
+    "zones": [
+      {
+        "id": 1,
+        "_id_comment": "Required. Non-negative integer. Must be unique across all zones.",
+
+        "type": "inspection",
+        "_type_comment": "Required. One of: inspection, maintenance, loading, restricted, charging.",
+
+        "positions": [
+          [0, 0],
+          [1, 0],
+          [0, 1],
+          [1, 1]
+        ],
+        "_positions_comment": "Required. Non-empty array of [x, y] positions that this zone covers."
+      }
+    ],
+    "_zones_comment": "Optional. Array of zone objects defining typed regions in the environment."
+  },
+
+  "_zone_types": {
+    "_comment": "Reference for available zone types and their typical use cases.",
+    "inspection": "Areas where robots perform inspection tasks.",
+    "maintenance": "Areas for robot maintenance or repair.",
+    "loading": "Areas for loading/unloading cargo or materials.",
+    "restricted": "Areas robots should avoid or require special permissions to enter.",
+    "charging": "Areas where robots can recharge their batteries."
+  }
+}
