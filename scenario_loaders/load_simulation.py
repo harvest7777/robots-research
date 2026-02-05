@@ -36,6 +36,4 @@ def load_simulation(path: str | Path) -> None:
             zones = load_zones(env_raw["zones"])
             for zone in zones:
                 env.add_zone(zone)
-
-
     return None

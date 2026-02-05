@@ -11,9 +11,6 @@ def main() -> None:
     args = parser.parse_args()
 
     sim = load_simulation(args.scenario)
-    env = sim["environment"]
-    print(f"Loaded environment: {env.width}x{env.height}")
-    print(env)
 
 
 if __name__ == "__main__":
