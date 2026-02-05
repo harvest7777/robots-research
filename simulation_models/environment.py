@@ -60,7 +60,8 @@ class Environment:
         - Objects placed in the environment are "printable" (i.e., `str(obj)` works).
 
         Rendering rules:
-        - Empty cells render as `.`.
+        - Empty cells in a zone render as the zone ID (single digit, or `+` if ID >= 10).
+        - Empty cells not in any zone render as `.`.
         - Occupied cells render as the first character of `str(obj)` to keep columns aligned.
         - If `str(obj)` fails for any reason, the cell renders as `UNKNOWN_OBJECT_STRING`
           (the literal `?`).
@@ -71,7 +72,12 @@ class Environment:
             for x in range(self._width):
                 obj = self._grid[y][x]
                 if obj is None:
-                    row_chars.append(".")
+                    pos = Position(x, y)
+                    zone_id = self._get_zone_id_at(pos)
+                    if zone_id is not None:
+                        row_chars.append(str(zone_id) if zone_id < 10 else "+")
+                    else:
+                        row_chars.append(".")
                     continue
                 try:
                     s = str(obj)
@@ -170,6 +176,13 @@ class Environment:
 
         # All validations passed - commit the zone
         self._zones[zone.id] = zone
+
+    def _get_zone_id_at(self, pos: Position) -> ZoneId | None:
+        """Return the zone ID containing `pos`, or None if not in any zone."""
+        for zone_id, zone in self._zones.items():
+            if zone.contains(pos):
+                return zone_id
+        return None
 
     def _position_in_bounds(self, pos: Position) -> bool:
         """
