@@ -13,7 +13,7 @@ The Simulation class holds all state and data needed to run a simulation:
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from simulation_models.assignment import Assignment, RobotId
 from simulation_models.environment import Environment
@@ -42,6 +42,7 @@ class Simulation:
         task_states: Mutable state for each task, keyed by task_id.
         assignment_algorithm: Algorithm that assigns robots to tasks. Optional at
             construction, but required before stepping.
+        current_assignments: Assignments from the most recent step() call.
     """
 
     environment: Environment
@@ -50,6 +51,7 @@ class Simulation:
     robot_states: dict[RobotId, RobotState]
     task_states: dict[TaskId, TaskState]
     assignment_algorithm: AssignmentAlgorithm | None = None
+    current_assignments: list[Assignment] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if self.environment is None:
@@ -85,10 +87,5 @@ class Simulation:
         self._validate_ready()
 
         # Run assignment algorithm
-        assignments = self.assignment_algorithm(self.tasks, self.robots)
-
-        # Apply assignments to task states
-        for assignment in assignments:
-            task = next(t for t in self.tasks if t.id == assignment.task_id)
-            task_state = self.task_states[assignment.task_id]
-            task.set_assignment(task_state, set(assignment.robot_ids))
+        self.current_assignments = self.assignment_algorithm(self.tasks, self.robots)
+        print(self.current_assignments)
