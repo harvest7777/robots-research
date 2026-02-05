@@ -18,6 +18,7 @@ The robot is a dumb executor. All coordination lives in the Simulation.
 from __future__ import annotations
 
 import math
+from dataclasses import dataclass
 
 from simulation_models.assignment import RobotId
 from simulation_models.capability import Capability
@@ -32,6 +33,7 @@ _DRAIN_WORK_PER_TICK = 0.002  # per tick of work
 _DRAIN_IDLE_PER_TICK = 0.0005  # per tick idle
 
 
+@dataclass(frozen=True)
 class Robot:
     """
     Immutable robot definition + execution model.
@@ -45,27 +47,9 @@ class Robot:
     All time deltas are passed as Time objects and treated as opaque units.
     """
 
-    def __init__(
-        self,
-        id: RobotId,
-        capabilities: frozenset[Capability],
-        speed: float,
-    ) -> None:
-        self._id = id
-        self._capabilities = capabilities
-        self._speed = speed
-
-    @property
-    def id(self) -> RobotId:
-        return self._id
-
-    @property
-    def capabilities(self) -> frozenset[Capability]:
-        return self._capabilities
-
-    @property
-    def speed(self) -> float:
-        return self._speed
+    id: RobotId
+    capabilities: frozenset[Capability]
+    speed: float
 
     def move_towards(self, state: RobotState, target: Position, dt: Time) -> None:
         """
@@ -83,7 +67,7 @@ class Robot:
         if distance_to_target == 0:
             return
 
-        max_distance = self._speed * dt.tick
+        max_distance = self.speed * dt.tick
 
         if distance_to_target <= max_distance:
             # Close enough to reach target
