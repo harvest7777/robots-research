@@ -181,6 +181,10 @@ class Environment:
         """Return True if `pos` is within the grid bounds."""
         return self._position_in_bounds(pos)
 
+    def get_zone(self, zone_id: ZoneId) -> Zone | None:
+        """Return the Zone with the given ID, or None if not found."""
+        return self._zones.get(zone_id)
+
     def _get_zone_id_at(self, pos: Position) -> ZoneId | None:
         """Return the zone ID containing `pos`, or None if not in any zone."""
         for zone_id, zone in self._zones.items():

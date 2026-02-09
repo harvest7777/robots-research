@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from simulation_models.simulation import AssignmentAlgorithm, Simulation
+from simulation_models.simulation import AssignmentAlgorithm, PathfindingAlgorithm, Simulation
 
 from .load_environment import load_environment
 from .load_robot_states import load_robot_states
@@ -16,6 +16,7 @@ from .load_zones import load_zones
 def load_simulation(
     path: str | Path,
     assignment_algorithm: AssignmentAlgorithm | None = None,
+    pathfinding_algorithm: PathfindingAlgorithm | None = None,
 ) -> Simulation:
     """Load a simulation scenario from a JSON file.
 
@@ -78,4 +79,5 @@ def load_simulation(
         robot_states=robot_states,
         task_states=task_states,
         assignment_algorithm=assignment_algorithm,
+        pathfinding_algorithm=pathfinding_algorithm,
     )
