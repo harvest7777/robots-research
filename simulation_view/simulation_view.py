@@ -41,6 +41,14 @@ TASK_TYPE_LABELS: dict[TaskType, str] = {
     TaskType.PICKUP: "PU",
 }
 
+TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
+    TaskType.ROUTINE_INSPECTION: "Routine Inspection",
+    TaskType.ANOMALY_INVESTIGATION: "Anomaly Investigation",
+    TaskType.PREVENTIVE_MAINTENANCE: "Preventive Maintenance",
+    TaskType.EMERGENCY_RESPONSE: "Emergency Response",
+    TaskType.PICKUP: "Pickup",
+}
+
 ROBOT_SYMBOL = "R"
 OBSTACLE_SYMBOL = "#"
 EMPTY_SYMBOL = "."
@@ -56,6 +64,7 @@ class SimulationView:
             self._render_grid(),
             self._render_robots(),
             self._render_tasks(),
+            self._render_robot_activity(),
         ]
         return "\n\n".join(parts)
 
@@ -113,4 +122,32 @@ class SimulationView:
                 f"  priority={task.priority}"
                 f"  progress={state.work_done.tick}/{task.required_work_time.tick}"
             )
+        return "\n".join(lines)
+
+    def _render_robot_activity(self) -> str:
+        # Build reverse mapping: robot_id -> task
+        robot_task_map: dict[object, object] = {}
+        for task in self.snapshot.tasks:
+            state = self.snapshot.task_states[task.id]
+            if state.status in (TaskStatus.ASSIGNED, TaskStatus.IN_PROGRESS):
+                for rid in state.assigned_robot_ids:
+                    robot_task_map[rid] = task
+
+        lines = ["Activity:"]
+        for robot in self.snapshot.robots:
+            rstate = self.snapshot.robot_states[robot.id]
+            task = robot_task_map.get(robot.id)
+            if task is not None:
+                name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
+                tstate = self.snapshot.task_states[task.id]
+                lines.append(
+                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
+                    f" is working on {name} (Task {task.id})"
+                    f" ({tstate.status.value})"
+                )
+            else:
+                lines.append(
+                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
+                    f" is idle"
+                )
         return "\n".join(lines)
