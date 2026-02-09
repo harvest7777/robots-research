@@ -20,6 +20,7 @@ from types import MappingProxyType
 
 from simulation_models.assignment import Assignment, RobotId
 from simulation_models.environment import Environment
+from simulation_models.position import Position
 from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
 from simulation_models.snapshot import SimulationSnapshot
@@ -29,6 +30,12 @@ from simulation_models.time import Time
 
 AssignmentAlgorithm = Callable[[list[Task], list[Robot]], list[Assignment]]
 """A function that assigns robots to tasks."""
+
+PathfindingAlgorithm = Callable[
+    [Environment, Position, Position, frozenset[Position]],
+    Position | None,
+]
+"""(environment, start, goal, occupied_by_other_robots) -> next_step or None."""
 
 
 @dataclass
