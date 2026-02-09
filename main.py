@@ -9,7 +9,7 @@ from coordinator_algorithms import simple_assign
 from pathfinding_algorithms import bfs_pathfind
 from simulation_view.simulation_view import SimulationView
 
-NUM_TICKS = 15
+NUM_TICKS = 25
 
 
 def main() -> None:
