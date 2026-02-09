@@ -128,79 +128,84 @@ class Simulation:
 
         robot_assignment: dict[RobotId, TaskId] = {}
         for assignment in self.current_assignments:
-            for rid in assignment.robot_ids:
-                robot_assignment[rid] = assignment.task_id
+            for robot_id in assignment.robot_ids:
+                robot_assignment[robot_id] = assignment.task_id
 
         # Update task assignment states
         for task in self.tasks:
-            ts = self.task_states[task.id]
-            assigned_rids = {
-                rid for rid, tid in robot_assignment.items() if tid == task.id
+            task_state = self.task_states[task.id]
+            assigned_robot_ids = {
+                robot_id
+                for robot_id, task_id in robot_assignment.items()
+                if task_id == task.id
             }
-            task.set_assignment(ts, assigned_rids)
+            task.set_assignment(task_state, assigned_robot_ids)
 
         # --- Plan phase ---
         all_positions = {
-            rid: state.position for rid, state in self.robot_states.items()
+            robot_id: state.position
+            for robot_id, state in self.robot_states.items()
         }
         planned_moves: dict[RobotId, Position | None] = {}
 
-        for rid, state in self.robot_states.items():
-            if rid not in robot_assignment:
-                planned_moves[rid] = None
+        for robot_id, state in self.robot_states.items():
+            if robot_id not in robot_assignment:
+                planned_moves[robot_id] = None
                 continue
 
-            tid = robot_assignment[rid]
-            task = self._task_by_id[tid]
-            ts = self.task_states[tid]
+            task_id = robot_assignment[robot_id]
+            task = self._task_by_id[task_id]
+            task_state = self.task_states[task_id]
 
-            if ts.status in (TaskStatus.DONE, TaskStatus.FAILED):
-                planned_moves[rid] = None
+            if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+                planned_moves[robot_id] = None
                 continue
 
             goal = self._resolve_goal(task, state.position)
             if goal is None:
                 # No spatial constraint — robot works in place
-                planned_moves[rid] = None
+                planned_moves[robot_id] = None
                 continue
 
             if state.position == goal:
-                planned_moves[rid] = None
+                planned_moves[robot_id] = None
                 continue
 
             occupied = frozenset(
-                pos for other_rid, pos in all_positions.items() if other_rid != rid
+                pos
+                for other_robot_id, pos in all_positions.items()
+                if other_robot_id != robot_id
             )
             next_step = self.pathfinding_algorithm(
                 self.environment, state.position, goal, occupied
             )
-            planned_moves[rid] = next_step
+            planned_moves[robot_id] = next_step
 
         # Detect planned collisions: two robots targeting the same cell
         target_counts: dict[Position, list[RobotId]] = {}
-        for rid, next_pos in planned_moves.items():
+        for robot_id, next_pos in planned_moves.items():
             if next_pos is not None:
-                target_counts.setdefault(next_pos, []).append(rid)
-        for pos, rids in target_counts.items():
-            if len(rids) > 1:
+                target_counts.setdefault(next_pos, []).append(robot_id)
+        for pos, robot_ids in target_counts.items():
+            if len(robot_ids) > 1:
                 # Only first robot proceeds, others stay put
-                for rid in rids[1:]:
-                    planned_moves[rid] = None
+                for robot_id in robot_ids[1:]:
+                    planned_moves[robot_id] = None
 
         # --- Execute phase ---
-        for rid, state in self.robot_states.items():
-            robot = self._robot_by_id[rid]
-            next_pos = planned_moves.get(rid)
+        for robot_id, state in self.robot_states.items():
+            robot = self._robot_by_id[robot_id]
+            next_pos = planned_moves.get(robot_id)
 
-            if rid not in robot_assignment:
+            if robot_id not in robot_assignment:
                 robot.idle(state, self.dt)
                 continue
 
-            tid = robot_assignment[rid]
-            task = self._task_by_id[tid]
-            ts = self.task_states[tid]
+            task_id = robot_assignment[robot_id]
+            task = self._task_by_id[task_id]
+            task_state = self.task_states[task_id]
 
-            if ts.status in (TaskStatus.DONE, TaskStatus.FAILED):
+            if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
                 robot.idle(state, self.dt)
                 continue
 
@@ -212,7 +217,7 @@ class Simulation:
             elif goal is None or state.position == goal:
                 # At goal or no spatial constraint — do work
                 robot.work(state, self.dt)
-                task.apply_work(ts, self.dt, self.t_now)
+                task.apply_work(task_state, self.dt, self.t_now)
             else:
                 # Stuck (pathfinding returned None, or collision-blocked)
                 robot.idle(state, self.dt)
