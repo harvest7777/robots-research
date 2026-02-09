@@ -1,10 +1,9 @@
-# SimulationView: stateless renderer for a single SimulationSnapshot.
+# SimulationView: pure, stateless renderer for a single SimulationSnapshot.
 #
-# Receives an immutable SimulationSnapshot and produces a visual
-# representation of that moment in time. Owns no simulation state —
-# all data comes from the snapshot. This keeps rendering fully
-# decoupled from the live Simulation and makes any snapshot in the
-# history dict renderable with no extra setup.
+# Receives an immutable SimulationSnapshot and produces a Frame (2D character
+# grid).  Contains NO ANSI codes, NO printing, NO terminal awareness, NO
+# diffing, NO state.  Deterministic: same snapshot + same dimensions → same
+# frame, always.
 
 from simulation_models.environment import Obstacle
 from simulation_models.position import Position
@@ -12,6 +11,8 @@ from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import TaskId, TaskType
 from simulation_models.task_state import TaskStatus
 from simulation_models.zone import ZoneId, ZoneType
+
+from .frame import Frame, make_frame, stamp
 
 # ---------------------------------------------------------------------------
 # Symbol dictionaries
@@ -59,46 +60,156 @@ class SimulationView:
     def __init__(self, snapshot: SimulationSnapshot) -> None:
         self.snapshot = snapshot
 
-    def render(self) -> str:
-        parts = [
-            self._render_header(),
-            self._render_grid(),
-            self._render_robots(),
-            self._render_tasks(),
-            self._render_robot_activity(),
-        ]
-        return "\n\n".join(parts)
+    def render(self, width: int, height: int) -> Frame:
+        """Build a fully populated 2D character grid from the snapshot."""
+        frame = make_frame(width, height)
+        row = 0
 
-    def _render_header(self) -> str:
+        row = self._render_header(frame, row)
+        row += 1  # blank separator
+
+        row = self._render_grid(frame, row)
+        row += 1  # blank separator
+
+        row = self._render_robots(frame, row)
+        row += 1  # blank separator
+
+        row = self._render_tasks(frame, row)
+        row += 1  # blank separator
+
+        self._render_robot_activity(frame, row)
+
+        return frame
+
+    # ------------------------------------------------------------------
+    # Section renderers — each writes into *frame* and returns next row
+    # ------------------------------------------------------------------
+
+    def _render_header(self, frame: Frame, start_row: int) -> int:
         t = self.snapshot.t_now
-        return f"t={t.tick}" if t is not None else "t=?"
+        text = f"t={t.tick}" if t is not None else "t=?"
+        stamp(frame, start_row, 0, text)
+        return start_row + 1
 
-    def _render_grid(self) -> str:
+    def _render_grid(self, frame: Frame, start_row: int) -> int:
         env = self.snapshot.env
+
         robot_positions: dict[Position, object] = {}
         for rid, state in self.snapshot.robot_states.items():
             robot_positions[state.position] = rid
 
         targets, areas = self._compute_task_work_areas()
 
-        rows: list[str] = []
         for y in range(env.height):
-            row: list[str] = []
+            frame_row = start_row + y
+            if frame_row >= len(frame):
+                break
             for x in range(env.width):
                 pos = Position(x, y)
                 if pos in robot_positions:
-                    row.append(ROBOT_SYMBOL)
+                    symbol = ROBOT_SYMBOL
                 elif pos in env.obstacles:
-                    row.append(OBSTACLE_SYMBOL)
+                    symbol = OBSTACLE_SYMBOL
                 elif pos in targets:
-                    row.append(self._task_id_symbol(targets[pos]))
+                    symbol = self._task_id_symbol(targets[pos])
                 elif pos in areas:
-                    row.append(TASK_AREA_SYMBOL)
+                    symbol = TASK_AREA_SYMBOL
                 else:
                     zone_sym = self._zone_symbol_at(pos)
-                    row.append(zone_sym if zone_sym else EMPTY_SYMBOL)
-            rows.append(" ".join(row))
-        return "\n".join(rows)
+                    symbol = zone_sym if zone_sym else EMPTY_SYMBOL
+
+                frame_col = x * 2  # space-separated layout
+                if frame_col < len(frame[frame_row]):
+                    frame[frame_row][frame_col] = symbol
+
+        return start_row + env.height
+
+    def _render_robots(self, frame: Frame, start_row: int) -> int:
+        row = start_row
+        if row >= len(frame):
+            return row
+        stamp(frame, row, 0, "Robots:")
+        row += 1
+
+        for robot in self.snapshot.robots:
+            if row >= len(frame):
+                break
+            state = self.snapshot.robot_states[robot.id]
+            text = (
+                f"  {ROBOT_SYMBOL} Robot {robot.id}"
+                f"  pos=({state.x:.0f},{state.y:.0f})"
+                f"  battery={state.battery_level:.0%}"
+            )
+            stamp(frame, row, 0, text)
+            row += 1
+
+        return row
+
+    def _render_tasks(self, frame: Frame, start_row: int) -> int:
+        row = start_row
+        if row >= len(frame):
+            return row
+        stamp(frame, row, 0, "Tasks:")
+        row += 1
+
+        for task in self.snapshot.tasks:
+            if row >= len(frame):
+                break
+            state = self.snapshot.task_states[task.id]
+            status = TASK_STATUS_SYMBOLS.get(state.status, "?")
+            label = TASK_TYPE_LABELS.get(task.type, "??")
+            spatial = self._spatial_info(task)
+            text = (
+                f"  {status} [{label}] Task {task.id}"
+                f"  priority={task.priority}"
+                f"  progress={state.work_done.tick}/{task.required_work_time.tick}"
+                f"{spatial}"
+            )
+            stamp(frame, row, 0, text)
+            row += 1
+
+        return row
+
+    def _render_robot_activity(self, frame: Frame, start_row: int) -> int:
+        robot_task_map: dict[object, object] = {}
+        for task in self.snapshot.tasks:
+            state = self.snapshot.task_states[task.id]
+            if state.status in (TaskStatus.ASSIGNED, TaskStatus.IN_PROGRESS):
+                for rid in state.assigned_robot_ids:
+                    robot_task_map[rid] = task
+
+        row = start_row
+        if row >= len(frame):
+            return row
+        stamp(frame, row, 0, "Activity:")
+        row += 1
+
+        for robot in self.snapshot.robots:
+            if row >= len(frame):
+                break
+            rstate = self.snapshot.robot_states[robot.id]
+            task = robot_task_map.get(robot.id)
+            if task is not None:
+                name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
+                tstate = self.snapshot.task_states[task.id]
+                text = (
+                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
+                    f" is working on {name} (Task {task.id})"
+                    f" ({tstate.status.value})"
+                )
+            else:
+                text = (
+                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
+                    f" is idle"
+                )
+            stamp(frame, row, 0, text)
+            row += 1
+
+        return row
+
+    # ------------------------------------------------------------------
+    # Helpers (unchanged logic from the original)
+    # ------------------------------------------------------------------
 
     def _compute_task_work_areas(
         self,
@@ -123,7 +234,6 @@ class SimulationView:
                                 if p != sc.target and 0 <= p.x < env.width and 0 <= p.y < env.height:
                                     areas.setdefault(p, task.id)
             else:
-                # target is a ZoneId
                 zone = env.get_zone(sc.target)
                 if zone is not None:
                     for p in zone.cells:
@@ -135,37 +245,10 @@ class SimulationView:
         return str(int(task_id)) if int(task_id) < 10 else "*"
 
     def _zone_symbol_at(self, pos: Position) -> str | None:
-        # Access internal _zones; a public accessor on Environment can be added later.
         for zone in self.snapshot.env._zones.values():
             if zone.contains(pos):
                 return ZONE_SYMBOLS.get(zone.zone_type, "?")
         return None
-
-    def _render_robots(self) -> str:
-        lines = ["Robots:"]
-        for robot in self.snapshot.robots:
-            state = self.snapshot.robot_states[robot.id]
-            lines.append(
-                f"  {ROBOT_SYMBOL} Robot {robot.id}"
-                f"  pos=({state.x:.0f},{state.y:.0f})"
-                f"  battery={state.battery_level:.0%}"
-            )
-        return "\n".join(lines)
-
-    def _render_tasks(self) -> str:
-        lines = ["Tasks:"]
-        for task in self.snapshot.tasks:
-            state = self.snapshot.task_states[task.id]
-            status = TASK_STATUS_SYMBOLS.get(state.status, "?")
-            label = TASK_TYPE_LABELS.get(task.type, "??")
-            spatial = self._spatial_info(task)
-            lines.append(
-                f"  {status} [{label}] Task {task.id}"
-                f"  priority={task.priority}"
-                f"  progress={state.work_done.tick}/{task.required_work_time.tick}"
-                f"{spatial}"
-            )
-        return "\n".join(lines)
 
     @staticmethod
     def _spatial_info(task: "Task") -> str:
@@ -177,33 +260,4 @@ class SimulationView:
             if sc.max_distance > 0:
                 s += f" r={sc.max_distance}"
             return s
-        # target is a ZoneId
         return f"  zone={int(sc.target)}"
-
-    def _render_robot_activity(self) -> str:
-        # Build reverse mapping: robot_id -> task
-        robot_task_map: dict[object, object] = {}
-        for task in self.snapshot.tasks:
-            state = self.snapshot.task_states[task.id]
-            if state.status in (TaskStatus.ASSIGNED, TaskStatus.IN_PROGRESS):
-                for rid in state.assigned_robot_ids:
-                    robot_task_map[rid] = task
-
-        lines = ["Activity:"]
-        for robot in self.snapshot.robots:
-            rstate = self.snapshot.robot_states[robot.id]
-            task = robot_task_map.get(robot.id)
-            if task is not None:
-                name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
-                tstate = self.snapshot.task_states[task.id]
-                lines.append(
-                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
-                    f" is working on {name} (Task {task.id})"
-                    f" ({tstate.status.value})"
-                )
-            else:
-                lines.append(
-                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
-                    f" is idle"
-                )
-        return "\n".join(lines)

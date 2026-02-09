@@ -8,8 +8,9 @@ from scenario_loaders import load_simulation
 from coordinator_algorithms import simple_assign
 from pathfinding_algorithms import bfs_pathfind
 from simulation_view.simulation_view import SimulationView
+from simulation_view.terminal_renderer import TerminalRenderer
 
-NUM_TICKS = 25
+NUM_TICKS = 60
 
 
 def main() -> None:
@@ -21,13 +22,20 @@ def main() -> None:
     sim.assignment_algorithm = simple_assign
     sim.pathfinding_algorithm = bfs_pathfind
 
-    os.system("clear")
-    print(SimulationView(sim.snapshot()).render())
-    for _ in range(NUM_TICKS):
-        time.sleep(1)
-        sim.step()
-        os.system("clear")
-        print(SimulationView(sim.snapshot()).render())
+    renderer = TerminalRenderer()
+    try:
+        cols, rows = os.get_terminal_size()
+        frame = SimulationView(sim.snapshot()).render(cols, rows)
+        renderer.draw(frame)
+
+        for _ in range(NUM_TICKS):
+            time.sleep(.3)
+            sim.step()
+            cols, rows = os.get_terminal_size()
+            frame = SimulationView(sim.snapshot()).render(cols, rows)
+            renderer.draw(frame)
+    finally:
+        renderer.cleanup()
 
 
 if __name__ == "__main__":
