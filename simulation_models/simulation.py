@@ -161,7 +161,7 @@ class Simulation:
                 planned_moves[robot_id] = None
                 continue
 
-            goal = self._resolve_goal(task, state.position)
+            goal = self._resolve_task_target_position(task, state.position)
             if goal is None:
                 # No spatial constraint — robot works in place
                 planned_moves[robot_id] = None
@@ -209,7 +209,7 @@ class Simulation:
                 robot.idle(state, self.dt)
                 continue
 
-            goal = self._resolve_goal(task, state.position)
+            goal = self._resolve_task_target_position(task, state.position)
 
             if next_pos is not None and next_pos != state.position:
                 # Robot has a move to make
@@ -225,7 +225,7 @@ class Simulation:
         # Record snapshot at new time
         self.history[self.t_now] = self.snapshot()
 
-    def _resolve_goal(self, task: Task, robot_pos: Position) -> Position | None:
+    def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
         """Resolve a task's spatial constraint to a concrete Position.
 
         Returns:
