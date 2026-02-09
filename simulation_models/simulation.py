@@ -85,6 +85,10 @@ class Simulation:
         if self.task_states is None:
             raise ValueError("Simulation requires 'task_states'")
 
+        # Build lookups for immutable robot/task lists
+        self._robot_by_id: dict[RobotId, Robot] = {r.id: r for r in self.robots}
+        self._task_by_id: dict[TaskId, Task] = {t.id: t for t in self.tasks}
+
         # Record initial snapshot at t_now=0
         self.history[self.t_now] = self.snapshot()
 
@@ -122,9 +126,6 @@ class Simulation:
         # Run assignment algorithm
         self.current_assignments = self.assignment_algorithm(self.tasks, self.robots)
 
-        # Build lookup: robot_id -> (task, task_state) for assigned robots
-        robot_by_id = {r.id: r for r in self.robots}
-        task_by_id = {t.id: t for t in self.tasks}
         robot_assignment: dict[RobotId, TaskId] = {}
         for assignment in self.current_assignments:
             for rid in assignment.robot_ids:
@@ -150,7 +151,7 @@ class Simulation:
                 continue
 
             tid = robot_assignment[rid]
-            task = task_by_id[tid]
+            task = self._task_by_id[tid]
             ts = self.task_states[tid]
 
             if ts.status in (TaskStatus.DONE, TaskStatus.FAILED):
@@ -188,7 +189,7 @@ class Simulation:
 
         # --- Execute phase ---
         for rid, state in self.robot_states.items():
-            robot = robot_by_id[rid]
+            robot = self._robot_by_id[rid]
             next_pos = planned_moves.get(rid)
 
             if rid not in robot_assignment:
@@ -196,7 +197,7 @@ class Simulation:
                 continue
 
             tid = robot_assignment[rid]
-            task = task_by_id[tid]
+            task = self._task_by_id[tid]
             ts = self.task_states[tid]
 
             if ts.status in (TaskStatus.DONE, TaskStatus.FAILED):
