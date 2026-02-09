@@ -9,9 +9,9 @@
 from simulation_models.environment import Obstacle
 from simulation_models.position import Position
 from simulation_models.snapshot import SimulationSnapshot
-from simulation_models.task import TaskType
+from simulation_models.task import TaskId, TaskType
 from simulation_models.task_state import TaskStatus
-from simulation_models.zone import ZoneType
+from simulation_models.zone import ZoneId, ZoneType
 
 # ---------------------------------------------------------------------------
 # Symbol dictionaries
@@ -51,6 +51,7 @@ TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
 
 ROBOT_SYMBOL = "R"
 OBSTACLE_SYMBOL = "#"
+TASK_AREA_SYMBOL = "+"
 EMPTY_SYMBOL = "."
 
 
@@ -78,6 +79,8 @@ class SimulationView:
         for rid, state in self.snapshot.robot_states.items():
             robot_positions[state.position] = rid
 
+        targets, areas = self._compute_task_work_areas()
+
         rows: list[str] = []
         for y in range(env.height):
             row: list[str] = []
@@ -87,11 +90,49 @@ class SimulationView:
                     row.append(ROBOT_SYMBOL)
                 elif pos in env.obstacles:
                     row.append(OBSTACLE_SYMBOL)
+                elif pos in targets:
+                    row.append(self._task_id_symbol(targets[pos]))
+                elif pos in areas:
+                    row.append(TASK_AREA_SYMBOL)
                 else:
                     zone_sym = self._zone_symbol_at(pos)
                     row.append(zone_sym if zone_sym else EMPTY_SYMBOL)
             rows.append(" ".join(row))
         return "\n".join(rows)
+
+    def _compute_task_work_areas(
+        self,
+    ) -> tuple[dict[Position, TaskId], dict[Position, TaskId]]:
+        targets: dict[Position, TaskId] = {}
+        areas: dict[Position, TaskId] = {}
+        env = self.snapshot.env
+        for task in self.snapshot.tasks:
+            state = self.snapshot.task_states[task.id]
+            if state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+                continue
+            sc = task.spatial_constraint
+            if sc is None:
+                continue
+            if isinstance(sc.target, Position):
+                targets.setdefault(sc.target, task.id)
+                if sc.max_distance > 0:
+                    for dy in range(-sc.max_distance, sc.max_distance + 1):
+                        for dx in range(-sc.max_distance, sc.max_distance + 1):
+                            if abs(dx) + abs(dy) <= sc.max_distance:
+                                p = Position(sc.target.x + dx, sc.target.y + dy)
+                                if p != sc.target and 0 <= p.x < env.width and 0 <= p.y < env.height:
+                                    areas.setdefault(p, task.id)
+            else:
+                # target is a ZoneId
+                zone = env.get_zone(sc.target)
+                if zone is not None:
+                    for p in zone.cells:
+                        areas.setdefault(p, task.id)
+        return targets, areas
+
+    @staticmethod
+    def _task_id_symbol(task_id: TaskId) -> str:
+        return str(int(task_id)) if int(task_id) < 10 else "*"
 
     def _zone_symbol_at(self, pos: Position) -> str | None:
         # Access internal _zones; a public accessor on Environment can be added later.
@@ -117,12 +158,27 @@ class SimulationView:
             state = self.snapshot.task_states[task.id]
             status = TASK_STATUS_SYMBOLS.get(state.status, "?")
             label = TASK_TYPE_LABELS.get(task.type, "??")
+            spatial = self._spatial_info(task)
             lines.append(
                 f"  {status} [{label}] Task {task.id}"
                 f"  priority={task.priority}"
                 f"  progress={state.work_done.tick}/{task.required_work_time.tick}"
+                f"{spatial}"
             )
         return "\n".join(lines)
+
+    @staticmethod
+    def _spatial_info(task: "Task") -> str:
+        sc = task.spatial_constraint
+        if sc is None:
+            return ""
+        if isinstance(sc.target, Position):
+            s = f"  at ({sc.target.x},{sc.target.y})"
+            if sc.max_distance > 0:
+                s += f" r={sc.max_distance}"
+            return s
+        # target is a ZoneId
+        return f"  zone={int(sc.target)}"
 
     def _render_robot_activity(self) -> str:
         # Build reverse mapping: robot_id -> task
