@@ -1,0 +1,105 @@
+{
+  "environment": {
+    "width": 20,
+    "height": 12,
+    "obstacles": [
+      [9, 3], [9, 4], [9, 5], [9, 6], [9, 7],
+      [5, 9], [6, 9], [7, 9]
+    ],
+    "zones": [
+      {
+        "id": 1,
+        "type": "inspection",
+        "positions": [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]]
+      },
+      {
+        "id": 2,
+        "type": "charging",
+        "positions": [[18, 10], [19, 10], [18, 11], [19, 11]]
+      },
+      {
+        "id": 3,
+        "type": "loading",
+        "positions": [[14, 0], [15, 0], [16, 0], [17, 0], [14, 1], [15, 1], [16, 1], [17, 1]]
+      },
+      {
+        "id": 4,
+        "type": "restricted",
+        "positions": [[12, 5], [13, 5], [14, 5], [12, 6], [13, 6], [14, 6]]
+      },
+      {
+        "id": 5,
+        "type": "maintenance",
+        "positions": [[0, 10], [1, 10], [2, 10], [0, 11], [1, 11], [2, 11]]
+      }
+    ]
+  },
+
+  "robots": [
+    { "id": 1, "capabilities": ["vision", "sensing"], "speed": 1.5 },
+    { "id": 2, "capabilities": ["manipulation", "repair"], "speed": 1.0 },
+    { "id": 3, "capabilities": ["vision", "manipulation", "sensing"], "speed": 0.8 },
+    { "id": 4, "capabilities": ["charging"], "speed": 2.0 }
+  ],
+
+  "robot_states": [
+    { "robot_id": 1, "position": [1, 0], "battery_level": 0.95 },
+    { "robot_id": 2, "position": [15, 1], "battery_level": 0.70 },
+    { "robot_id": 3, "position": [6, 6], "battery_level": 0.50 },
+    { "robot_id": 4, "position": [18, 11], "battery_level": 1.0 }
+  ],
+
+  "tasks": [
+    {
+      "id": 1,
+      "type": "routine_inspection",
+      "priority": 3,
+      "required_work_time": 8,
+      "spatial_constraint": { "target": 1 },
+      "required_capabilities": ["vision"]
+    },
+    {
+      "id": 2,
+      "type": "anomaly_investigation",
+      "priority": 7,
+      "required_work_time": 15,
+      "spatial_constraint": { "target": [6, 4], "max_distance": 2 },
+      "required_capabilities": ["vision", "sensing"]
+    },
+    {
+      "id": 3,
+      "type": "preventive_maintenance",
+      "priority": 5,
+      "required_work_time": 20,
+      "spatial_constraint": { "target": 5 },
+      "required_capabilities": ["manipulation", "repair"],
+      "deadline": 50
+    },
+    {
+      "id": 4,
+      "type": "pickup",
+      "priority": 4,
+      "required_work_time": 5,
+      "spatial_constraint": { "target": 3 },
+      "required_capabilities": ["manipulation"],
+      "dependencies": [1]
+    },
+    {
+      "id": 5,
+      "type": "emergency_response",
+      "priority": 10,
+      "required_work_time": 12,
+      "spatial_constraint": { "target": [3, 7] },
+      "required_capabilities": ["vision", "manipulation", "sensing"],
+      "deadline": 25
+    }
+  ],
+
+  "task_states": [
+    { "task_id": 1, "status": "unassigned" },
+    { "task_id": 2, "status": "unassigned" },
+    { "task_id": 3, "status": "unassigned" },
+    { "task_id": 4, "status": "unassigned" },
+    { "task_id": 5, "status": "unassigned" }
+  ]
+}
