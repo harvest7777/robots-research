@@ -17,7 +17,6 @@ The robot is a dumb executor. All coordination lives in the Simulation.
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 
 from simulation_models.assignment import RobotId
@@ -49,39 +48,24 @@ class Robot:
 
     id: RobotId
     capabilities: frozenset[Capability]
-    speed: float
+    speed: int
 
     def move_towards(self, state: RobotState, target: Position, dt: Time) -> None:
         """
-        Move in a straight line toward the target.
+        Move toward the target (integer cells per tick).
 
-        Distance moved is proportional to speed * dt.
+        BFS always provides a single adjacent cell as the next step, so the
+        robot snaps to target when speed * dt >= manhattan distance.
         Updates position and drains battery on `state`.
 
         Does NOT check collisions or bounds.
         """
-        dx = target.x - state.x
-        dy = target.y - state.y
-        distance_to_target = math.sqrt(dx * dx + dy * dy)
-
-        if distance_to_target == 0:
+        manhattan = abs(target.x - state.position.x) + abs(target.y - state.position.y)
+        if manhattan == 0:
             return
-
-        max_distance = self.speed * dt.tick
-
-        if distance_to_target <= max_distance:
-            # Close enough to reach target
-            state.x = float(target.x)
-            state.y = float(target.y)
-            distance_moved = distance_to_target
-        else:
-            # Move towards target by max_distance
-            ratio = max_distance / distance_to_target
-            state.x += dx * ratio
-            state.y += dy * ratio
-            distance_moved = max_distance
-
-        state.battery_level -= distance_moved * _DRAIN_MOVE_PER_UNIT
+        if self.speed * dt.tick >= manhattan:
+            state.position = target
+            state.battery_level -= manhattan * _DRAIN_MOVE_PER_UNIT
 
     def work(self, state: RobotState, dt: Time) -> None:
         """
