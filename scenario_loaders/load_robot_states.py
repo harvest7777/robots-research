@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from simulation_models.assignment import RobotId
+from simulation_models.position import Position
 from simulation_models.robot_state import RobotState
 
 
@@ -51,9 +52,9 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
             )
 
         x, y = position_raw
-        if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+        if not isinstance(x, int) or not isinstance(y, int):
             raise ValueError(
-                f"robot_state {robot_id}: position coordinates must be numbers, "
+                f"robot_state {robot_id}: position coordinates must be integers, "
                 f"got: {position_raw!r}"
             )
 
@@ -66,8 +67,7 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
 
         robot_state = RobotState(
             robot_id=RobotId(robot_id),
-            x=float(x),
-            y=float(y),
+            position=Position(x, y),
             battery_level=float(battery_level),
         )
         robot_states.append(robot_state)

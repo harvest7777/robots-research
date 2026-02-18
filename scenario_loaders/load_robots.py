@@ -14,7 +14,7 @@ def load_robots(raw: list[dict[str, Any]]) -> list[Robot]:
         raw: List of robot dictionaries, each with required keys:
             id: Unique integer identifier for the robot.
             capabilities: Array of capability strings.
-            speed: Positive float for movement speed.
+            speed: Positive integer (cells per tick).
 
     Returns:
         List of configured Robot instances.
@@ -59,15 +59,15 @@ def load_robots(raw: list[dict[str, Any]]) -> list[Robot]:
                     f"must be one of {valid_caps}"
                 )
 
-        if not isinstance(speed, (int, float)) or speed <= 0:
+        if not isinstance(speed, int) or speed <= 0:
             raise ValueError(
-                f"robot {robot_id}: speed must be a positive number, got: {speed!r}"
+                f"robot {robot_id}: speed must be a positive integer (cells per tick), got: {speed!r}"
             )
 
         robot = Robot(
             id=RobotId(robot_id),
             capabilities=frozenset(capabilities),
-            speed=float(speed),
+            speed=speed,
         )
         robots.append(robot)
 
