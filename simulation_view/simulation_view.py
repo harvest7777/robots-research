@@ -137,7 +137,7 @@ class SimulationView:
             state = self.snapshot.robot_states[robot.id]
             text = (
                 f"  {ROBOT_SYMBOL} Robot {robot.id}"
-                f"  pos=({state.x:.0f},{state.y:.0f})"
+                f"  pos=({state.position.x},{state.position.y})"
                 f"  battery={state.battery_level:.0%}"
             )
             stamp(frame, row, 0, text)
@@ -193,13 +193,13 @@ class SimulationView:
                 name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
                 tstate = self.snapshot.task_states[task.id]
                 text = (
-                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
+                    f"  Robot {robot.id} ({rstate.position.x},{rstate.position.y})"
                     f" is working on {name} (Task {task.id})"
                     f" ({tstate.status.value})"
                 )
             else:
                 text = (
-                    f"  Robot {robot.id} ({rstate.x:.0f},{rstate.y:.0f})"
+                    f"  Robot {robot.id} ({rstate.position.x},{rstate.position.y})"
                     f" is idle"
                 )
             stamp(frame, row, 0, text)

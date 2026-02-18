@@ -36,10 +36,10 @@
   },
 
   "robots": [
-    { "id": 1, "capabilities": ["vision", "sensing"], "speed": 1.5 },
-    { "id": 2, "capabilities": ["manipulation", "repair"], "speed": 1.0 },
-    { "id": 3, "capabilities": ["vision", "manipulation", "sensing"], "speed": 0.8 },
-    { "id": 4, "capabilities": ["charging"], "speed": 2.0 }
+    { "id": 1, "capabilities": ["vision", "sensing"], "speed": 1 },
+    { "id": 2, "capabilities": ["manipulation", "repair"], "speed": 1 },
+    { "id": 3, "capabilities": ["vision", "manipulation", "sensing"], "speed": 1 },
+    { "id": 4, "capabilities": ["charging"], "speed": 2 }
   ],
 
   "robot_states": [

@@ -56,8 +56,8 @@
       "capabilities": ["vision", "sensing"],
       "_capabilities_comment": "Required. Array of: vision, manipulation, sensing, repair, charging.",
 
-      "speed": 1.0,
-      "_speed_comment": "Required. Positive number. Movement speed in grid units per tick."
+      "speed": 1,
+      "_speed_comment": "Required. Positive integer. Movement speed in cells per tick."
     }
   ],
   "_robots_comment": "Optional. Array of robot definitions.",
@@ -70,7 +70,7 @@
       "_robot_id_comment": "Required. Non-negative integer. Must match a robot id.",
 
       "position": [0, 0],
-      "_position_comment": "Required. [x, y] starting position. Can be floats for sub-cell precision.",
+      "_position_comment": "Required. [x, y] starting position (integers).",
 
       "battery_level": 1.0,
       "_battery_level_comment": "Optional. Float between 0.0 and 1.0. Default: 1.0 (fully charged)."
