@@ -35,7 +35,7 @@ def main() -> None:
         try:
             renderer.update(sim.snapshot())
             for _ in range(NUM_TICKS):
-                time.sleep(0.3)
+                time.sleep(1)
                 sim.step()
                 renderer.update(sim.snapshot())
             renderer.wait_for_close()
