@@ -77,9 +77,9 @@ if __name__ == "__main__":
     robot = Robot(
         id=robot_id,
         capabilities=frozenset({Capability.VISION}),
-        speed=1.0,
+        speed=1,
     )
-    robot_state = RobotState.from_position(robot_id, Position(0, 0))
+    robot_state = RobotState(robot_id=robot_id, position=Position(0, 0))
 
     # Create one task
     task_id = TaskId(1)
@@ -118,11 +118,11 @@ if __name__ == "__main__":
     for t, snap in sorted(sim.history.items(), key=lambda x: x[0].tick):
         r_state = snap.robot_states[robot_id]
         t_state = snap.task_states[task_id]
-        print(f"t={t.tick}: robot at ({r_state.x}, {r_state.y}), task status={t_state.status.value}")
+        print(f"t={t.tick}: robot at ({r_state.position.x}, {r_state.position.y}), task status={t_state.status.value}")
 
     # Verify snapshot isolation
     initial_snap = sim.history[Time(0)]
-    original_x = initial_snap.robot_states[robot_id].x
-    sim.robot_states[robot_id].x = 999.0
-    assert initial_snap.robot_states[robot_id].x == original_x, "Snapshot should be isolated!"
+    original_pos = initial_snap.robot_states[robot_id].position
+    sim.robot_states[robot_id].position = Position(999, 0)
+    assert initial_snap.robot_states[robot_id].position == original_pos, "Snapshot should be isolated!"
     print("\n[OK] Snapshots are isolated from live simulation.")
