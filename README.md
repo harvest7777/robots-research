@@ -6,10 +6,10 @@
 python main.py <scenario> [--renderer {terminal,mujoco}]
 ```
 
-| Argument | Description |
-|----------|-------------|
-| `scenario` | Path to scenario JSON (e.g. `scenarios/warehouse_mega.json`) |
-| `--renderer` | `terminal` (default) or `mujoco` |
+| Argument     | Description                                                  |
+| ------------ | ------------------------------------------------------------ |
+| `scenario`   | Path to scenario JSON (e.g. `scenarios/warehouse_mega.json`) |
+| `--renderer` | `terminal` (default) or `mujoco`                             |
 
 **Examples**
 
