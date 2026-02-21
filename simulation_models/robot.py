@@ -4,7 +4,7 @@ Robot Execution Model
 A Robot is a physical actor that executes movement and work.
 
 This module separates:
-- `Robot`: immutable robot definition (capabilities, speed)
+- `Robot`: immutable robot definition (capabilities, speed, radius)
 - `RobotState`: mutable runtime state (position, battery)
 
 The robot updates runtime state but:
@@ -17,7 +17,8 @@ The robot is a dumb executor. All coordination lives in the Simulation.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+import math
+from dataclasses import dataclass, field
 
 from simulation_models.assignment import RobotId
 from simulation_models.capability import Capability
@@ -30,6 +31,9 @@ from simulation_models.time import Time
 _DRAIN_MOVE_PER_UNIT = 0.001  # per unit distance moved
 _DRAIN_WORK_PER_TICK = 0.002  # per tick of work
 _DRAIN_IDLE_PER_TICK = 0.0005  # per tick idle
+
+# Guard against floating-point jitter when robot is at target
+_AT_TARGET_EPSILON = 0.001
 
 
 @dataclass(frozen=True)
@@ -48,24 +52,28 @@ class Robot:
 
     id: RobotId
     capabilities: frozenset[Capability]
-    speed: int
+    speed: float
+    radius: float = field(default=0.4)
 
     def move_towards(self, state: RobotState, target: Position, dt: Time) -> None:
         """
-        Move toward the target (integer cells per tick).
+        Move toward the target using continuous vector math.
 
-        BFS always provides a single adjacent cell as the next step, so the
-        robot snaps to target when speed * dt >= manhattan distance.
-        Updates position and drains battery on `state`.
+        Direction is normalized; travel distance is clamped so the robot cannot
+        overshoot the target. Updates position and drains battery on state.
 
         Does NOT check collisions or bounds.
         """
-        manhattan = abs(target.x - state.position.x) + abs(target.y - state.position.y)
-        if manhattan == 0:
+        dx = target.x - state.position.x
+        dy = target.y - state.position.y
+        dist = math.sqrt(dx * dx + dy * dy)
+        if dist < _AT_TARGET_EPSILON:
             return
-        if self.speed * dt.tick >= manhattan:
-            state.position = target
-            state.battery_level -= manhattan * _DRAIN_MOVE_PER_UNIT
+        travel = min(self.speed * dt.tick, dist)
+        nx = state.position.x + (dx / dist) * travel
+        ny = state.position.y + (dy / dist) * travel
+        state.position = Position(nx, ny)
+        state.battery_level -= travel * _DRAIN_MOVE_PER_UNIT
 
     def work(self, state: RobotState, dt: Time) -> None:
         """
