@@ -4,11 +4,11 @@ Environment (discrete grid world)
 This module defines a minimal `Environment` backed by a 2D grid.
 
 Coordinate / indexing conventions:
-- Positions use `Position(x: int, y: int)` (integers only).
-- `(0, 0)` is the **top-left** cell.
+- Positions use `Position(x: float, y: float)`.
+- `(0.0, 0.0)` is the **top-left** cell.
 - `x` indexes columns (increases to the right).
 - `y` indexes rows (increases downward).
-- Grid indexing is `grid[y][x]`.
+- Grid indexing uses integer-floored coordinates: `grid[int(y)][int(x)]`.
 
 Core invariant:
 - **No overlap**: at most one object may occupy a grid cell at a time.
@@ -72,7 +72,7 @@ class Environment:
             for x in range(self._width):
                 obj = self._grid[y][x]
                 if obj is None:
-                    pos = Position(x, y)
+                    pos = Position(float(x), float(y))
                     zone_id = self._get_zone_id_at(pos)
                     if zone_id is not None:
                         row_chars.append(str(zone_id) if zone_id < 10 else "+")
@@ -98,7 +98,8 @@ class Environment:
         """
         if not self._position_in_bounds(pos):
             raise IndexError(f"Invalid position {pos}")
-        return self._grid[pos.y][pos.x]
+        cx, cy = self._cell(pos)
+        return self._grid[cy][cx]
 
     def is_empty(self, pos: Position) -> bool:
         """
@@ -117,13 +118,14 @@ class Environment:
         - Validates `pos` is in-bounds.
         - Enforces the invariant that **no two objects may overlap**:
           if the target cell is already occupied, raises `ValueError`.
-        - Otherwise writes `obj` into the backing grid cell: `self._grid[y][x] = obj`.
+        - Otherwise writes `obj` into the backing grid cell.
         """
         if not self._position_in_bounds(pos):
             raise IndexError(f"Invalid position {pos}")
-        if self._grid[pos.y][pos.x] is not None:
+        cx, cy = self._cell(pos)
+        if self._grid[cy][cx] is not None:
             raise ValueError("Position occupied")
-        self._grid[pos.y][pos.x] = obj
+        self._grid[cy][cx] = obj
 
     @property
     def obstacles(self) -> frozenset[Position]:
@@ -185,6 +187,10 @@ class Environment:
         """Return the Zone with the given ID, or None if not found."""
         return self._zones.get(zone_id)
 
+    def _cell(self, pos: Position) -> tuple[int, int]:
+        """Convert a Position to integer grid cell indices (col, row)."""
+        return (int(pos.x), int(pos.y))
+
     def _get_zone_id_at(self, pos: Position) -> ZoneId | None:
         """Return the zone ID containing `pos`, or None if not in any zone."""
         for zone_id, zone in self._zones.items():
@@ -197,7 +203,7 @@ class Environment:
         Check whether a Position maps to a valid grid cell.
 
         Mapping convention:
-        - The grid uses a top-left origin: `(0, 0)` is the top-left cell.
+        - The grid uses a top-left origin: `(0.0, 0.0)` is the top-left cell.
         - `pos.x` is the column index (increases to the right).
         - `pos.y` is the row index (increases downward).
 
