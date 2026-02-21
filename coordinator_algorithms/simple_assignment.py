@@ -34,6 +34,7 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
             if robot.id in assigned_robots:
                 continue
 
+            # LLM Part in the future
             if task.required_capabilities <= robot.capabilities:
                 assignments.append(
                     Assignment(task_id=task.id, robot_ids=frozenset([robot.id]))
