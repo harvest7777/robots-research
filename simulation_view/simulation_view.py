@@ -94,9 +94,12 @@ class SimulationView:
     def _render_grid(self, frame: Frame, start_row: int) -> int:
         env = self.snapshot.env
 
+        # Key robot positions by floored grid cell so mid-movement floats
+        # still render on the correct cell.
         robot_positions: dict[Position, object] = {}
         for rid, state in self.snapshot.robot_states.items():
-            robot_positions[state.position] = rid
+            cell = Position(int(state.position.x), int(state.position.y))
+            robot_positions[cell] = rid
 
         targets, areas = self._compute_task_work_areas()
 
@@ -137,7 +140,7 @@ class SimulationView:
             state = self.snapshot.robot_states[robot.id]
             text = (
                 f"  {ROBOT_SYMBOL} Robot {robot.id}"
-                f"  pos=({state.position.x},{state.position.y})"
+                f"  pos=({state.position.x:.2f},{state.position.y:.2f})"
                 f"  battery={state.battery_level:.0%}"
             )
             stamp(frame, row, 0, text)
@@ -193,13 +196,13 @@ class SimulationView:
                 name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
                 tstate = self.snapshot.task_states[task.id]
                 text = (
-                    f"  Robot {robot.id} ({rstate.position.x},{rstate.position.y})"
+                    f"  Robot {robot.id} ({rstate.position.x:.2f},{rstate.position.y:.2f})"
                     f" is working on {name} (Task {task.id})"
                     f" ({tstate.status.value})"
                 )
             else:
                 text = (
-                    f"  Robot {robot.id} ({rstate.position.x},{rstate.position.y})"
+                    f"  Robot {robot.id} ({rstate.position.x:.2f},{rstate.position.y:.2f})"
                     f" is idle"
                 )
             stamp(frame, row, 0, text)
