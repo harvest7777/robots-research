@@ -14,6 +14,7 @@ The Simulation class holds all state and data needed to run a simulation:
 from __future__ import annotations
 
 import dataclasses
+import math
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
@@ -37,6 +38,9 @@ PathfindingAlgorithm = Callable[
     Position | None,
 ]
 """(environment, start, goal, occupied_by_other_robots) -> next_step or None."""
+
+# Goal-reached epsilon: within half a cell counts as "at goal"
+_AT_GOAL_EPS = 0.5
 
 
 @dataclass
@@ -167,7 +171,7 @@ class Simulation:
                 planned_moves[robot_id] = None
                 continue
 
-            if state.position == goal:
+            if state.position.near(goal, eps=_AT_GOAL_EPS):
                 planned_moves[robot_id] = None
                 continue
 
@@ -181,18 +185,30 @@ class Simulation:
             )
             planned_moves[robot_id] = next_step
 
-        # Detect planned collisions: two robots targeting the same cell
-        target_counts: dict[Position, list[RobotId]] = {}
-        for robot_id, next_pos in planned_moves.items():
-            if next_pos is not None:
-                target_counts.setdefault(next_pos, []).append(robot_id)
-        for pos, robot_ids in target_counts.items():
-            if len(robot_ids) > 1:
-                # Only first robot proceeds, others stay put
-                for robot_id in robot_ids[1:]:
-                    planned_moves[robot_id] = None
+        # Detect planned collisions using pairwise radius-based distance check.
+        # Build list of (robot_id, planned_position) for robots that have a move.
+        moving_robots: list[tuple[RobotId, Position]] = [
+            (rid, pos)
+            for rid, pos in planned_moves.items()
+            if pos is not None
+        ]
+        for i in range(len(moving_robots)):
+            rid_a, pos_a = moving_robots[i]
+            if planned_moves[rid_a] is None:
+                continue
+            robot_a = self._robot_by_id[rid_a]
+            for j in range(i + 1, len(moving_robots)):
+                rid_b, pos_b = moving_robots[j]
+                if planned_moves[rid_b] is None:
+                    continue
+                robot_b = self._robot_by_id[rid_b]
+                dist = pos_a.distance(pos_b)
+                if dist < robot_a.radius + robot_b.radius:
+                    # Block the second robot
+                    planned_moves[rid_b] = None
 
         # --- Execute phase ---
+        obstacles = self.environment.obstacles
         for robot_id, state in self.robot_states.items():
             robot = self._robot_by_id[robot_id]
             next_pos = planned_moves.get(robot_id)
@@ -211,10 +227,12 @@ class Simulation:
 
             goal = self._resolve_task_target_position(task, state.position)
 
-            if next_pos is not None and next_pos != state.position:
+            if next_pos is not None:
                 # Robot has a move to make
                 robot.move_towards(state, next_pos, self.dt)
-            elif goal is None or state.position == goal:
+                # Layer 2: push robot out of any obstacle AABBs it may clip
+                self._push_out_of_obstacles(state, robot.radius, obstacles)
+            elif goal is None or state.position.near(goal, eps=_AT_GOAL_EPS):
                 # At goal or no spatial constraint — do work
                 robot.work(state, self.dt)
                 task.apply_work(task_state, self.dt, self.t_now)
@@ -224,6 +242,44 @@ class Simulation:
 
         # Record snapshot at new time
         self.history[self.t_now] = self.snapshot()
+
+    @staticmethod
+    def _push_out_of_obstacles(
+        state: RobotState,
+        radius: float,
+        obstacles: frozenset[Position],
+    ) -> None:
+        """Layer 2 safety: push robot center out of any obstacle AABB it overlaps.
+
+        Checks only the 9 cells surrounding the robot's current cell for performance.
+        Each obstacle occupies the unit square [cx, cx+1] × [cy, cy+1].
+        """
+        cx = int(state.position.x)
+        cy = int(state.position.y)
+        for dox in range(-1, 2):
+            for doy in range(-1, 2):
+                cell = Position(float(cx + dox), float(cy + doy))
+                if cell not in obstacles:
+                    continue
+                ox = float(cx + dox)
+                oy = float(cy + doy)
+                # Nearest point on AABB [ox, ox+1] × [oy, oy+1] to robot center
+                nearest_x = max(ox, min(state.position.x, ox + 1.0))
+                nearest_y = max(oy, min(state.position.y, oy + 1.0))
+                dx = state.position.x - nearest_x
+                dy = state.position.y - nearest_y
+                dist = math.sqrt(dx * dx + dy * dy)
+                if dist < radius:
+                    if dist > 1e-9:
+                        # Push robot to AABB surface along penetration vector
+                        scale = radius / dist
+                        state.position = Position(
+                            nearest_x + dx * scale,
+                            nearest_y + dy * scale,
+                        )
+                    else:
+                        # Robot center is inside obstacle — push upward
+                        state.position = Position(state.position.x, oy - radius)
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
         """Resolve a task's spatial constraint to a concrete Position.
