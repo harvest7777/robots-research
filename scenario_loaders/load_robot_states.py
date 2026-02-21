@@ -13,7 +13,7 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
     Args:
         raw: List of robot_state dictionaries, each with required keys:
             robot_id: Integer identifier matching a Robot.
-            position: [x, y] starting position.
+            position: [x, y] starting position (int or float coordinates).
 
             Optional keys:
             battery_level: Float between 0.0 and 1.0. Defaults to 1.0.
@@ -52,9 +52,9 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
             )
 
         x, y = position_raw
-        if not isinstance(x, int) or not isinstance(y, int):
+        if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
             raise ValueError(
-                f"robot_state {robot_id}: position coordinates must be integers, "
+                f"robot_state {robot_id}: position coordinates must be numbers, "
                 f"got: {position_raw!r}"
             )
 
@@ -67,7 +67,7 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
 
         robot_state = RobotState(
             robot_id=RobotId(robot_id),
-            position=Position(x, y),
+            position=Position(float(x), float(y)),
             battery_level=float(battery_level),
         )
         robot_states.append(robot_state)
