@@ -6,10 +6,10 @@ A small [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server 
 
 The server provides two tools:
 
-| Tool   | Description                          | Parameters   |
-|--------|--------------------------------------|--------------|
-| `ping` | Health check. Returns `"pong"`.      | (none)       |
-| `hello`| Returns a greeting for the given name.| `name` (str) |
+| Tool    | Description                            | Parameters   |
+| ------- | -------------------------------------- | ------------ |
+| `ping`  | Health check. Returns `"pong"`.        | (none)       |
+| `hello` | Returns a greeting for the given name. | `name` (str) |
 
 ## How to run it
 
