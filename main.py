@@ -6,7 +6,7 @@ import time
 
 from scenario_loaders import load_simulation
 from coordinator_algorithms import simple_assign
-from pathfinding_algorithms import bfs_pathfind
+from pathfinding_algorithms import astar_pathfind
 from simulation_view.simulation_view import SimulationView
 from simulation_view.terminal_renderer import TerminalRenderer
 
@@ -26,7 +26,7 @@ def main() -> None:
 
     sim = load_simulation(args.scenario)
     sim.assignment_algorithm = simple_assign
-    sim.pathfinding_algorithm = bfs_pathfind
+    sim.pathfinding_algorithm = astar_pathfind
 
     if args.renderer == "mujoco":
         from simulation_view.mujoco_renderer import MuJoCoRenderer
