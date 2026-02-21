@@ -49,8 +49,12 @@ class Zone:
         return Zone(id=id, zone_type=zone_type, _positions=frozenset(positions))
 
     def contains(self, pos: Position) -> bool:
-        """Return True if this zone contains `pos`."""
-        return pos in self._positions
+        """Return True if this zone contains `pos`.
+
+        Float positions are floored to the enclosing grid cell before lookup,
+        so a robot at (3.74, 2.12) is inside the zone if cell (3, 2) is covered.
+        """
+        return Position(int(pos.x), int(pos.y)) in self._positions
 
     @property
     def cells(self) -> frozenset[Position]:
