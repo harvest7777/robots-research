@@ -112,23 +112,27 @@ class Simulation:
                 "Simulation requires 'pathfinding_algorithm' before stepping"
             )
 
-    def run(self, max_steps: int) -> SimulationResult:
-        """Run the simulation to completion or until the step limit is reached.
+    def run(self, max_delta_time: int) -> SimulationResult:
+        """Run the simulation to completion or until the time budget is exhausted.
 
         Terminates when all tasks are in a terminal state (DONE or FAILED) or
-        when t_now reaches max_steps, whichever comes first.
+        when elapsed ticks since run() was called reaches max_delta_time,
+        whichever comes first.
 
         Args:
-            max_steps: Maximum number of steps before the run is forced to end.
+            max_delta_time: Maximum ticks this run may consume before being
+                forced to end. Measured from t_now at the time run() is called,
+                so the cap is independent of the simulation's starting time.
 
         Returns:
             SimulationResult with outcome metrics and the full snapshot history.
         """
         self._validate_ready()
 
+        t_start = self.t_now
         terminal = {TaskStatus.DONE, TaskStatus.FAILED}
 
-        while int(self.t_now) < max_steps:
+        while (self.t_now.tick - t_start.tick) < max_delta_time:
             if all(s.status in terminal for s in self.task_states.values()):
                 break
             self._step()
@@ -137,12 +141,13 @@ class Simulation:
         tasks_succeeded = sum(
             1 for s in self.task_states.values() if s.status == TaskStatus.DONE
         )
+        elapsed = self.t_now.tick - t_start.tick
 
         return SimulationResult(
             completed=all_terminal,
             tasks_succeeded=tasks_succeeded,
             tasks_total=len(self.tasks),
-            makespan=int(self.t_now) if all_terminal else None,
+            makespan=elapsed if all_terminal else None,
             snapshots=list(self.history.values()),
         )
 
