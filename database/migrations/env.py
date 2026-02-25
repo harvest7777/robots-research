@@ -1,3 +1,23 @@
+"""
+Alembic migration environment configuration.
+
+This file is run by Alembic whenever you execute `alembic upgrade` or
+`alembic downgrade`. It is responsible for connecting to the database and
+running the migration scripts found in versions/.
+
+Connection: reads DATABASE_URL from the environment (via .env). No credentials
+are hardcoded here — make sure DATABASE_URL is set before running migrations.
+
+No ORM models are used (target_metadata = None), so migrations are written
+as raw SQL in each version file rather than auto-generated from model classes.
+
+To apply all pending migrations:
+    alembic upgrade head
+
+To roll back one migration:
+    alembic downgrade -1
+"""
+
 import os
 from logging.config import fileConfig
 
