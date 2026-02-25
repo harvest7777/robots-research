@@ -24,6 +24,7 @@ from simulation_models.environment import Environment
 from simulation_models.position import Position
 from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
+from simulation_models.simulation_result import SimulationResult
 from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import SpatialConstraint, Task, TaskId
 from simulation_models.task_state import TaskState, TaskStatus
@@ -111,18 +112,48 @@ class Simulation:
                 "Simulation requires 'pathfinding_algorithm' before stepping"
             )
 
-    def step(self) -> None:
+    def run(self, max_steps: int) -> SimulationResult:
+        """Run the simulation to completion or until the step limit is reached.
+
+        Terminates when all tasks are in a terminal state (DONE or FAILED) or
+        when t_now reaches max_steps, whichever comes first.
+
+        Args:
+            max_steps: Maximum number of steps before the run is forced to end.
+
+        Returns:
+            SimulationResult with outcome metrics and the full snapshot history.
+        """
+        self._validate_ready()
+
+        terminal = {TaskStatus.DONE, TaskStatus.FAILED}
+
+        while int(self.t_now) < max_steps:
+            if all(s.status in terminal for s in self.task_states.values()):
+                break
+            self._step()
+
+        all_terminal = all(s.status in terminal for s in self.task_states.values())
+        tasks_succeeded = sum(
+            1 for s in self.task_states.values() if s.status == TaskStatus.DONE
+        )
+
+        return SimulationResult(
+            completed=all_terminal,
+            tasks_succeeded=tasks_succeeded,
+            tasks_total=len(self.tasks),
+            makespan=int(self.t_now) if all_terminal else None,
+            snapshots=list(self.history.values()),
+        )
+
+    def _step(self) -> None:
         """Execute one simulation tick.
 
         Two-phase approach to prevent move-order bias:
 
         Plan phase: compute next positions for all robots before moving any.
         Execute phase: move robots, apply work, update task states.
-
-        Raises:
-            ValueError: If simulation is not ready.
         """
-        self._validate_ready()
 
         # Advance simulation time
         self.t_now = self.t_now.advance(self.dt)
