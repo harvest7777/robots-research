@@ -37,7 +37,7 @@ def upgrade() -> None:
         return
     conn = op.get_bind()
     conn.execute(
-        text("INSERT INTO scenarios (name, data) VALUES (:name, :data::jsonb)"),
+        text("INSERT INTO scenarios (name, data) VALUES (:name, (:data)::jsonb)"),
         rows,
     )
 
