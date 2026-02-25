@@ -10,7 +10,7 @@ from pathfinding_algorithms import astar_pathfind
 from simulation_view.simulation_view import SimulationView
 from simulation_view.terminal_renderer import TerminalRenderer
 
-NUM_TICKS = 60
+MAX_STEPS = 60
 
 
 def main() -> None:
@@ -28,32 +28,27 @@ def main() -> None:
     sim.assignment_algorithm = simple_assign
     sim.pathfinding_algorithm = astar_pathfind
 
+    result = sim.run(max_steps=MAX_STEPS)
+
     if args.renderer == "mujoco":
         from simulation_view.mujoco_renderer import MuJoCoRenderer
 
         renderer = MuJoCoRenderer()
         try:
-            renderer.update(sim.snapshot())
-            for _ in range(NUM_TICKS):
-                time.sleep(.5)
-                sim.step()
-                renderer.update(sim.snapshot())
+            for snapshot in result.snapshots:
+                renderer.update(snapshot)
+                time.sleep(0.5)
             renderer.wait_for_close()
         finally:
             renderer.cleanup()
     else:
         renderer = TerminalRenderer()
         try:
-            cols, rows = os.get_terminal_size()
-            frame = SimulationView(sim.snapshot()).render(cols, rows)
-            renderer.draw(frame)
-
-            for _ in range(NUM_TICKS):
-                time.sleep(1)
-                sim.step()
+            for snapshot in result.snapshots:
                 cols, rows = os.get_terminal_size()
-                frame = SimulationView(sim.snapshot()).render(cols, rows)
+                frame = SimulationView(snapshot).render(cols, rows)
                 renderer.draw(frame)
+                time.sleep(1)
         finally:
             renderer.cleanup()
 
