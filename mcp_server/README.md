@@ -11,6 +11,34 @@ The server provides two tools:
 | `ping`  | Health check. Returns `"pong"`.        | (none)       |
 | `hello` | Returns a greeting for the given name. | `name` (str) |
 
+## Hello World
+
+The minimal MCP server — one tool, a few lines:
+
+```python
+from fastmcp import FastMCP
+
+mcp = FastMCP("hello-world")
+
+@mcp.tool()
+def hello(name: str = "World") -> str:
+    """Greet someone by name."""
+    return f"Hello, {name}!"
+
+if __name__ == "__main__":
+    mcp.run()
+```
+
+Run it:
+
+```bash
+python server.py
+```
+
+That's it. The `@mcp.tool()` decorator registers the function as a callable tool. The docstring becomes the tool description Claude sees. `mcp.run()` starts the server over stdio.
+
+---
+
 ## How to run it
 
 ### Prerequisites
