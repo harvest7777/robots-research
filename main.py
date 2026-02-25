@@ -10,7 +10,7 @@ from pathfinding_algorithms import astar_pathfind
 from simulation_view.simulation_view import SimulationView
 from simulation_view.terminal_renderer import TerminalRenderer
 
-MAX_STEPS = 60
+MAX_DELTA_TIME = 60
 
 
 def main() -> None:
@@ -28,7 +28,7 @@ def main() -> None:
     sim.assignment_algorithm = simple_assign
     sim.pathfinding_algorithm = astar_pathfind
 
-    result = sim.run(max_steps=MAX_STEPS)
+    result = sim.run(max_delta_time=MAX_DELTA_TIME)
 
     if args.renderer == "mujoco":
         from simulation_view.mujoco_renderer import MuJoCoRenderer
