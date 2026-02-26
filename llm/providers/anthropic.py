@@ -10,6 +10,9 @@ from llm.providers.base import (
     ToolResultContent,
     ToolUseContent,
 )
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 def _to_anthropic_content(content: str | list[Content]) -> str | list[dict]:
