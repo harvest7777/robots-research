@@ -25,7 +25,7 @@ def main() -> None:
     args = parser.parse_args()
 
     sim = load_simulation(args.scenario)
-    sim.assignment_algorithm = simple_assign
+    sim.assignments = simple_assign(sim.tasks, sim.robots)
     sim.pathfinding_algorithm = astar_pathfind
 
     result = sim.run(max_delta_time=MAX_DELTA_TIME)
