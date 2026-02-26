@@ -1,3 +1,10 @@
+"""
+LLM provider implementation for Anthropic Claude.
+
+Translates the shared Message/Tool types to the Anthropic SDK format,
+calls the API, and maps the response back to LLMResponse.
+"""
+
 import anthropic
 
 from llm.providers.base import (

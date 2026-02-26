@@ -1,3 +1,11 @@
+"""
+Conversation session: orchestrates the LLM ↔ MCP tool-use loop.
+
+Maintains message history, fetches available tools from the MCP server,
+and drives the cycle of LLM completions → tool calls → tool results
+until the model returns a final answer.
+"""
+
 import logging
 
 from llm.mcp_client import MCPClient
