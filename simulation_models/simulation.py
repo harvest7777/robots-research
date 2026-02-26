@@ -26,13 +26,9 @@ from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
 from simulation_models.simulation_result import SimulationResult
 from simulation_models.snapshot import SimulationSnapshot
-from simulation_models.task import SpatialConstraint, Task, TaskId
+from simulation_models.task import Task, TaskId
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
-from simulation_models.zone import ZoneId
-
-AssignmentAlgorithm = Callable[[list[Task], list[Robot]], list[Assignment]]
-"""A function that assigns robots to tasks."""
 
 PathfindingAlgorithm = Callable[
     [Environment, Position, Position, frozenset[Position]],
@@ -49,18 +45,14 @@ class Simulation:
     """
     Central container for simulation state and data.
 
-    Data fields are required at construction. The assignment_algorithm is optional
-    at construction but required before calling step().
-
     Attributes:
         environment: The grid environment with zones and obstacles.
         robots: List of robot definitions (immutable).
         tasks: List of task definitions (immutable).
         robot_states: Mutable state for each robot, keyed by robot_id.
         task_states: Mutable state for each task, keyed by task_id.
-        assignment_algorithm: Algorithm that assigns robots to tasks. Optional at
-            construction, but required before stepping.
-        current_assignments: Assignments from the most recent step() call.
+        assignments: Fixed robot-task assignments to execute. Set before run().
+        pathfinding_algorithm: Algorithm for computing robot movement.
         t_now: Current simulation time.
         dt: Time step size per step() call.
         history: Snapshot history keyed by simulation time.
@@ -71,9 +63,8 @@ class Simulation:
     tasks: list[Task]
     robot_states: dict[RobotId, RobotState]
     task_states: dict[TaskId, TaskState]
-    assignment_algorithm: AssignmentAlgorithm | None = None
+    assignments: list[Assignment] = field(default_factory=list)
     pathfinding_algorithm: PathfindingAlgorithm | None = None
-    current_assignments: list[Assignment] = field(default_factory=list)
     t_now: Time = field(default_factory=lambda: Time(0))
     dt: Time = field(default_factory=lambda: Time(1))
     history: dict[Time, SimulationSnapshot] = field(default_factory=dict)
@@ -101,12 +92,8 @@ class Simulation:
         """Validate that simulation is ready to step.
 
         Raises:
-            ValueError: If assignment_algorithm or pathfinding_algorithm is not set.
+            ValueError: If pathfinding_algorithm is not set.
         """
-        if self.assignment_algorithm is None:
-            raise ValueError(
-                "Simulation requires 'assignment_algorithm' before stepping"
-            )
         if self.pathfinding_algorithm is None:
             raise ValueError(
                 "Simulation requires 'pathfinding_algorithm' before stepping"
@@ -163,11 +150,8 @@ class Simulation:
         # Advance simulation time
         self.t_now = self.t_now.advance(self.dt)
 
-        # Run assignment algorithm
-        self.current_assignments = self.assignment_algorithm(self.tasks, self.robots)
-
         robot_assignment: dict[RobotId, TaskId] = {}
-        for assignment in self.current_assignments:
+        for assignment in self.assignments:
             for robot_id in assignment.robot_ids:
                 robot_assignment[robot_id] = assignment.task_id
 
