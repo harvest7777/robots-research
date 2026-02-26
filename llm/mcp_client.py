@@ -1,3 +1,10 @@
+"""
+Thin wrapper around an MCP ClientSession.
+
+Exposes list_tools() and call_tool() in terms of the shared Tool type
+so the session layer never imports directly from the mcp package.
+"""
+
 from mcp import ClientSession
 
 from llm.providers.base import Tool

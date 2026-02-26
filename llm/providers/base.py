@@ -1,3 +1,10 @@
+"""
+Shared types and abstract interface for LLM providers.
+
+Defines Message, Tool, and content types used across all providers,
+plus the LLMProvider base class that each provider must implement.
+"""
+
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
