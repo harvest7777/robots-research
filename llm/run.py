@@ -6,7 +6,10 @@ Usage:
 """
 
 import asyncio
+import logging
 import sys
+
+logging.basicConfig(level=logging.INFO, format="%(name)s | %(message)s")
 
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client

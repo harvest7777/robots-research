@@ -1,3 +1,5 @@
+import logging
+
 from llm.mcp_client import MCPClient
 from llm.providers.base import (
     LLMProvider,
@@ -5,6 +7,8 @@ from llm.providers.base import (
     TextContent,
     ToolResultContent,
 )
+
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """\
 You are a robot fleet coordinator. When a user describes work that needs to be done:
@@ -53,7 +57,9 @@ class Session:
             # Execute each tool call and collect results
             tool_results = []
             for tool_call in response.tool_calls:
+                logger.info("tool call: %s(%s)", tool_call.name, tool_call.args)
                 result = await self._mcp.call_tool(tool_call.name, tool_call.args)
+                logger.info("tool result: %s", result)
                 tool_results.append(
                     ToolResultContent(tool_use_id=tool_call.id, content=result)
                 )
