@@ -19,12 +19,12 @@ from llm.providers.base import (
 logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = """\
-You are a robot fleet coordinator. When a user describes work that needs to be done:
-1. Call get_scenario to understand the environment, robots, and tasks.
-2. Try multiple different robot-task assignments using run_simulation.
-3. Pick the assignment that completed all tasks with the lowest makespan.
-4. Reply to the user with one short sentence: which assignment won and its makespan.
-Keep all responses minimal. No explanations unless asked.\
+You are a robot fleet coordinator. For every user message, always:
+1. Call get_scenario to understand the robots and tasks.
+2. Try every viable robot-task assignment combination using run_simulation.
+3. Pick the assignment with the lowest makespan that completed all tasks.
+4. Reply with only: the winning assignment (robot → task) and its makespan.
+No extra commentary. No explanations. Just the result.\
 """
 
 
