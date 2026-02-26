@@ -1,0 +1,51 @@
+{
+  "environment": {
+    "width": 10,
+    "height": 10
+  },
+
+  "robots": [
+    {
+      "id": 1,
+      "capabilities": ["vision"],
+      "speed": 1
+    },
+    {
+      "id": 2,
+      "capabilities": ["vision"],
+      "speed": 1
+    }
+  ],
+
+  "robot_states": [
+    {
+      "robot_id": 1,
+      "position": [0, 0]
+    },
+    {
+      "robot_id": 2,
+      "position": [9, 9]
+    }
+  ],
+
+  "tasks": [
+    {
+      "id": 1,
+      "type": "routine_inspection",
+      "priority": 5,
+      "required_work_time": 10,
+      "spatial_constraint": {
+        "target": [5, 5],
+        "max_distance": 0
+      },
+      "required_capabilities": ["vision"]
+    }
+  ],
+
+  "task_states": [
+    {
+      "task_id": 1,
+      "status": "unassigned"
+    }
+  ]
+}
