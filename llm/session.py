@@ -66,9 +66,9 @@ class Session:
             # Execute each tool call and collect results
             tool_results = []
             for tool_call in response.tool_calls:
-                logger.info("tool call: %s(%s)", tool_call.name, tool_call.args)
+                logger.info("→ %s(%s)", tool_call.name, tool_call.args)
                 result = await self._mcp.call_tool(tool_call.name, tool_call.args)
-                logger.info("tool result: %s", result)
+                logger.info("← %s", result[:120])
                 tool_results.append(
                     ToolResultContent(tool_use_id=tool_call.id, content=result)
                 )
