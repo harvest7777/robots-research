@@ -10,6 +10,7 @@ Assigns robots to tasks based on capability matching.
 from simulation_models.assignment import Assignment, RobotId
 from simulation_models.robot import Robot
 from simulation_models.task import Task
+from simulation_models.time import Time
 
 
 def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
@@ -37,7 +38,7 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
             # LLM Part in the future
             if task.required_capabilities <= robot.capabilities:
                 assignments.append(
-                    Assignment(task_id=task.id, robot_ids=frozenset([robot.id]))
+                    Assignment(task_id=task.id, robot_ids=frozenset([robot.id]), assign_at=Time(0))
                 )
                 assigned_robots.add(robot.id)
                 break
