@@ -1,20 +1,20 @@
-import json
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
-from pathfinding_algorithms import astar_pathfind
-from scenario_loaders import load_simulation_from_dict
-from simulation_models.assignment import Assignment
+from services import JsonAssignmentService, JsonSimulationStateService
+from simulation_models.assignment import Assignment, RobotId
+from simulation_models.task import TaskId
+from simulation_models.time import Time
 
 mcp = FastMCP("robots-sim")
 
-_SCENARIO_PATH = Path(__file__).parent.parent / "scenarios" / "simple_test.json"
+_ROOT = Path(__file__).parent.parent
+_STATE_PATH = _ROOT / "sim_state.json"
+_ASSIGNMENTS_PATH = _ROOT / "sim_assignments.json"
 
-
-def _load_scenario_data() -> dict:
-    with open(_SCENARIO_PATH) as f:
-        return json.load(f)
+_state_service = JsonSimulationStateService(_STATE_PATH)
+_assignment_service = JsonAssignmentService(_ASSIGNMENTS_PATH)
 
 
 # ---------------------------------------------------------------------------
@@ -29,52 +29,66 @@ def ping() -> str:
 
 
 @mcp.tool()
-def get_scenario() -> dict:
-    """Get the current scenario: environment dimensions, robot starting positions
-    and capabilities, and task locations and requirements. Call this before
-    proposing assignments so you understand what robots and tasks exist."""
-    return _load_scenario_data()
+def get_simulation_state() -> dict:
+    """Get the current live state of the running simulation.
+
+    Returns the current tick, scenario ID, and the live position/status of
+    every robot and task. Call this before writing assignments so you have
+    accurate, up-to-date context.
+
+    Returns None if no simulation has been started yet.
+    """
+    state = _state_service.read()
+    if state is None:
+        return {"error": "No simulation state found. Start main.py first."}
+    return {
+        "scenario_id": state.scenario_id,
+        "tick": state.tick,
+        "robots": [
+            {
+                "robot_id": r.robot_id,
+                "x": r.x,
+                "y": r.y,
+                "battery_level": r.battery_level,
+            }
+            for r in state.robots
+        ],
+        "tasks": [
+            {
+                "task_id": t.task_id,
+                "status": t.status.value,
+                "work_done_ticks": t.work_done_ticks,
+                "assigned_robot_ids": t.assigned_robot_ids,
+            }
+            for t in state.tasks
+        ],
+    }
 
 
 @mcp.tool()
-def run_simulation(assignments: list[dict]) -> dict:
-    """Run the simulation with a proposed set of robot-task assignments and return
-    the outcome. Each assignment is {"task_id": <int>, "robot_ids": [<int>, ...]}.
+def assign_robots(assignments: list[dict], assign_at_tick: int) -> dict:
+    """Override robot-task assignments starting at a given simulation tick.
 
-    Returns whether all tasks completed, the makespan (ticks taken), and the
-    final status of each task. Use this to evaluate your coordination plan.
+    Each assignment is {"task_id": <int>, "robot_ids": [<int>, ...]}.
+    assign_at_tick must be >= the current tick (use get_simulation_state to
+    check). Assignments with a higher assign_at always win, so this safely
+    stacks on top of any existing assignments.
 
-    Example assignments: [{"task_id": 1, "robot_ids": [1]}]
+    Example:
+        assign_robots([{"task_id": 2, "robot_ids": [1, 3]}], assign_at_tick=10)
     """
-    data = _load_scenario_data()
-    sim = load_simulation_from_dict(data, pathfinding_algorithm=astar_pathfind)
-
-    sim.assignments = [
+    new_assignments = [
         Assignment(
-            task_id=a["task_id"],
-            robot_ids=frozenset(a["robot_ids"]),
+            task_id=TaskId(a["task_id"]),
+            robot_ids=frozenset(RobotId(rid) for rid in a["robot_ids"]),
+            assign_at=Time(assign_at_tick),
         )
         for a in assignments
     ]
-
-    result = sim.run(max_delta_time=200)
-
-    per_task = [
-        {
-            "task_id": task.id,
-            "status": sim.task_states[task.id].status.value,
-            "work_done": sim.task_states[task.id].work_done.tick,
-            "required_work_time": task.required_work_time.tick,
-        }
-        for task in sim.tasks
-    ]
-
+    _assignment_service.add_assignments(new_assignments)
     return {
-        "completed": result.completed,
-        "tasks_succeeded": result.tasks_succeeded,
-        "tasks_total": result.tasks_total,
-        "makespan": result.makespan,
-        "per_task": per_task,
+        "written": len(new_assignments),
+        "assign_at_tick": assign_at_tick,
     }
 
 
