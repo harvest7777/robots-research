@@ -32,7 +32,8 @@ class JsonSimulationStateService(BaseSimulationStateService):
     def write(self, state: SimulationState) -> None:
         data = {
             "scenario_id": state.scenario_id,
-            "tick": state.tick,
+            "current_tick": state.current_tick,
+            "max_tick": state.max_tick,
             "robots": [
                 {
                     "robot_id": r.robot_id,
@@ -85,7 +86,22 @@ class JsonSimulationStateService(BaseSimulationStateService):
         ]
         return SimulationState(
             scenario_id=data["scenario_id"],
-            tick=data["tick"],
+            current_tick=data["current_tick"],
+            max_tick=data["max_tick"],
             robots=robots,
             tasks=tasks,
         )
+
+    def update_current_tick(self, tick: int) -> None:
+        if not self._path.exists():
+            return
+        with open(self._path) as f:
+            data = json.load(f)
+        data["current_tick"] = tick
+        dir_ = self._path.parent
+        with tempfile.NamedTemporaryFile(
+            "w", dir=dir_, suffix=".tmp", delete=False
+        ) as f:
+            json.dump(data, f, indent=2)
+            tmp_path = f.name
+        os.replace(tmp_path, self._path)

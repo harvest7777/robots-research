@@ -43,7 +43,7 @@ def get_current_tick() -> dict:
     state = _state_service.read()
     if state is None:
         return {"error": "No simulation state found. Start main.py first."}
-    return {"tick": state.tick}
+    return {"current_tick": state.current_tick, "max_tick": state.max_tick}
 
 
 @mcp.tool()
@@ -66,7 +66,8 @@ def get_simulation_state() -> dict:
         return {"error": "No simulation state found. Start main.py first."}
     return {
         "scenario_id": state.scenario_id,
-        "tick": state.tick,
+        "current_tick": state.current_tick,
+        "max_tick": state.max_tick,
         "robots": [
             {
                 "robot_id": r.robot_id,
@@ -102,7 +103,7 @@ def stop_all_robots() -> dict:
     if state is None:
         return {"error": "No simulation state found. Start main.py first."}
 
-    assign_at = state.tick + 1
+    assign_at = state.current_tick + 1
     all_robot_ids = frozenset(RobotId(r.robot_id) for r in state.robots)
     _assignment_service.add_assignments([
         Assignment(

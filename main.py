@@ -30,7 +30,7 @@ _ASSIGNMENTS_PATH = Path(__file__).parent / "sim_assignments.json"
 
 
 def _snapshot_to_simulation_state(
-    scenario_id: str, snapshot: SimulationSnapshot
+    scenario_id: str, snapshot: SimulationSnapshot, max_tick: int = MAX_DELTA_TIME
 ) -> SimulationState:
     robots = [
         RobotStateSnapshot(
@@ -52,7 +52,8 @@ def _snapshot_to_simulation_state(
     ]
     return SimulationState(
         scenario_id=scenario_id,
-        tick=snapshot.t_now.tick if snapshot.t_now else 0,
+        current_tick=snapshot.t_now.tick if snapshot.t_now else 0,
+        max_tick=max_tick,
         robots=robots,
         tasks=tasks,
     )
@@ -74,6 +75,7 @@ def main() -> None:
     sim = load_simulation(args.scenario)
 
     # Inject a shared IDLE task so any robot can be reassigned to do nothing
+    # TODO fix this since it is not very clean
     idle_task_id = TaskId(0)
     idle_task = Task(id=idle_task_id, type=TaskType.IDLE, priority=0, required_work_time=Time(0))
     sim.tasks.append(idle_task)
@@ -91,30 +93,31 @@ def main() -> None:
     sim.assignment_service = assignment_service
     sim.pathfinding_algorithm = astar_pathfind
 
-    def on_tick(snapshot: SimulationSnapshot) -> None:
-        state_service.write(_snapshot_to_simulation_state(scenario_id, snapshot))
-
-    result = sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
-
     if args.renderer == "mujoco":
         from simulation_view.mujoco_renderer import MuJoCoRenderer
 
         renderer = MuJoCoRenderer()
         try:
-            for snapshot in result.snapshots:
+            def on_tick(snapshot: SimulationSnapshot) -> None:
+                state_service.write(_snapshot_to_simulation_state(scenario_id, snapshot))
                 renderer.update(snapshot)
                 time.sleep(0.5)
+
+            sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
             renderer.wait_for_close()
         finally:
             renderer.cleanup()
     else:
         renderer = TerminalRenderer()
         try:
-            for snapshot in result.snapshots:
+            def on_tick(snapshot: SimulationSnapshot) -> None:
+                state_service.write(_snapshot_to_simulation_state(scenario_id, snapshot))
                 cols, rows = os.get_terminal_size()
                 frame = SimulationView(snapshot).render(cols, rows)
                 renderer.draw(frame)
                 time.sleep(1)
+
+            sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
         finally:
             renderer.cleanup()
 

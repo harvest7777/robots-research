@@ -36,7 +36,8 @@ class TaskStateSnapshot:
 class SimulationState:
     """Full live state of the simulation at a given tick."""
     scenario_id: str
-    tick: int
+    current_tick: int
+    max_tick: int
     robots: list[RobotStateSnapshot]
     tasks: list[TaskStateSnapshot]
 
@@ -49,3 +50,7 @@ class BaseSimulationStateService(ABC):
     @abstractmethod
     def read(self) -> SimulationState | None:
         """Return the last written state, or None if nothing has been written yet."""
+
+    @abstractmethod
+    def update_current_tick(self, tick: int) -> None:
+        """Update only the current_tick field in the stored state."""
