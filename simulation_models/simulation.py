@@ -20,13 +20,14 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 
 from simulation_models.assignment import Assignment, RobotId
+from services.base_assignment_service import BaseAssignmentService
 from simulation_models.environment import Environment
 from simulation_models.position import Position
 from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
 from simulation_models.simulation_result import SimulationResult
 from simulation_models.snapshot import SimulationSnapshot
-from simulation_models.task import Task, TaskId
+from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 
@@ -63,7 +64,7 @@ class Simulation:
     tasks: list[Task]
     robot_states: dict[RobotId, RobotState]
     task_states: dict[TaskId, TaskState]
-    assignments: list[Assignment] = field(default_factory=list)
+    assignment_service: BaseAssignmentService | None = None
     pathfinding_algorithm: PathfindingAlgorithm | None = None
     t_now: Time = field(default_factory=lambda: Time(0))
     dt: Time = field(default_factory=lambda: Time(1))
@@ -119,21 +120,26 @@ class Simulation:
         t_start = self.t_now
         terminal = {TaskStatus.DONE, TaskStatus.FAILED}
 
+        # IDLE tasks never complete — exclude them from the termination check
+        non_idle_task_ids = {
+            t.id for t in self.tasks if t.type != TaskType.IDLE
+        }
+
         while (self.t_now.tick - t_start.tick) < max_delta_time:
-            if all(s.status in terminal for s in self.task_states.values()):
+            if all(self.task_states[tid].status in terminal for tid in non_idle_task_ids):
                 break
             self._step()
 
-        all_terminal = all(s.status in terminal for s in self.task_states.values())
+        all_terminal = all(self.task_states[tid].status in terminal for tid in non_idle_task_ids)
         tasks_succeeded = sum(
-            1 for s in self.task_states.values() if s.status == TaskStatus.DONE
+            1 for tid in non_idle_task_ids if self.task_states[tid].status == TaskStatus.DONE
         )
         elapsed = self.t_now.tick - t_start.tick
 
         return SimulationResult(
             completed=all_terminal,
             tasks_succeeded=tasks_succeeded,
-            tasks_total=len(self.tasks),
+            tasks_total=len(non_idle_task_ids),
             makespan=elapsed if all_terminal else None,
             snapshots=list(self.history.values()),
         )
@@ -179,6 +185,10 @@ class Simulation:
             task_state = self.task_states[task_id]
 
             if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+                planned_moves[robot_id] = None
+                continue
+
+            if task.type == TaskType.IDLE:
                 planned_moves[robot_id] = None
                 continue
 
@@ -239,6 +249,10 @@ class Simulation:
             task_state = self.task_states[task_id]
 
             if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+                robot.idle(state, self.dt)
+                continue
+
+            if task.type == TaskType.IDLE:
                 robot.idle(state, self.dt)
                 continue
 
@@ -322,22 +336,13 @@ class Simulation:
         )
 
     def _resolve_robot_assignment(self) -> dict[RobotId, TaskId]:
-        """Return the active robot→task mapping at t_now.
-
-        For each robot, picks the assignment with the highest assign_at
-        that is still <= t_now. The robot stays on that task until a
-        newer assignment supersedes it.
-        """
+        """Return the active robot→task mapping at t_now via the assignment service."""
+        if self.assignment_service is None:
+            return {}
         robot_assignment: dict[RobotId, TaskId] = {}
-        all_robot_ids = {rid for a in self.assignments for rid in a.robot_ids}
-        for robot_id in all_robot_ids:
-            applicable = [
-                a for a in self.assignments
-                if robot_id in a.robot_ids and a.assign_at.tick <= self.t_now.tick
-            ]
-            if applicable:
-                best = max(applicable, key=lambda a: a.assign_at.tick)
-                robot_assignment[robot_id] = best.task_id
+        for assignment in self.assignment_service.get_assignments_for_time(self.t_now):
+            for robot_id in assignment.robot_ids:
+                robot_assignment[robot_id] = assignment.task_id
         return robot_assignment
 
     def snapshot(self) -> SimulationSnapshot:
@@ -369,17 +374,11 @@ class Simulation:
             for tid, state in self.task_states.items()
         }
 
-        # Collect the winning Assignment object per robot (deduplicated by identity)
-        active: dict[int, Assignment] = {}
-        all_robot_ids = {rid for a in self.assignments for rid in a.robot_ids}
-        for robot_id in all_robot_ids:
-            applicable = [
-                a for a in self.assignments
-                if robot_id in a.robot_ids and a.assign_at.tick <= self.t_now.tick
-            ]
-            if applicable:
-                best = max(applicable, key=lambda a: a.assign_at.tick)
-                active[id(best)] = best
+        active_assignments = (
+            self.assignment_service.get_assignments_for_time(self.t_now)
+            if self.assignment_service is not None
+            else []
+        )
 
         return SimulationSnapshot(
             env=self.environment,
@@ -388,5 +387,5 @@ class Simulation:
             tasks=tuple(self.tasks),
             task_states=MappingProxyType(task_states_copy),
             t_now=self.t_now,
-            active_assignments=tuple(active.values()),
+            active_assignments=tuple(active_assignments),
         )

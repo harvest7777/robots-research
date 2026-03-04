@@ -43,6 +43,7 @@ class TaskType(Enum):
     PREVENTIVE_MAINTENANCE = "preventive_maintenance"
     EMERGENCY_RESPONSE = "emergency_response"
     PICKUP = "pickup"
+    IDLE = "idle"
 
 
 @dataclass(frozen=True)
