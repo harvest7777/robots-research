@@ -89,7 +89,20 @@ class SimulationView:
         t = self.snapshot.t_now
         text = f"t={t.tick}" if t is not None else "t=?"
         stamp(frame, start_row, 0, text)
-        return start_row + 1
+        row = start_row + 1
+
+        if row < len(frame):
+            stamp(frame, row, 0, "Assignments:")
+            row += 1
+
+        for assignment in self.snapshot.active_assignments:
+            if row >= len(frame):
+                break
+            robot_ids_str = ", ".join(f"R{rid}" for rid in sorted(assignment.robot_ids))
+            stamp(frame, row, 0, f"  {robot_ids_str} → Task {assignment.task_id} (since t={assignment.assign_at.tick})")
+            row += 1
+
+        return row
 
     def _render_grid(self, frame: Frame, start_row: int) -> int:
         env = self.snapshot.env

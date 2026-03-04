@@ -150,23 +150,9 @@ class Simulation:
         # Advance simulation time
         self.t_now = self.t_now.advance(self.dt)
 
-        # For each robot, find all assignments where assign_at <= t_now,
-        # then take the one with the highest assign_at (most recent override).
-        # The robot stays on that task until a newer assignment supersedes it.
-        robot_assignment: dict[RobotId, TaskId] = {}
-        all_robot_ids = {rid for a in self.assignments for rid in a.robot_ids}
-        for robot_id in all_robot_ids:
-            applicable = [
-                a for a in self.assignments
-                if robot_id in a.robot_ids and a.assign_at.tick <= self.t_now.tick
-            ]
-            if applicable:
-                best = max(applicable, key=lambda a: a.assign_at.tick)
-                robot_assignment[robot_id] = best.task_id
+        robot_assignment = self._resolve_robot_assignment()
 
-
-        # same exact thing goes for the tasks
-        # Update task assignment states
+        # Update task assignment states based on robot states
         for task in self.tasks:
             task_state = self.task_states[task.id]
             assigned_robot_ids = {
@@ -335,6 +321,25 @@ class Simulation:
             key=lambda cell: abs(cell.x - robot_pos.x) + abs(cell.y - robot_pos.y),
         )
 
+    def _resolve_robot_assignment(self) -> dict[RobotId, TaskId]:
+        """Return the active robot→task mapping at t_now.
+
+        For each robot, picks the assignment with the highest assign_at
+        that is still <= t_now. The robot stays on that task until a
+        newer assignment supersedes it.
+        """
+        robot_assignment: dict[RobotId, TaskId] = {}
+        all_robot_ids = {rid for a in self.assignments for rid in a.robot_ids}
+        for robot_id in all_robot_ids:
+            applicable = [
+                a for a in self.assignments
+                if robot_id in a.robot_ids and a.assign_at.tick <= self.t_now.tick
+            ]
+            if applicable:
+                best = max(applicable, key=lambda a: a.assign_at.tick)
+                robot_assignment[robot_id] = best.task_id
+        return robot_assignment
+
     def snapshot(self) -> SimulationSnapshot:
         """
         Create a read-only snapshot of current simulation state.
@@ -364,6 +369,18 @@ class Simulation:
             for tid, state in self.task_states.items()
         }
 
+        # Collect the winning Assignment object per robot (deduplicated by identity)
+        active: dict[int, Assignment] = {}
+        all_robot_ids = {rid for a in self.assignments for rid in a.robot_ids}
+        for robot_id in all_robot_ids:
+            applicable = [
+                a for a in self.assignments
+                if robot_id in a.robot_ids and a.assign_at.tick <= self.t_now.tick
+            ]
+            if applicable:
+                best = max(applicable, key=lambda a: a.assign_at.tick)
+                active[id(best)] = best
+
         return SimulationSnapshot(
             env=self.environment,
             robots=tuple(self.robots),
@@ -371,4 +388,5 @@ class Simulation:
             tasks=tuple(self.tasks),
             task_states=MappingProxyType(task_states_copy),
             t_now=self.t_now,
+            active_assignments=tuple(active.values()),
         )

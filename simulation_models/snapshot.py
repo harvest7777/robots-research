@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Mapping
 
 if TYPE_CHECKING:
-    from simulation_models.assignment import RobotId
+    from simulation_models.assignment import Assignment, RobotId
     from simulation_models.environment import Environment
     from simulation_models.robot import Robot
     from simulation_models.robot_state import RobotState
@@ -54,6 +54,7 @@ class SimulationSnapshot:
     tasks: tuple["Task", ...]
     task_states: Mapping["TaskId", "TaskState"]
     t_now: "Time | None" = None
+    active_assignments: tuple["Assignment", ...] = ()
 
 
 if __name__ == "__main__":
