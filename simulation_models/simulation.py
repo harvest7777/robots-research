@@ -18,6 +18,7 @@ import math
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
+from typing import Optional
 
 from simulation_models.assignment import Assignment, RobotId
 from services.base_assignment_service import BaseAssignmentService
@@ -100,7 +101,11 @@ class Simulation:
                 "Simulation requires 'pathfinding_algorithm' before stepping"
             )
 
-    def run(self, max_delta_time: int) -> SimulationResult:
+    def run(
+        self,
+        max_delta_time: int,
+        on_tick: Optional[Callable[["SimulationSnapshot"], None]] = None,
+    ) -> SimulationResult:
         """Run the simulation to completion or until the time budget is exhausted.
 
         Terminates when all tasks are in a terminal state (DONE or FAILED) or
@@ -111,6 +116,8 @@ class Simulation:
             max_delta_time: Maximum ticks this run may consume before being
                 forced to end. Measured from t_now at the time run() is called,
                 so the cap is independent of the simulation's starting time.
+            on_tick: Optional callback invoked after each tick with the new
+                snapshot. Use this to write live state to an external store.
 
         Returns:
             SimulationResult with outcome metrics and the full snapshot history.
@@ -129,6 +136,8 @@ class Simulation:
             if all(self.task_states[tid].status in terminal for tid in non_idle_task_ids):
                 break
             self._step()
+            if on_tick is not None:
+                on_tick(self.history[self.t_now])
 
         all_terminal = all(self.task_states[tid].status in terminal for tid in non_idle_task_ids)
         tasks_succeeded = sum(
