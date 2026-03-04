@@ -150,11 +150,22 @@ class Simulation:
         # Advance simulation time
         self.t_now = self.t_now.advance(self.dt)
 
+        # For each robot, find all assignments where assign_at <= t_now,
+        # then take the one with the highest assign_at (most recent override).
+        # The robot stays on that task until a newer assignment supersedes it.
         robot_assignment: dict[RobotId, TaskId] = {}
-        for assignment in self.assignments:
-            for robot_id in assignment.robot_ids:
-                robot_assignment[robot_id] = assignment.task_id
+        all_robot_ids = {rid for a in self.assignments for rid in a.robot_ids}
+        for robot_id in all_robot_ids:
+            applicable = [
+                a for a in self.assignments
+                if robot_id in a.robot_ids and a.assign_at.tick <= self.t_now.tick
+            ]
+            if applicable:
+                best = max(applicable, key=lambda a: a.assign_at.tick)
+                robot_assignment[robot_id] = best.task_id
 
+
+        # same exact thing goes for the tasks
         # Update task assignment states
         for task in self.tasks:
             task_state = self.task_states[task.id]
