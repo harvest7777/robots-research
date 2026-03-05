@@ -122,21 +122,27 @@ def stop_all_robots() -> dict:
 def assign_robots(assignments: list[dict], assign_at_tick: int) -> dict:
     """Override robot-task assignments starting at a given simulation tick.
 
-    Each assignment is {"task_id": <int>, "robot_ids": [<int>, ...]}.
+    REQUIRED PARAMETERS — both must be provided:
+      assignments    : list of {"task_id": <int>, "robot_ids": [<int>, ...]}
+      assign_at_tick : int — the tick at which these assignments take effect
 
-    Key rules:
+    Rules:
     - task_id 0 is the IDLE task — assign robots here to stop them.
-    - assign_at_tick must be >= the current tick (call get_current_tick first).
+    - assign_at_tick must be >= current_tick (call get_current_tick first).
     - For urgent / ASAP actions: use current_tick + 1 as assign_at_tick.
-    - Assignments with a higher assign_at always win, so this safely stacks
-      on top of any existing assignments without corrupting history.
+    - Higher assign_at always wins, so new calls safely stack on existing ones.
 
-    Example — stop robot 2 immediately:
-        get_current_tick() -> {"tick": 7}
-        assign_robots([{"task_id": 0, "robot_ids": [2]}], assign_at_tick=8)
+    Example — stop robot 2 immediately (current_tick = 7):
+        assign_robots(
+            assignments=[{"task_id": 0, "robot_ids": [2]}],
+            assign_at_tick=8
+        )
 
-    Example — redirect robot 1 to task 3 at tick 20:
-        assign_robots([{"task_id": 3, "robot_ids": [1]}], assign_at_tick=20)
+    Example — redirect robots 1 and 3 to task 5 at tick 20:
+        assign_robots(
+            assignments=[{"task_id": 5, "robot_ids": [1, 3]}],
+            assign_at_tick=20
+        )
     """
     new_assignments = [
         Assignment(
