@@ -50,16 +50,26 @@ def get_current_tick() -> dict:
 def get_simulation_state() -> dict:
     """Get the full live state of the running simulation.
 
-    Returns the current tick, and the live position/status of every robot and
-    task. Use this to understand the scenario before making assignment decisions.
+    Returns the current tick, max tick, and the live position/status of every
+    robot and task.
+
+    WHEN TO CALL THIS:
+    - Always call this FIRST before making any assignment decisions. You need
+      to know which tasks exist, which robots are available, and what is
+      already in progress before choosing assignments.
+
+    ASSIGNMENT WORKFLOW (follow in order):
+      1. get_simulation_state()  — understand tasks and robots
+      2. get_current_tick()      — get the tick to schedule at
+      3. assign_robots(...)      — write the assignments
+
+    TO STOP ALL ROBOTS: call stop_all_robots() directly — do not use this
+    tool for that purpose.
 
     Key facts about the data:
     - task_id 0 is always the IDLE task — assign robots here to stop them.
     - task status values: unassigned, assigned, in_progress, done, failed.
     - robot positions are (x, y) floats in grid units.
-
-    For urgent actions (e.g. "stop all robots now"), call get_current_tick
-    first, then act immediately using tick + 1 as assign_at_tick.
     """
     state = _state_service.read()
     if state is None:
