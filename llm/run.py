@@ -15,7 +15,7 @@ from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from llm.mcp_client import MCPClient
-from llm.providers.anthropic import AnthropicProvider
+from llm.providers.openai import OpenAIProvider
 from llm.session import Session
 
 
@@ -30,7 +30,7 @@ async def main() -> None:
             await mcp_session.initialize()
 
             mcp = MCPClient(mcp_session)
-            provider = AnthropicProvider()  # swap provider here to change LLMs
+            provider = OpenAIProvider()  # swap provider here to change LLMs
             session = Session(provider=provider, mcp=mcp)
 
             print("Robot coordinator ready. Ctrl-C or type 'quit' to exit.\n")
