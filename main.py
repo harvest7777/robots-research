@@ -101,7 +101,7 @@ def main() -> None:
             def on_tick(snapshot: SimulationSnapshot) -> None:
                 state_service.write(_snapshot_to_simulation_state(scenario_id, snapshot))
                 renderer.update(snapshot)
-                time.sleep(0.5)
+                time.sleep(1.5)
 
             sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
             renderer.wait_for_close()
