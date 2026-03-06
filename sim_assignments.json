@@ -1,0 +1,147 @@
+{
+  "assignments": [
+    {
+      "task_id": 1,
+      "robot_ids": [
+        1
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 2,
+      "robot_ids": [
+        3
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 3,
+      "robot_ids": [
+        2
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 4,
+      "robot_ids": [
+        6
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 6,
+      "robot_ids": [
+        5
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 7,
+      "robot_ids": [
+        8
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 8,
+      "robot_ids": [
+        10
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 11,
+      "robot_ids": [
+        12
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 12,
+      "robot_ids": [
+        11
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 14,
+      "robot_ids": [
+        7
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 0,
+      "robot_ids": [
+        4
+      ],
+      "assign_at": 0
+    },
+    {
+      "task_id": 0,
+      "robot_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "assign_at": 14
+    },
+    {
+      "task_id": 2,
+      "robot_ids": [
+        1,
+        2
+      ],
+      "assign_at": 32
+    },
+    {
+      "task_id": 3,
+      "robot_ids": [
+        3,
+        4
+      ],
+      "assign_at": 32
+    },
+    {
+      "task_id": 4,
+      "robot_ids": [
+        5,
+        6
+      ],
+      "assign_at": 32
+    },
+    {
+      "task_id": 5,
+      "robot_ids": [
+        8,
+        7
+      ],
+      "assign_at": 32
+    },
+    {
+      "task_id": 6,
+      "robot_ids": [
+        9,
+        10
+      ],
+      "assign_at": 32
+    },
+    {
+      "task_id": 7,
+      "robot_ids": [
+        11,
+        12
+      ],
+      "assign_at": 32
+    }
+  ]
+}

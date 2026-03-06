@@ -1,0 +1,225 @@
+{
+  "scenario_id": "warehouse_mega",
+  "current_tick": 60,
+  "max_tick": 60,
+  "robots": [
+    {
+      "robot_id": 1,
+      "x": 5.142507074287456,
+      "y": 2.0855042445724736,
+      "battery_level": 0.8996422296269282
+    },
+    {
+      "robot_id": 2,
+      "x": 7.358196146753445,
+      "y": 0.9998959133396309,
+      "battery_level": 0.649500000000001
+    },
+    {
+      "robot_id": 3,
+      "x": 29.0,
+      "y": 6.0,
+      "battery_level": 0.5030352103452926
+    },
+    {
+      "robot_id": 4,
+      "x": 30.0,
+      "y": 38.0,
+      "battery_level": 0.9560000000000017
+    },
+    {
+      "robot_id": 5,
+      "x": 12.0,
+      "y": 17.0,
+      "battery_level": 0.35870477110335125
+    },
+    {
+      "robot_id": 6,
+      "x": 45.0,
+      "y": 2.0,
+      "battery_level": 0.739206392623062
+    },
+    {
+      "robot_id": 7,
+      "x": 32.4,
+      "y": 21.707106781186546,
+      "battery_level": 0.5600761759814832
+    },
+    {
+      "robot_id": 8,
+      "x": 22.0,
+      "y": 26.6,
+      "battery_level": 0.7073845983680069
+    },
+    {
+      "robot_id": 9,
+      "x": 25.0,
+      "y": 0.0,
+      "battery_level": 0.8531005050633897
+    },
+    {
+      "robot_id": 10,
+      "x": 56.0,
+      "y": 6.0,
+      "battery_level": 0.7934857864376278
+    },
+    {
+      "robot_id": 11,
+      "x": 5.021850818083487,
+      "y": 27.749380356183384,
+      "battery_level": 0.5955000000000014
+    },
+    {
+      "robot_id": 12,
+      "x": 8.4,
+      "y": 31.707106781186546,
+      "battery_level": 0.2565635703166194
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "status": "done",
+      "work_done_ticks": 8,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 2,
+      "status": "assigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": [
+        1,
+        2
+      ]
+    },
+    {
+      "task_id": 3,
+      "status": "assigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": [
+        3,
+        4
+      ]
+    },
+    {
+      "task_id": 4,
+      "status": "done",
+      "work_done_ticks": 6,
+      "assigned_robot_ids": [
+        5,
+        6
+      ]
+    },
+    {
+      "task_id": 5,
+      "status": "assigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": [
+        8,
+        7
+      ]
+    },
+    {
+      "task_id": 6,
+      "status": "assigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": [
+        9,
+        10
+      ]
+    },
+    {
+      "task_id": 7,
+      "status": "assigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": [
+        11,
+        12
+      ]
+    },
+    {
+      "task_id": 8,
+      "status": "in_progress",
+      "work_done_ticks": 5,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 9,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 10,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 11,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 12,
+      "status": "done",
+      "work_done_ticks": 7,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 13,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 14,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 15,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 16,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 17,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 18,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 19,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 20,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 0,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    }
+  ]
+}
