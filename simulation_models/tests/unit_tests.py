@@ -11,25 +11,12 @@ from simulation_models.time import Time
 
 
 def _create_sim_fixture() -> Simulation:
-    robot_id = RobotId(1)
-    task_id = TaskId(1)
-
-    robot = Robot(id=robot_id, capabilities=frozenset(), speed=1.0)
-    task = Task(
-        id=task_id,
-        type=TaskType.ROUTINE_INSPECTION,
-        priority=1,
-        required_work_time=Time(1),
-    )
-    robot_state = RobotState(robot_id=robot_id, position=Position(0.0, 0.0))
-    task_state = TaskState(task_id=task_id)
-
     return Simulation(
-        environment=Environment(width=5, height=5),
-        robots=[robot],
-        tasks=[task],
-        robot_states={robot_id: robot_state},
-        task_states={task_id: task_state},
+        environment=Environment(width=1, height=1),
+        robots=[],
+        tasks=[],
+        robot_states={},
+        task_states={},
     )
 
 
