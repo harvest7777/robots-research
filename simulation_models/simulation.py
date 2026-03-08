@@ -339,7 +339,36 @@ class Simulation:
         task_states[task.id].assigned_robot_ids down to robots that
         satisfy all per-robot constraints (capabilities, battery, spatial).
         """
-        raise NotImplementedError
+        task_state = task_states[task.id]
+
+        # Task-level guards: terminal status, deadline, unmet dependencies
+        if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+            return []
+        if task.deadline is not None and time.tick > task.deadline.tick:
+            return []
+        if any(task_states[dep].status != TaskStatus.DONE for dep in task.dependencies):
+            return []
+
+        # Per-robot filtering
+        eligible = []
+        for robot_id in task_state.assigned_robot_ids:
+            robot = robots[robot_id]
+            state = robot_states[robot_id]
+
+            if state.battery_level <= 0.0:
+                continue
+            if not task.required_capabilities.issubset(robot.capabilities):
+                continue
+            if (
+                task.spatial_constraint is not None
+                and isinstance(task.spatial_constraint.target, Position)
+                and state.position.distance(task.spatial_constraint.target) > task.spatial_constraint.max_distance
+            ):
+                continue
+
+            eligible.append(robot_id)
+
+        return eligible
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
         """Resolve a task's spatial constraint to a concrete Position.
