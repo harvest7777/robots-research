@@ -327,18 +327,17 @@ class Simulation:
     @staticmethod
     def _task_can_be_worked_on(
         task: Task,
-        task_state: TaskState,
-        assigned_robots: list[tuple[Robot, RobotState]],
+        task_states: dict[TaskId, TaskState],
+        robots: dict[RobotId, Robot],
+        robot_states: dict[RobotId, RobotState],
         time: Time,
     ) -> list[RobotId]:
-        """Return the IDs of robots eligible to work on the task right now.
+        """Return IDs of robots eligible to work on task this tick.
 
-        Filters assigned_robots down to those that meet all of the task's
-        constraints (capabilities, battery, spatial, terminal status, etc.).
-        An empty list means the task cannot be worked on this tick.
-
-        The caller is expected to already hold the Robot and RobotState objects
-        and can look them up by the returned IDs as needed.
+        Returns empty list if the task is in a terminal state, past its
+        deadline, or has unfinished dependencies. Otherwise filters
+        task_states[task.id].assigned_robot_ids down to robots that
+        satisfy all per-robot constraints (capabilities, battery, spatial).
         """
         raise NotImplementedError
 

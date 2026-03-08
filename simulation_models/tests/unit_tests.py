@@ -29,15 +29,16 @@ def test_returns_robot_id_when_robot_meets_required_capabilities():
         required_work_time=Time(1),
         required_capabilities=frozenset({Capability.VISION}),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(0),
     )
 
@@ -54,17 +55,19 @@ def test_returns_only_capable_robot_ids_when_robots_have_mixed_capabilities():
         required_work_time=Time(1),
         required_capabilities=frozenset({Capability.VISION}),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1), RobotId(2)})
     capable_robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
     incapable_robot = Robot(id=RobotId(2), capabilities=frozenset(), speed=1.0)
-    capable_robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
-    incapable_robot_state = RobotState(robot_id=RobotId(2), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(capable_robot, capable_robot_state), (incapable_robot, incapable_robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): capable_robot, RobotId(2): incapable_robot},
+        robot_states={
+            RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0)),
+            RobotId(2): RobotState(robot_id=RobotId(2), position=Position(0.0, 0.0)),
+        },
         time=Time(0),
     )
 
@@ -80,15 +83,16 @@ def test_returns_empty_when_robot_has_no_battery():
         priority=1,
         required_work_time=Time(1),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0), battery_level=0.0)
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(0),
     )
 
@@ -104,15 +108,16 @@ def test_returns_empty_when_task_is_failed():
         priority=1,
         required_work_time=Time(1),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.FAILED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.FAILED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(0),
     )
 
@@ -128,15 +133,16 @@ def test_returns_empty_when_task_is_completed():
         priority=1,
         required_work_time=Time(1),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.DONE)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.DONE, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(0),
     )
 
@@ -153,15 +159,16 @@ def test_returns_empty_when_robot_is_outside_spatial_constraint():
         required_work_time=Time(1),
         spatial_constraint=SpatialConstraint(target=Position(10.0, 10.0), max_distance=0),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(0),
     )
 
@@ -178,15 +185,16 @@ def test_returns_empty_when_no_robot_meets_required_capabilities():
         required_work_time=Time(1),
         required_capabilities=frozenset({Capability.VISION}),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(0),
     )
 
@@ -203,15 +211,16 @@ def test_returns_empty_when_deadline_has_passed():
         required_work_time=Time(1),
         deadline=Time(5),
     )
-    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
     result = Simulation._task_can_be_worked_on(
         task,
-        task_state,
-        assigned_robots=[(robot, robot_state)],
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
         time=Time(6),
     )
 
