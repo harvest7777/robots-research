@@ -244,6 +244,7 @@ class Simulation:
                     planned_moves[rid_b] = None
 
         # --- Execute phase ---
+        # Currently each robot on a task applies some work to that task
         obstacles = self.environment.obstacles
         for robot_id, state in self.robot_states.items():
             robot = self._robot_by_id[robot_id]
@@ -272,6 +273,8 @@ class Simulation:
                 robot.move_towards(state, next_pos, self.dt)
                 # Layer 2: push robot out of any obstacle AABBs it may clip
                 self._push_out_of_obstacles(state, robot.radius, obstacles)
+            # TODO: we should refactor this to be more clear, it is currently 
+            # checking if the task can be worked on, but the "elif" block is very ambiguous
             elif goal is None or state.position.near(goal, eps=_AT_GOAL_EPS):
                 # At goal or no spatial constraint — do work
                 robot.work(state, self.dt)
@@ -320,6 +323,14 @@ class Simulation:
                     else:
                         # Robot center is inside obstacle — push upward
                         state.position = Position(state.position.x, oy - radius)
+
+    @staticmethod
+    def _task_can_be_worked_on(
+        task_state: TaskState,
+        robot_states_assigned_to_this_task: list[RobotState],
+        time: Time
+    ) -> bool:
+        raise NotImplementedError
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
         """Resolve a task's spatial constraint to a concrete Position.
