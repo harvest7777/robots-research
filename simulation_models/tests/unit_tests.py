@@ -1,16 +1,36 @@
+from simulation_models.assignment import RobotId
+from simulation_models.capability import Capability
+from simulation_models.environment import Environment
+from simulation_models.position import Position
+from simulation_models.robot import Robot
+from simulation_models.robot_state import RobotState
 from simulation_models.simulation import Simulation
+from simulation_models.task import Task, TaskId, TaskType
+from simulation_models.task_state import TaskState, TaskStatus
+from simulation_models.time import Time
 
 
-def _create_sim_() -> Simulation:
-    pass
+def _create_sim_fixture() -> Simulation:
+    robot_id = RobotId(1)
+    task_id = TaskId(1)
 
-# content of test_sample.py
-def func(x):
-    return x + 1
+    robot = Robot(id=robot_id, capabilities=frozenset(), speed=1.0)
+    task = Task(
+        id=task_id,
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+    )
+    robot_state = RobotState(robot_id=robot_id, position=Position(0.0, 0.0))
+    task_state = TaskState(task_id=task_id)
 
-
-def test_answer():
-    assert func(3) == 5
+    return Simulation(
+        environment=Environment(width=5, height=5),
+        robots=[robot],
+        tasks=[task],
+        robot_states={robot_id: robot_state},
+        task_states={task_id: task_state},
+    )
 
 
 def test_task_can_be_worked_on_if_at_least_one_robot_meets_required_capabilities():
