@@ -325,7 +325,7 @@ class Simulation:
                         state.position = Position(state.position.x, oy - radius)
 
     @staticmethod
-    def _task_can_be_worked_on(
+    def _get_eligible_robot_ids_for_task(
         task: Task,
         task_states: dict[TaskId, TaskState],
         robots: dict[RobotId, Robot],

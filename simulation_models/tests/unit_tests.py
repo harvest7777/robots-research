@@ -34,7 +34,7 @@ def test_returns_robot_id_when_robot_meets_required_capabilities():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
@@ -60,7 +60,7 @@ def test_returns_only_capable_robot_ids_when_robots_have_mixed_capabilities():
     incapable_robot = Robot(id=RobotId(2), capabilities=frozenset(), speed=1.0)
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): capable_robot, RobotId(2): incapable_robot},
@@ -88,7 +88,7 @@ def test_returns_empty_when_robot_has_no_battery():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0), battery_level=0.0)
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
@@ -113,7 +113,7 @@ def test_returns_empty_when_task_is_failed():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
@@ -138,7 +138,7 @@ def test_returns_empty_when_task_is_completed():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
@@ -164,7 +164,7 @@ def test_returns_empty_when_robot_is_outside_spatial_constraint():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
@@ -190,7 +190,7 @@ def test_returns_empty_when_no_robot_meets_required_capabilities():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
@@ -216,7 +216,7 @@ def test_returns_empty_when_deadline_has_passed():
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
 
     # Act
-    result = Simulation._task_can_be_worked_on(
+    result = Simulation._get_eligible_robot_ids_for_task(
         task,
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
