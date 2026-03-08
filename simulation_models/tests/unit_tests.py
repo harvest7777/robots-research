@@ -20,7 +20,7 @@ def _create_sim_fixture() -> Simulation:
     )
 
 
-def test_task_can_be_worked_on_if_at_least_one_robot_meets_required_capabilities():
+def test_returns_robot_id_when_robot_meets_required_capabilities():
     # Arrange
     task = Task(
         id=TaskId(1),
@@ -45,7 +45,7 @@ def test_task_can_be_worked_on_if_at_least_one_robot_meets_required_capabilities
     assert result == [RobotId(1)]
 
 
-def test_task_is_only_worked_on_by_robots_with_required_capabilities():
+def test_returns_only_capable_robot_ids_when_robots_have_mixed_capabilities():
     # Arrange: task requires VISION; one capable robot, one without
     task = Task(
         id=TaskId(1),
@@ -72,7 +72,7 @@ def test_task_is_only_worked_on_by_robots_with_required_capabilities():
     assert result == [RobotId(1)]
 
 
-def test_task_can_not_be_worked_on_if_robot_is_out_of_battery():
+def test_returns_empty_when_robot_has_no_battery():
     # Arrange
     task = Task(
         id=TaskId(1),
@@ -96,7 +96,7 @@ def test_task_can_not_be_worked_on_if_robot_is_out_of_battery():
     assert result == []
 
 
-def test_failed_task_can_not_be_worked_on():
+def test_returns_empty_when_task_is_failed():
     # Arrange
     task = Task(
         id=TaskId(1),
@@ -120,7 +120,7 @@ def test_failed_task_can_not_be_worked_on():
     assert result == []
 
 
-def test_completed_task_can_not_be_worked_on():
+def test_returns_empty_when_task_is_completed():
     # Arrange
     task = Task(
         id=TaskId(1),
@@ -144,7 +144,7 @@ def test_completed_task_can_not_be_worked_on():
     assert result == []
 
 
-def task_can_not_be_worked_on_if_robots_are_not_within_spatial_constraint():
+def test_returns_empty_when_robot_is_outside_spatial_constraint():
     # Arrange: task requires robot to be at (10, 10); robot is at (0, 0)
     task = Task(
         id=TaskId(1),
@@ -169,7 +169,7 @@ def task_can_not_be_worked_on_if_robots_are_not_within_spatial_constraint():
     assert result == []
 
 
-def test_task_can_not_be_worked_on_if_no_robot_has_the_required_capabilities():
+def test_returns_empty_when_no_robot_meets_required_capabilities():
     # Arrange
     task = Task(
         id=TaskId(1),
