@@ -330,6 +330,7 @@ class Simulation:
         task_states: dict[TaskId, TaskState],
         robots: dict[RobotId, Robot],
         robot_states: dict[RobotId, RobotState],
+        environment: Environment,
         time: Time,
     ) -> list[RobotId]:
         """Return IDs of robots eligible to work on task this tick.
