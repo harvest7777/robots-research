@@ -11,21 +11,19 @@ from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 
 
+_ZONE = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(2.0, 2.0)])
+
+
 def _create_sim_fixture() -> Simulation:
+    env = Environment(width=5, height=5)
+    env.add_zone(_ZONE)
     return Simulation(
-        environment=Environment(width=1, height=1),
+        environment=env,
         robots=[],
         tasks=[],
         robot_states={},
         task_states={},
     )
-
-
-def _make_zone_env(zone: Zone) -> Environment:
-    """Return a 5x5 environment with the given zone registered."""
-    env = Environment(width=5, height=5)
-    env.add_zone(zone)
-    return env
 
 
 # ---------------------------------------------------------------------------
@@ -521,15 +519,15 @@ def test_returns_empty_when_robot_is_just_outside_position_max_distance():
 # ---------------------------------------------------------------------------
 
 def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
-    # Arrange: zone covers cell (2, 2); robot is positioned inside it
-    zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(2.0, 2.0)])
+    # Arrange: robot positioned inside _ZONE's cell (2, 2)
+    sim = _create_sim_fixture()
     task = Task(
         id=TaskId(1),
         type=TaskType.ROUTINE_INSPECTION,
         priority=1,
         required_work_time=Time(1),
         required_capabilities=frozenset({Capability.VISION}),
-        spatial_constraint=SpatialConstraint(target=zone.id, max_distance=0),
+        spatial_constraint=SpatialConstraint(target=_ZONE.id, max_distance=0),
     )
     task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
@@ -541,7 +539,7 @@ def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
-        environment=_make_zone_env(zone),
+        environment=sim.environment,
         time=Time(0),
     )
 
@@ -550,15 +548,15 @@ def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
 
 
 def test_returns_empty_when_robot_has_capabilities_but_is_outside_required_zone():
-    # Arrange: zone covers cell (2, 2); robot is at (0, 0) — outside the zone
-    zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(2.0, 2.0)])
+    # Arrange: robot at (0, 0) — outside _ZONE's cell (2, 2)
+    sim = _create_sim_fixture()
     task = Task(
         id=TaskId(1),
         type=TaskType.ROUTINE_INSPECTION,
         priority=1,
         required_work_time=Time(1),
         required_capabilities=frozenset({Capability.VISION}),
-        spatial_constraint=SpatialConstraint(target=zone.id, max_distance=0),
+        spatial_constraint=SpatialConstraint(target=_ZONE.id, max_distance=0),
     )
     task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
@@ -570,7 +568,7 @@ def test_returns_empty_when_robot_has_capabilities_but_is_outside_required_zone(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
-        environment=_make_zone_env(zone),
+        environment=sim.environment,
         time=Time(0),
     )
 
