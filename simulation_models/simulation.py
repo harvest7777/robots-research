@@ -330,7 +330,16 @@ class Simulation:
         task_state: TaskState,
         assigned_robots: list[tuple[Robot, RobotState]],
         time: Time,
-    ) -> list[tuple[Robot, RobotState]]:
+    ) -> list[RobotId]:
+        """Return the IDs of robots eligible to work on the task right now.
+
+        Filters assigned_robots down to those that meet all of the task's
+        constraints (capabilities, battery, spatial, terminal status, etc.).
+        An empty list means the task cannot be worked on this tick.
+
+        The caller is expected to already hold the Robot and RobotState objects
+        and can look them up by the returned IDs as needed.
+        """
         raise NotImplementedError
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:

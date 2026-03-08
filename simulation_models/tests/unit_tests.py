@@ -42,7 +42,7 @@ def test_task_can_be_worked_on_if_at_least_one_robot_meets_required_capabilities
     )
 
     # Assert
-    assert result == [(robot, robot_state)]
+    assert result == [RobotId(1)]
 
 
 def test_task_is_only_worked_on_by_robots_with_required_capabilities():
@@ -69,7 +69,7 @@ def test_task_is_only_worked_on_by_robots_with_required_capabilities():
     )
 
     # Assert: only the capable robot is returned; incapable robot is excluded
-    assert result == [(capable_robot, capable_robot_state)]
+    assert result == [RobotId(1)]
 
 
 def test_task_can_not_be_worked_on_if_robot_is_out_of_battery():
