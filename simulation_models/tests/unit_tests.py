@@ -255,3 +255,31 @@ def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
 
     # Assert
     assert result == [RobotId(1)]
+
+
+def test_returns_empty_when_robot_has_capabilities_but_is_outside_required_zone():
+    # Arrange: zone covers cell (2, 2); robot is at (0, 0) — outside the zone
+    zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(2.0, 2.0)])
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+        required_capabilities=frozenset({Capability.VISION}),
+        spatial_constraint=SpatialConstraint(target=zone.id, max_distance=0),
+    )
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
+    robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
+    robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))  # outside zone
+
+    # Act
+    result = Simulation._get_eligible_robot_ids_for_task(
+        task,
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
+        time=Time(0),
+    )
+
+    # Assert
+    assert result == []
