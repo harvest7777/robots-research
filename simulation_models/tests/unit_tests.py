@@ -6,6 +6,7 @@ from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
 from simulation_models.simulation import Simulation
 from simulation_models.task import Task, TaskId, TaskType, SpatialConstraint
+from simulation_models.zone import Zone, ZoneId, ZoneType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 
@@ -226,3 +227,31 @@ def test_returns_empty_when_deadline_has_passed():
 
     # Assert
     assert result == []
+
+
+def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
+    # Arrange: zone covers cell (2, 2); robot is positioned inside it
+    zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(2.0, 2.0)])
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+        required_capabilities=frozenset({Capability.VISION}),
+        spatial_constraint=SpatialConstraint(target=zone.id, max_distance=0),
+    )
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
+    robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
+    robot_state = RobotState(robot_id=RobotId(1), position=Position(2.5, 2.5))  # floors to cell (2, 2)
+
+    # Act
+    result = Simulation._get_eligible_robot_ids_for_task(
+        task,
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
+        time=Time(0),
+    )
+
+    # Assert
+    assert result == [RobotId(1)]
