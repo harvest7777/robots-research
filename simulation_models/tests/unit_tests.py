@@ -192,3 +192,28 @@ def test_returns_empty_when_no_robot_meets_required_capabilities():
 
     # Assert
     assert result == []
+
+
+def test_returns_empty_when_deadline_has_passed():
+    # Arrange: task deadline is tick 5, current time is tick 6
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+        deadline=Time(5),
+    )
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
+    robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
+
+    # Act
+    result = Simulation._task_can_be_worked_on(
+        task,
+        task_state,
+        assigned_robots=[(robot, robot_state)],
+        time=Time(6),
+    )
+
+    # Assert
+    assert result == []
