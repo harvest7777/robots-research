@@ -330,7 +330,7 @@ class Simulation:
         task_state: TaskState,
         assigned_robots: list[tuple[Robot, RobotState]],
         time: Time,
-    ) -> bool:
+    ) -> list[tuple[Robot, RobotState]]:
         raise NotImplementedError
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:

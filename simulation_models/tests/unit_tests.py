@@ -42,7 +42,8 @@ def test_task_can_be_worked_on_if_at_least_one_robot_meets_required_capabilities
     )
 
     # Assert
-    assert result is True
+    assert result == [(robot, robot_state)]
+
 
 def test_task_is_only_worked_on_by_robots_with_required_capabilities():
     # Arrange: task requires VISION; one capable robot, one without
@@ -67,8 +68,8 @@ def test_task_is_only_worked_on_by_robots_with_required_capabilities():
         time=Time(0),
     )
 
-    # Assert: the capable robot is sufficient — task can be worked on
-    assert result is True
+    # Assert: only the capable robot is returned; incapable robot is excluded
+    assert result == [(capable_robot, capable_robot_state)]
 
 
 def test_task_can_not_be_worked_on_if_robot_is_out_of_battery():
@@ -92,7 +93,7 @@ def test_task_can_not_be_worked_on_if_robot_is_out_of_battery():
     )
 
     # Assert
-    assert result is False
+    assert result == []
 
 
 def test_failed_task_can_not_be_worked_on():
@@ -116,7 +117,7 @@ def test_failed_task_can_not_be_worked_on():
     )
 
     # Assert
-    assert result is False
+    assert result == []
 
 
 def test_completed_task_can_not_be_worked_on():
@@ -140,7 +141,7 @@ def test_completed_task_can_not_be_worked_on():
     )
 
     # Assert
-    assert result is False
+    assert result == []
 
 
 def task_can_not_be_worked_on_if_robots_are_not_within_spatial_constraint():
@@ -165,7 +166,7 @@ def task_can_not_be_worked_on_if_robots_are_not_within_spatial_constraint():
     )
 
     # Assert
-    assert result is False
+    assert result == []
 
 
 def test_task_can_not_be_worked_on_if_no_robot_has_the_required_capabilities():
@@ -190,4 +191,4 @@ def test_task_can_not_be_worked_on_if_no_robot_has_the_required_capabilities():
     )
 
     # Assert
-    assert result is False
+    assert result == []
