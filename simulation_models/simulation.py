@@ -360,12 +360,22 @@ class Simulation:
                 continue
             if not task.required_capabilities.issubset(robot.capabilities):
                 continue
-            if (
-                task.spatial_constraint is not None
-                and isinstance(task.spatial_constraint.target, Position)
-                and state.position.distance(task.spatial_constraint.target) > task.spatial_constraint.max_distance
-            ):
-                continue
+            if task.spatial_constraint is not None:
+                sc = task.spatial_constraint
+                if isinstance(sc.target, Position):
+                    if state.position.distance(sc.target) > sc.max_distance:
+                        continue
+                else:
+                    zone = environment.get_zone(sc.target)
+                    if zone is None:
+                        continue
+                    in_zone = zone.contains(state.position)
+                    if not in_zone and sc.max_distance == 0:
+                        continue
+                    if not in_zone and sc.max_distance > 0:
+                        nearest = min(zone.cells, key=lambda cell: state.position.distance(cell))
+                        if state.position.distance(nearest) > sc.max_distance:
+                            continue
 
             eligible.append(robot_id)
 
