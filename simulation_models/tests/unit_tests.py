@@ -21,7 +21,28 @@ def _create_sim_fixture() -> Simulation:
 
 
 def test_task_can_be_worked_on_if_at_least_one_robot_meets_required_capabilities():
-    pass
+    # Arrange
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+        required_capabilities=frozenset({Capability.VISION}),
+    )
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED)
+    robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1.0)
+    robot_state = RobotState(robot_id=RobotId(1), position=Position(0.0, 0.0))
+
+    # Act
+    result = Simulation._task_can_be_worked_on(
+        task,
+        task_state,
+        assigned_robots=[(robot, robot_state)],
+        time=Time(0),
+    )
+
+    # Assert
+    assert result is True
 
 def test_task_is_only_worked_on_by_robots_with_required_capabilities():
     pass

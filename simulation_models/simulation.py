@@ -326,9 +326,10 @@ class Simulation:
 
     @staticmethod
     def _task_can_be_worked_on(
+        task: Task,
         task_state: TaskState,
-        robot_states_assigned_to_this_task: list[RobotState],
-        time: Time
+        assigned_robots: list[tuple[Robot, RobotState]],
+        time: Time,
     ) -> bool:
         raise NotImplementedError
 
