@@ -156,10 +156,13 @@ class Simulation:
     def _step(self) -> None:
         """Execute one simulation tick.
 
-        Two-phase approach to prevent move-order bias:
+        Three-phase approach to prevent move-order and work-order bias:
 
-        Plan phase: compute next positions for all robots before moving any.
-        Execute phase: move robots, apply work, update task states.
+        Plan phase:      compute next positions for all robots before moving any.
+        Execute/move:    apply planned moves; track which robots moved.
+        Execute/work:    snapshot eligibility across all tasks, then apply work
+                         task-centrically so mid-loop completions cannot affect
+                         sibling tasks within the same tick.
         """
 
         # Advance simulation time
@@ -243,45 +246,60 @@ class Simulation:
                     # Block the second robot
                     planned_moves[rid_b] = None
 
-        # --- Execute phase ---
-        # Currently each robot on a task applies some work to that task
+        # --- Execute phase: movement ---
+        # Move robots that have a planned step. Track which robots moved so the
+        # work phase below knows not to update their state a second time.
         obstacles = self.environment.obstacles
-        for robot_id, state in self.robot_states.items():
+        moved_set: set[RobotId] = set()
+
+        for robot_id, next_pos in planned_moves.items():
+            if next_pos is None:
+                continue
+            state = self.robot_states[robot_id]
             robot = self._robot_by_id[robot_id]
-            next_pos = planned_moves.get(robot_id)
+            robot.move_towards(state, next_pos, self.dt)
+            # Layer 2: push robot out of any obstacle AABBs it may clip
+            self._push_out_of_obstacles(state, robot.radius, obstacles)
+            moved_set.add(robot_id)
 
-            if robot_id not in robot_assignment:
-                robot.idle(state, self.dt)
+        # --- Execute phase: work ---
+        # Snapshot eligibility against post-movement state before applying any
+        # work, so task completions mid-loop cannot affect sibling tasks'
+        # eligibility within the same tick.
+        eligible_by_task: dict[TaskId, list[RobotId]] = {
+            task.id: (
+                []
+                if task.type == TaskType.IDLE
+                else self._get_eligible_robot_ids_for_task(
+                    task,
+                    self.task_states,
+                    self._robot_by_id,
+                    self.robot_states,
+                    self.environment,
+                    self.t_now,
+                )
+            )
+            for task in self.tasks
+        }
+
+        # Apply work for each task using the snapshot, then update robot states.
+        worked_set: set[RobotId] = set()
+        for task in self.tasks:
+            eligible = eligible_by_task[task.id]
+            if not eligible:
                 continue
+            task_state = self.task_states[task.id]
+            task.apply_work(task_state, Time(self.dt.tick * len(eligible)), self.t_now)
+            for robot_id in eligible:
+                if robot_id not in moved_set:
+                    robot = self._robot_by_id[robot_id]
+                    robot.work(self.robot_states[robot_id], self.dt)
+                    worked_set.add(robot_id)
 
-            task_id = robot_assignment[robot_id]
-            task = self._task_by_id[task_id]
-            task_state = self.task_states[task_id]
-
-            if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
-                robot.idle(state, self.dt)
-                continue
-
-            if task.type == TaskType.IDLE:
-                robot.idle(state, self.dt)
-                continue
-
-            goal = self._resolve_task_target_position(task, state.position)
-
-            if next_pos is not None:
-                # Robot has a move to make
-                robot.move_towards(state, next_pos, self.dt)
-                # Layer 2: push robot out of any obstacle AABBs it may clip
-                self._push_out_of_obstacles(state, robot.radius, obstacles)
-            # TODO: we should refactor this to be more clear, it is currently 
-            # checking if the task can be worked on, but the "elif" block is very ambiguous
-            elif goal is None or state.position.near(goal, eps=_AT_GOAL_EPS):
-                # At goal or no spatial constraint — do work
-                robot.work(state, self.dt)
-                task.apply_work(task_state, self.dt, self.t_now)
-            else:
-                # Stuck (pathfinding returned None, or collision-blocked)
-                robot.idle(state, self.dt)
+        # Robots that neither moved nor worked this tick are idling.
+        for robot_id, state in self.robot_states.items():
+            if robot_id not in moved_set and robot_id not in worked_set:
+                self._robot_by_id[robot_id].idle(state, self.dt)
 
         # Record snapshot at new time
         self.history[self.t_now] = self.snapshot()
