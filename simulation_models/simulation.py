@@ -229,31 +229,43 @@ class Simulation:
             planned_moves[robot_id] = next_step
 
         # --- Collision resolution ---
-        # No two robots may occupy the same cell. A robot's planned move is
-        # cancelled if its target cell is already occupied by another robot
-        # (current position) or claimed by another robot's planned move.
+        # No two robots may occupy the same cell after movement.
         #
-        # We resolve greedily in robot_id order. Priority between equal-priority
-        # robots is arbitrary but deterministic.
-        claimed: dict[Position, RobotId] = {}
+        # Iterative algorithm — repeat until stable:
+        #   1. Compute every robot's intended end position (planned or current).
+        #   2. For each end position:
+        #      - If a staying robot is there, cancel every mover heading there.
+        #      - If multiple movers target the same empty cell, keep the
+        #        lowest robot_id, cancel the rest.
+        #   3. Each cancellation turns a mover into a stayer, which can expose
+        #      new conflicts in the next pass.
+        #
+        # Convergence: every iteration cancels ≥1 move, so the loop terminates
+        # in at most O(n) passes.
+        changed = True
+        while changed:
+            changed = False
 
-        # Robots that aren't moving hold their current cell
-        for robot_id, next_pos in planned_moves.items():
-            if next_pos is None:
-                pos = current_positions[robot_id]
-                claimed[pos] = robot_id
+            # Map each end position to the robots that will occupy it
+            end_pos: dict[Position, list[RobotId]] = {}
+            for rid in planned_moves:
+                pos = planned_moves[rid] if planned_moves[rid] is not None else current_positions[rid]
+                end_pos.setdefault(pos, []).append(rid)
 
-        # Process moving robots in stable order
-        for robot_id in sorted(planned_moves):
-            next_pos = planned_moves[robot_id]
-            if next_pos is None:
-                continue
-            if next_pos in claimed:
-                # Cell taken — robot stays put
-                planned_moves[robot_id] = None
-                claimed[current_positions[robot_id]] = robot_id
-            else:
-                claimed[next_pos] = robot_id
+            for pos, rids in end_pos.items():
+                stayers = [rid for rid in rids if planned_moves[rid] is None]
+                movers  = [rid for rid in rids if planned_moves[rid] is not None]
+
+                if stayers and movers:
+                    # A staying robot blocks all incoming movers
+                    for rid in movers:
+                        planned_moves[rid] = None
+                    changed = True
+                elif len(movers) > 1:
+                    # Multiple movers racing for the same empty cell: lowest id wins
+                    for rid in sorted(movers)[1:]:
+                        planned_moves[rid] = None
+                    changed = True
 
         # --- Post-plan rescue detection ---
         # Check if any SEARCH robot has reached an unfound rescue point.
