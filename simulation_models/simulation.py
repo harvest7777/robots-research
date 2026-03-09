@@ -31,7 +31,7 @@ from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
-from simulation_models.movement_planner import resolve_task_target_position
+from simulation_models.movement_planner import resolve_collisions, resolve_task_target_position
 from simulation_models.work_eligibility import get_eligible_robots
 
 PathfindingAlgorithm = Callable[
@@ -231,43 +231,7 @@ class Simulation:
             planned_moves[robot_id] = next_step
 
         # --- Collision resolution ---
-        # No two robots may occupy the same cell after movement.
-        #
-        # Iterative algorithm — repeat until stable:
-        #   1. Compute every robot's intended end position (planned or current).
-        #   2. For each end position:
-        #      - If a staying robot is there, cancel every mover heading there.
-        #      - If multiple movers target the same empty cell, keep the
-        #        lowest robot_id, cancel the rest.
-        #   3. Each cancellation turns a mover into a stayer, which can expose
-        #      new conflicts in the next pass.
-        #
-        # Convergence: every iteration cancels ≥1 move, so the loop terminates
-        # in at most O(n) passes.
-        changed = True
-        while changed:
-            changed = False
-
-            # Map each end position to the robots that will occupy it
-            end_pos: dict[Position, list[RobotId]] = {}
-            for rid in planned_moves:
-                pos = planned_moves[rid] if planned_moves[rid] is not None else current_positions[rid]
-                end_pos.setdefault(pos, []).append(rid)
-
-            for pos, rids in end_pos.items():
-                stayers = [rid for rid in rids if planned_moves[rid] is None]
-                movers  = [rid for rid in rids if planned_moves[rid] is not None]
-
-                if stayers and movers:
-                    # A staying robot blocks all incoming movers
-                    for rid in movers:
-                        planned_moves[rid] = None
-                    changed = True
-                elif len(movers) > 1:
-                    # Multiple movers racing for the same empty cell: lowest id wins
-                    for rid in sorted(movers)[1:]:
-                        planned_moves[rid] = None
-                    changed = True
+        planned_moves = resolve_collisions(planned_moves, current_positions)
 
         # --- Post-plan rescue detection ---
         # Check if any SEARCH robot has reached an unfound rescue point.
