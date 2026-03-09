@@ -18,12 +18,13 @@ simulation, but callers should treat them as read-only by convention.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Mapping
 
 if TYPE_CHECKING:
     from simulation_models.assignment import Assignment, RobotId
     from simulation_models.environment import Environment
+    from simulation_models.rescue_point import RescuePointId
     from simulation_models.robot import Robot
     from simulation_models.robot_state import RobotState
     from simulation_models.task import Task, TaskId
@@ -55,6 +56,7 @@ class SimulationSnapshot:
     task_states: Mapping["TaskId", "TaskState"]
     t_now: "Time | None" = None
     active_assignments: tuple["Assignment", ...] = ()
+    rescue_found: Mapping["RescuePointId", bool] = field(default_factory=dict)
 
 
 if __name__ == "__main__":

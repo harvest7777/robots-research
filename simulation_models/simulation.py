@@ -542,4 +542,5 @@ class Simulation:
             task_states=MappingProxyType(task_states_copy),
             t_now=self.t_now,
             active_assignments=tuple(active_assignments),
+            rescue_found=MappingProxyType(dict(self.rescue_found)),
         )
