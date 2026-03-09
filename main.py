@@ -23,7 +23,7 @@ from simulation_models.time import Time
 from simulation_view.simulation_view import SimulationView
 from simulation_view.terminal_renderer import TerminalRenderer
 
-MAX_DELTA_TIME = 60
+MAX_DELTA_TIME = 500
 
 _STATE_PATH = Path(__file__).parent / "sim_state.json"
 _ASSIGNMENTS_PATH = Path(__file__).parent / "sim_assignments.json"
@@ -115,7 +115,7 @@ def main() -> None:
                 cols, rows = os.get_terminal_size()
                 frame = SimulationView(snapshot).render(cols, rows)
                 renderer.draw(frame)
-                time.sleep(1)
+                time.sleep(.5)
 
             sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
         finally:
