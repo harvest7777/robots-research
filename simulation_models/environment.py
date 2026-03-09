@@ -4,11 +4,11 @@ Environment (discrete grid world)
 This module defines a minimal `Environment` backed by a 2D grid.
 
 Coordinate / indexing conventions:
-- Positions use `Position(x: float, y: float)`.
-- `(0.0, 0.0)` is the **top-left** cell.
+- Positions use `Position(x: int, y: int)` (integer grid cell indices).
+- `(0, 0)` is the **top-left** cell.
 - `x` indexes columns (increases to the right).
 - `y` indexes rows (increases downward).
-- Grid indexing uses integer-floored coordinates: `grid[int(y)][int(x)]`.
+- Grid indexing: `grid[y][x]`.
 
 Core invariant:
 - **No overlap**: at most one object may occupy a grid cell at a time.
@@ -72,7 +72,7 @@ class Environment:
             for x in range(self._width):
                 obj = self._grid[y][x]
                 if obj is None:
-                    pos = Position(float(x), float(y))
+                    pos = Position(x, y)
                     zone_id = self._get_zone_id_at(pos)
                     if zone_id is not None:
                         row_chars.append(str(zone_id) if zone_id < 10 else "+")
@@ -188,8 +188,8 @@ class Environment:
         return self._zones.get(zone_id)
 
     def _cell(self, pos: Position) -> tuple[int, int]:
-        """Convert a Position to integer grid cell indices (col, row)."""
-        return (int(pos.x), int(pos.y))
+        """Return grid cell indices (col, row) for a Position."""
+        return (pos.x, pos.y)
 
     def _get_zone_id_at(self, pos: Position) -> ZoneId | None:
         """Return the zone ID containing `pos`, or None if not in any zone."""
@@ -210,6 +210,8 @@ class Environment:
         Returns True if the position is within grid bounds, False otherwise.
         """
         return 0 <= pos.x < self._width and 0 <= pos.y < self._height
+
+
 
 
 if __name__ == "__main__":
