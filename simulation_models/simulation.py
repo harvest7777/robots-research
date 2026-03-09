@@ -31,6 +31,7 @@ from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
+from simulation_models.movement_planner import resolve_task_target_position
 from simulation_models.work_eligibility import get_eligible_robots
 
 PathfindingAlgorithm = Callable[
@@ -418,27 +419,7 @@ class Simulation:
         return None
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
-        """Resolve a task's spatial constraint to a concrete Position.
-
-        Returns:
-            The target Position, or None if the task has no spatial constraint.
-        """
-        sc = task.spatial_constraint
-        if sc is None:
-            return None
-
-        if isinstance(sc.target, Position):
-            return sc.target
-
-        # ZoneId — find nearest zone cell to the robot (Manhattan distance)
-        zone = self.environment.get_zone(sc.target)
-        if zone is None:
-            return None
-
-        return min(
-            zone.cells,
-            key=lambda cell: robot_pos.manhattan(cell),
-        )
+        return resolve_task_target_position(task, robot_pos, self.environment)
 
     def _get_active_assignments(self) -> list[Assignment]:
         """Return the active assignments at t_now via the assignment service."""
