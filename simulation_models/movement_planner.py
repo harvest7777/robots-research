@@ -7,10 +7,71 @@ No simulation state is held here — all inputs are explicit.
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
 from simulation_models.assignment import RobotId
 from simulation_models.environment import Environment
 from simulation_models.position import Position
+from simulation_models.robot_state import RobotState
 from simulation_models.task import Task
+from simulation_models.task_state import TaskStatus
+from simulation_models.task import TaskType
+
+
+PathfindingAlgorithm = Callable[[Environment, Position, Position], Position | None]
+GoalResolver = Callable[[RobotId, RobotState], Position | None]
+
+
+def plan_moves(
+    ctx: "StepContext",
+    pathfinding: PathfindingAlgorithm,
+    goal_resolver: GoalResolver,
+) -> dict[RobotId, Position | None]:
+    """Compute the intended next position for every robot this tick.
+
+    For each robot:
+    - Unassigned, IDLE, or terminal task → None (stay in place).
+    - goal_resolver returns None → None (no spatial target).
+    - Already at goal → None (no movement needed).
+    - Otherwise → result of pathfinding(environment, position, goal).
+
+    Does not apply collision resolution — call resolve_collisions separately.
+    The goal_resolver may write to robot state (e.g. current_waypoint) as a
+    side effect; plan_moves itself does not mutate any state directly.
+    """
+    from simulation_models.step_context import StepContext  # local to avoid circular import
+
+    planned: dict[RobotId, Position | None] = {}
+
+    for robot_id, state in ctx.robot_states.items():
+        if robot_id not in ctx.robot_to_task:
+            planned[robot_id] = None
+            continue
+
+        task_id = ctx.robot_to_task[robot_id]
+        task = ctx.task_by_id[task_id]
+        task_state = ctx.task_states[task_id]
+
+        if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+            planned[robot_id] = None
+            continue
+
+        if task.type == TaskType.IDLE:
+            planned[robot_id] = None
+            continue
+
+        goal = goal_resolver(robot_id, state)
+        if goal is None:
+            planned[robot_id] = None
+            continue
+
+        if state.position == goal:
+            planned[robot_id] = None
+            continue
+
+        planned[robot_id] = pathfinding(ctx.environment, state.position, goal)
+
+    return planned
 
 
 def resolve_collisions(

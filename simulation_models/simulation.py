@@ -30,7 +30,8 @@ from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
-from simulation_models.movement_planner import resolve_collisions, resolve_task_target_position
+from simulation_models.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
+from simulation_models.step_context import StepContext
 from simulation_models.rescue_handler import compute_rescue_effect
 from simulation_models.search_goal import compute_search_goal
 from simulation_models.work_eligibility import get_eligible_robots
@@ -189,30 +190,22 @@ class Simulation:
             task.set_assignment(task_state, assigned_robot_ids)
 
         # --- Plan phase ---
-        # Current occupancy: positions held by all robots right now
+        ctx = StepContext(
+            robot_states=self.robot_states,
+            task_states=self.task_states,
+            robot_to_task=robot_to_task,
+            task_by_id=self._task_by_id,
+            environment=self.environment,
+            t_now=self.t_now,
+        )
+
         current_positions: dict[RobotId, Position] = {
             robot_id: state.position
             for robot_id, state in self.robot_states.items()
         }
-        planned_moves: dict[RobotId, Position | None] = {}
 
-        for robot_id, state in self.robot_states.items():
-            if robot_id not in robot_to_task:
-                planned_moves[robot_id] = None
-                continue
-
-            task_id = robot_to_task[robot_id]
-            task = self._task_by_id[task_id]
-            task_state = self.task_states[task_id]
-
-            if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
-                planned_moves[robot_id] = None
-                continue
-
-            if task.type == TaskType.IDLE:
-                planned_moves[robot_id] = None
-                continue
-
+        def _goal_resolver(robot_id: RobotId, state: RobotState) -> Position | None:
+            task = self._task_by_id[robot_to_task[robot_id]]
             if task.type == TaskType.SEARCH:
                 goal = compute_search_goal(
                     state, self.environment.rescue_points, self.rescue_found,
@@ -220,21 +213,10 @@ class Simulation:
                     self.environment,
                 )
                 state.current_waypoint = goal
-            else:
-                goal = self._resolve_task_target_position(task, state.position)
-            if goal is None:
-                # No spatial constraint — robot works in place
-                planned_moves[robot_id] = None
-                continue
+                return goal
+            return self._resolve_task_target_position(task, state.position)
 
-            if state.position == goal:
-                planned_moves[robot_id] = None
-                continue
-
-            next_step = self.pathfinding_algorithm(
-                self.environment, state.position, goal
-            )
-            planned_moves[robot_id] = next_step
+        planned_moves = plan_moves(ctx, self.pathfinding_algorithm, _goal_resolver)
 
         # --- Collision resolution ---
         planned_moves = resolve_collisions(planned_moves, current_positions)

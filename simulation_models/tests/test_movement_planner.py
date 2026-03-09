@@ -1,10 +1,13 @@
 from simulation_models.assignment import RobotId
 from simulation_models.environment import Environment
 from simulation_models.position import Position
+from simulation_models.robot_state import RobotState
 from simulation_models.task import Task, TaskId, TaskType, SpatialConstraint
+from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 from simulation_models.zone import Zone, ZoneId, ZoneType
-from simulation_models.movement_planner import resolve_collisions, resolve_task_target_position
+from simulation_models.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
+from simulation_models.step_context import StepContext
 
 
 # ---------------------------------------------------------------------------
@@ -157,3 +160,145 @@ def test_resolve_collisions_does_not_mutate_input():
     resolve_collisions(planned, current)
 
     assert planned == planned_copy
+
+
+# ---------------------------------------------------------------------------
+# plan_moves helpers
+# ---------------------------------------------------------------------------
+
+def _make_ctx(
+    robot_id: RobotId,
+    robot_pos: Position,
+    task_id: TaskId = TaskId(1),
+    task_type: TaskType = TaskType.ROUTINE_INSPECTION,
+    task_status: TaskStatus = TaskStatus.ASSIGNED,
+) -> StepContext:
+    return StepContext(
+        robot_states={robot_id: RobotState(robot_id=robot_id, position=robot_pos)},
+        task_states={task_id: TaskState(
+            task_id=task_id, status=task_status, assigned_robot_ids={robot_id}
+        )},
+        robot_to_task={robot_id: task_id},
+        task_by_id={task_id: Task(
+            id=task_id, type=task_type, priority=1, required_work_time=Time(1)
+        )},
+        environment=Environment(width=5, height=5),
+        t_now=Time(0),
+    )
+
+
+def _stub_pathfinding(env, start, goal):
+    return Position(start.x + 1, start.y)
+
+
+# ---------------------------------------------------------------------------
+# plan_moves
+# ---------------------------------------------------------------------------
+
+def test_plan_moves_unassigned_robot_gets_none():
+    ctx = StepContext(
+        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
+        task_states={},
+        robot_to_task={},
+        task_by_id={},
+        environment=Environment(width=5, height=5),
+        t_now=Time(0),
+    )
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: Position(3, 3))
+
+    assert result[RobotId(1)] is None
+
+
+def test_plan_moves_idle_task_gets_none():
+    ctx = _make_ctx(RobotId(1), Position(0, 0), task_type=TaskType.IDLE)
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: Position(3, 3))
+
+    assert result[RobotId(1)] is None
+
+
+def test_plan_moves_done_task_gets_none():
+    ctx = _make_ctx(RobotId(1), Position(0, 0), task_status=TaskStatus.DONE)
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: Position(3, 3))
+
+    assert result[RobotId(1)] is None
+
+
+def test_plan_moves_failed_task_gets_none():
+    ctx = _make_ctx(RobotId(1), Position(0, 0), task_status=TaskStatus.FAILED)
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: Position(3, 3))
+
+    assert result[RobotId(1)] is None
+
+
+def test_plan_moves_no_goal_gets_none():
+    ctx = _make_ctx(RobotId(1), Position(0, 0))
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: None)
+
+    assert result[RobotId(1)] is None
+
+
+def test_plan_moves_robot_already_at_goal_gets_none():
+    pos = Position(2, 2)
+    ctx = _make_ctx(RobotId(1), pos)
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: pos)
+
+    assert result[RobotId(1)] is None
+
+
+def test_plan_moves_returns_pathfinding_result_when_not_at_goal():
+    ctx = _make_ctx(RobotId(1), Position(0, 0))
+    expected_next = Position(1, 0)
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: Position(4, 4))
+
+    assert result[RobotId(1)] == expected_next
+
+
+def test_plan_moves_goal_resolver_receives_correct_robot_id_and_state():
+    robot_id = RobotId(1)
+    robot_pos = Position(2, 3)
+    ctx = _make_ctx(robot_id, robot_pos)
+    captured = []
+
+    def capturing_resolver(rid, state):
+        captured.append((rid, state))
+        return Position(4, 4)
+
+    plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=capturing_resolver)
+
+    assert len(captured) == 1
+    assert captured[0][0] == robot_id
+    assert captured[0][1].position == robot_pos
+
+
+def test_plan_moves_covers_all_robots():
+    # Two robots, both assigned to different tasks, both should move
+    r1, r2 = RobotId(1), RobotId(2)
+    t1, t2 = TaskId(1), TaskId(2)
+    ctx = StepContext(
+        robot_states={
+            r1: RobotState(robot_id=r1, position=Position(0, 0)),
+            r2: RobotState(robot_id=r2, position=Position(1, 0)),
+        },
+        task_states={
+            t1: TaskState(task_id=t1, status=TaskStatus.ASSIGNED, assigned_robot_ids={r1}),
+            t2: TaskState(task_id=t2, status=TaskStatus.ASSIGNED, assigned_robot_ids={r2}),
+        },
+        robot_to_task={r1: t1, r2: t2},
+        task_by_id={
+            t1: Task(id=t1, type=TaskType.ROUTINE_INSPECTION, priority=1, required_work_time=Time(1)),
+            t2: Task(id=t2, type=TaskType.ROUTINE_INSPECTION, priority=1, required_work_time=Time(1)),
+        },
+        environment=Environment(width=5, height=5),
+        t_now=Time(0),
+    )
+
+    result = plan_moves(ctx, pathfinding=_stub_pathfinding, goal_resolver=lambda rid, s: Position(4, 4))
+
+    assert set(result.keys()) == {r1, r2}
