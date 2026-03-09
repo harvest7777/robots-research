@@ -172,8 +172,8 @@ class Simulation:
         ctx = self._build_step_context(robot_to_task)
         planned_moves = self._plan_robot_moves(ctx, robot_to_task)
         planned_moves = self._resolve_robot_collisions(planned_moves)
-        for rp in self._find_rescue_discoveries(robot_to_task):
-            self._trigger_rescue_found(rp, robot_to_task)
+        for rescue_point in self._find_rescue_discoveries(robot_to_task):
+            self._trigger_rescue_found(rescue_point, robot_to_task)
 
         moved_set = self._apply_robot_moves(planned_moves)
         eligible_by_task = self._snapshot_work_eligibility()
@@ -240,11 +240,11 @@ class Simulation:
         ]
         for robot_id in sorted(search_robot_ids):
             state = self.robot_states[robot_id]
-            for rp in self.environment.rescue_points.values():
-                if self.rescue_found.get(rp.id):
+            for rescue_point in self.environment.rescue_points.values():
+                if self.rescue_found.get(rescue_point.id):
                     continue
-                if state.position == rp.position:
-                    discovered.append(rp)
+                if state.position == rescue_point.position:
+                    discovered.append(rescue_point)
                     break
         return discovered
 
@@ -316,9 +316,9 @@ class Simulation:
                 self._robot_by_id[robot_id].idle(state)
 
     def _trigger_rescue_found(
-        self, rp: object, robot_to_task: dict[RobotId, TaskId]
+        self, rescue_point: object, robot_to_task: dict[RobotId, TaskId]
     ) -> None:
-        effect = compute_rescue_effect(rp, robot_to_task, self._task_by_id, self.tasks, self.t_now)
+        effect = compute_rescue_effect(rescue_point, robot_to_task, self._task_by_id, self.tasks, self.t_now)
 
         self.rescue_found.update(effect.rescue_found_updates)
 
