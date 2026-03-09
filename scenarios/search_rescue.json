@@ -1,0 +1,77 @@
+{
+  "environment": {
+    "width": 20,
+    "height": 20,
+    "obstacles": [],
+    "rescue_points": [
+      {
+        "id": 1,
+        "name": "Survivor Alpha",
+        "position": [10, 10],
+        "rescue_task_id": 20
+      }
+    ]
+  },
+
+  "robots": [
+    {
+      "id": 1,
+      "capabilities": [],
+      "speed": 1
+    },
+    {
+      "id": 2,
+      "capabilities": [],
+      "speed": 1
+    }
+  ],
+
+  "robot_states": [
+    {
+      "robot_id": 1,
+      "position": [0, 0]
+    },
+    {
+      "robot_id": 2,
+      "position": [19, 19]
+    }
+  ],
+
+  "tasks": [
+    {
+      "id": 10,
+      "type": "search",
+      "priority": 8,
+      "required_work_time": 9999,
+      "required_capabilities": [],
+      "dependencies": []
+    },
+    {
+      "id": 20,
+      "type": "rescue",
+      "priority": 10,
+      "required_work_time": 5,
+      "spatial_constraint": {
+        "target": [10, 10],
+        "max_distance": 0
+      },
+      "required_capabilities": [],
+      "dependencies": []
+    }
+  ],
+
+  "task_states": [
+    {
+      "task_id": 10,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 20,
+      "status": "unassigned",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    }
+  ]
+}
