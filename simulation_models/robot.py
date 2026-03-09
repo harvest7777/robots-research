@@ -4,7 +4,7 @@ Robot Execution Model
 A Robot is a physical actor that executes movement and work.
 
 This module separates:
-- `Robot`: immutable robot definition (capabilities, speed, radius)
+- `Robot`: immutable robot definition (capabilities, speed)
 - `RobotState`: mutable runtime state (position, battery)
 
 The robot updates runtime state but:
@@ -17,23 +17,18 @@ The robot is a dumb executor. All coordination lives in the Simulation.
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from simulation_models.assignment import RobotId
 from simulation_models.capability import Capability
 from simulation_models.position import Position
 from simulation_models.robot_state import RobotState
-from simulation_models.time import Time
 
 
 # Battery drain rates (per tick)
-_DRAIN_MOVE_PER_UNIT = 0.001  # per unit distance moved
-_DRAIN_WORK_PER_TICK = 0.002  # per tick of work
+_DRAIN_MOVE_PER_TICK = 0.001   # per tick of movement (1 cell)
+_DRAIN_WORK_PER_TICK = 0.002   # per tick of work
 _DRAIN_IDLE_PER_TICK = 0.0005  # per tick idle
-
-# Guard against floating-point jitter when robot is at target
-_AT_TARGET_EPSILON = 0.001
 
 
 @dataclass(frozen=True)
@@ -47,50 +42,33 @@ class Robot:
     - Does NOT know what a task is
     - Does NOT decide what to work on
 
-    All time deltas are passed as Time objects and treated as opaque units.
+    speed: cells moved per tick (each cell step is collision-checked separately).
     """
 
     id: RobotId
     capabilities: frozenset[Capability]
-    speed: float
-    radius: float = field(default=0.4)
+    speed: int = 1
 
-    def move_towards(self, state: RobotState, target: Position, dt: Time) -> None:
+    def step_to(self, state: RobotState, target: Position) -> None:
         """
-        Move toward the target using continuous vector math.
+        Teleport robot to an adjacent cell.
 
-        Direction is normalized; travel distance is clamped so the robot cannot
-        overshoot the target. Updates position and drains battery on state.
-
-        Does NOT check collisions or bounds.
+        The caller is responsible for ensuring `target` is exactly one
+        cardinal step away and is not blocked. Drains battery for movement.
         """
-        dx = target.x - state.position.x
-        dy = target.y - state.position.y
-        dist = math.sqrt(dx * dx + dy * dy)
-        if dist < _AT_TARGET_EPSILON:
-            return
-        travel = min(self.speed * dt.tick, dist)
-        nx = state.position.x + (dx / dist) * travel
-        ny = state.position.y + (dy / dist) * travel
-        state.position = Position(nx, ny)
-        state.battery_level -= travel * _DRAIN_MOVE_PER_UNIT
+        state.position = target
+        state.battery_level -= _DRAIN_MOVE_PER_TICK
 
-    def work(self, state: RobotState, dt: Time) -> None:
+    def work(self, state: RobotState) -> None:
         """
-        Apply work effort for dt time units.
+        Apply one tick of work effort. Drains battery.
 
-        The robot does NOT know:
-        - What task is being worked on
-        - Whether work completes anything
-
-        Drains battery proportional to dt.
+        The robot does NOT know what task is being worked on.
         """
-        state.battery_level -= dt.tick * _DRAIN_WORK_PER_TICK
+        state.battery_level -= _DRAIN_WORK_PER_TICK
 
-    def idle(self, state: RobotState, dt: Time) -> None:
+    def idle(self, state: RobotState) -> None:
         """
-        Robot is idle for dt time units.
-
-        Applies minimal idle battery drain.
+        Robot is idle for one tick. Applies minimal battery drain.
         """
-        state.battery_level -= dt.tick * _DRAIN_IDLE_PER_TICK
+        state.battery_level -= _DRAIN_IDLE_PER_TICK
