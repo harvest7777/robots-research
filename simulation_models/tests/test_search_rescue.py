@@ -140,13 +140,13 @@ def test_search_robot_locks_onto_rescue_point_within_threshold():
     sim = _make_search_sim(robot_pos=Position(0, 0), rescue_pos=rescue_pos)
     state = sim.robot_states[RobotId(1)]
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state, sim.environment.rescue_points, sim.rescue_found,
         sim.rescue_proximity_threshold, sim.pathfinding_algorithm, sim.environment,
     )
 
     assert goal == rescue_pos
-    assert new_waypoint == rescue_pos
+    assert goal == rescue_pos
 
 
 # ---------------------------------------------------------------------------
@@ -159,7 +159,7 @@ def test_search_robot_does_not_lock_beyond_threshold():
     sim = _make_search_sim(robot_pos=Position(0, 0), rescue_pos=rescue_pos)
     state = sim.robot_states[RobotId(1)]
 
-    goal, _ = compute_search_goal(
+    goal = compute_search_goal(
         state, sim.environment.rescue_points, sim.rescue_found,
         sim.rescue_proximity_threshold, sim.pathfinding_algorithm, sim.environment,
     )
@@ -178,7 +178,7 @@ def test_search_robot_locks_immediately_if_starts_within_threshold():
     sim = _make_search_sim(robot_pos=robot_pos, rescue_pos=rescue_pos)
     state = sim.robot_states[RobotId(1)]
 
-    goal, _ = compute_search_goal(
+    goal = compute_search_goal(
         state, sim.environment.rescue_points, sim.rescue_found,
         sim.rescue_proximity_threshold, sim.pathfinding_algorithm, sim.environment,
     )

@@ -213,12 +213,12 @@ class Simulation:
                 continue
 
             if task.type == TaskType.SEARCH:
-                goal, new_waypoint = compute_search_goal(
+                goal = compute_search_goal(
                     state, self.environment.rescue_points, self.rescue_found,
                     self.rescue_proximity_threshold, self.pathfinding_algorithm,
                     self.environment,
                 )
-                state.current_waypoint = new_waypoint
+                state.current_waypoint = goal
             else:
                 goal = self._resolve_task_target_position(task, state.position)
             if goal is None:

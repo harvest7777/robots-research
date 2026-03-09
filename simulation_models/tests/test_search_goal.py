@@ -49,7 +49,7 @@ def test_proximity_lock_returns_rescue_point_when_within_threshold():
     state = _state(0, 0)  # Manhattan distance to rp = 3
     env = Environment(width=10, height=10)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
         rescue_found={},
@@ -59,7 +59,7 @@ def test_proximity_lock_returns_rescue_point_when_within_threshold():
     )
 
     assert goal == Position(3, 0)
-    assert new_waypoint == Position(3, 0)
+    assert goal == Position(3, 0)
 
 
 def test_proximity_lock_not_triggered_when_outside_threshold():
@@ -67,7 +67,7 @@ def test_proximity_lock_not_triggered_when_outside_threshold():
     state = _state(0, 0)  # Manhattan distance = 18, well outside threshold=5
     env = Environment(width=10, height=10)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
         rescue_found={},
@@ -85,7 +85,7 @@ def test_proximity_lock_skips_already_found_rescue_points():
     state = _state(0, 0)  # within any reasonable threshold
     env = Environment(width=10, height=10)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
         rescue_found={rp.id: True},
@@ -107,7 +107,7 @@ def test_keeps_existing_reachable_waypoint():
     state = _state(0, 0, waypoint=waypoint)
     env = Environment(width=10, height=10)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={},
         rescue_found={},
@@ -117,7 +117,7 @@ def test_keeps_existing_reachable_waypoint():
     )
 
     assert goal == waypoint
-    assert new_waypoint == waypoint
+    assert goal == waypoint
 
 
 def test_clears_unreachable_waypoint_and_picks_new_random():
@@ -125,7 +125,7 @@ def test_clears_unreachable_waypoint_and_picks_new_random():
     state = _state(0, 0, waypoint=Position(5, 5))
     env = Environment(width=2, height=1)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={},
         rescue_found={},
@@ -136,7 +136,7 @@ def test_clears_unreachable_waypoint_and_picks_new_random():
 
     # Waypoint was unreachable — should pick the only other walkable cell
     assert goal == Position(1, 0)
-    assert new_waypoint == Position(1, 0)
+    assert goal == Position(1, 0)
 
 
 def test_robot_at_waypoint_falls_through_to_new_random():
@@ -145,7 +145,7 @@ def test_robot_at_waypoint_falls_through_to_new_random():
     state = _state(0, 0, waypoint=Position(0, 0))
     env = Environment(width=2, height=1)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={},
         rescue_found={},
@@ -155,7 +155,7 @@ def test_robot_at_waypoint_falls_through_to_new_random():
     )
 
     assert goal == Position(1, 0)
-    assert new_waypoint == Position(1, 0)
+    assert goal == Position(1, 0)
 
 
 # ---------------------------------------------------------------------------
@@ -167,7 +167,7 @@ def test_picks_random_walkable_cell_when_no_waypoint():
     state = _state(0, 0, waypoint=None)
     env = Environment(width=2, height=1)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={},
         rescue_found={},
@@ -177,7 +177,7 @@ def test_picks_random_walkable_cell_when_no_waypoint():
     )
 
     assert goal == Position(1, 0)
-    assert new_waypoint == Position(1, 0)
+    assert goal == Position(1, 0)
 
 
 # ---------------------------------------------------------------------------
@@ -189,7 +189,7 @@ def test_returns_none_when_no_walkable_cell_exists():
     state = _state(0, 0, waypoint=None)
     env = Environment(width=1, height=1)
 
-    goal, new_waypoint = compute_search_goal(
+    goal = compute_search_goal(
         state=state,
         rescue_points={},
         rescue_found={},
@@ -199,7 +199,7 @@ def test_returns_none_when_no_walkable_cell_exists():
     )
 
     assert goal is None
-    assert new_waypoint is None
+    assert goal is None
 
 
 # ---------------------------------------------------------------------------

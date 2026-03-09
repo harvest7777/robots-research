@@ -2,8 +2,8 @@
 Search Goal
 
 Pure function for computing the movement goal of a SEARCH robot each tick.
-Returns (goal, new_waypoint) — the caller is responsible for writing
-new_waypoint back to robot state. No state is mutated here.
+Returns a single Position (or None) — the caller is responsible for writing
+it back to state.current_waypoint. No state is mutated here.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ def compute_search_goal(
     proximity_threshold: int,
     pathfinding: PathfindingAlgorithm,
     environment: Environment,
-) -> tuple[Position | None, Position | None]:
+) -> Position | None:
     """Compute the roaming goal for a SEARCH robot.
 
     Priority order:
@@ -39,22 +39,22 @@ def compute_search_goal(
     3. Random walkable cell: pick a new random non-obstacle position.
 
     Returns:
-        (goal, new_waypoint) where both may be None if no valid goal exists.
-        The caller must write new_waypoint to state.current_waypoint.
-        This function does not mutate state.
+        The goal Position, or None if no valid goal exists. The caller must
+        write the returned value to state.current_waypoint. This function
+        does not mutate state.
     """
     # Step 1: Proximity lock onto any nearby unfound rescue point
     for rp in rescue_points.values():
         if rescue_found.get(rp.id):
             continue
         if state.position.manhattan(rp.position) <= proximity_threshold:
-            return rp.position, rp.position
+            return rp.position
 
     # Step 2: Keep existing waypoint if reachable and not yet reached
     if state.current_waypoint is not None and state.current_waypoint != state.position:
         next_step = pathfinding(environment, state.position, state.current_waypoint)
         if next_step is not None:
-            return state.current_waypoint, state.current_waypoint
+            return state.current_waypoint
         # Waypoint unreachable — fall through to pick a new one
 
     # Step 3: Pick a random walkable position
@@ -63,6 +63,6 @@ def compute_search_goal(
         y = random.randint(0, environment.height - 1)
         pos = Position(x, y)
         if pos not in environment.obstacles and pos != state.position:
-            return pos, pos
+            return pos
 
-    return None, None
+    return None
