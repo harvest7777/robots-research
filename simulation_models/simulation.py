@@ -168,15 +168,16 @@ class Simulation:
         # Advance simulation time
         self.t_now = self.t_now.advance(self.dt)
 
-        robot_assignment = self._resolve_robot_assignment()
+        assignments = self._get_active_assignments()
+        robot_to_task: dict[RobotId, TaskId] = {
+            rid: a.task_id for a in assignments for rid in a.robot_ids
+        }
 
-        # Update task assignment states based on robot states
+        # Update task assignment states based on active assignments
         for task in self.tasks:
             task_state = self.task_states[task.id]
             assigned_robot_ids = {
-                robot_id
-                for robot_id, task_id in robot_assignment.items()
-                if task_id == task.id
+                rid for a in assignments if a.task_id == task.id for rid in a.robot_ids
             }
             task.set_assignment(task_state, assigned_robot_ids)
 
@@ -188,11 +189,11 @@ class Simulation:
         planned_moves: dict[RobotId, Position | None] = {}
 
         for robot_id, state in self.robot_states.items():
-            if robot_id not in robot_assignment:
+            if robot_id not in robot_to_task:
                 planned_moves[robot_id] = None
                 continue
 
-            task_id = robot_assignment[robot_id]
+            task_id = robot_to_task[robot_id]
             task = self._task_by_id[task_id]
             task_state = self.task_states[task_id]
 
@@ -423,15 +424,11 @@ class Simulation:
             key=lambda cell: abs(cell.x - robot_pos.x) + abs(cell.y - robot_pos.y),
         )
 
-    def _resolve_robot_assignment(self) -> dict[RobotId, TaskId]:
-        """Return the active robot→task mapping at t_now via the assignment service."""
+    def _get_active_assignments(self) -> list[Assignment]:
+        """Return the active assignments at t_now via the assignment service."""
         if self.assignment_service is None:
-            return {}
-        robot_assignment: dict[RobotId, TaskId] = {}
-        for assignment in self.assignment_service.get_assignments_for_time(self.t_now):
-            for robot_id in assignment.robot_ids:
-                robot_assignment[robot_id] = assignment.task_id
-        return robot_assignment
+            return []
+        return self.assignment_service.get_assignments_for_time(self.t_now)
 
     def snapshot(self) -> SimulationSnapshot:
         """
