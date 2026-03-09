@@ -14,7 +14,6 @@ The Simulation class holds all state and data needed to run a simulation:
 from __future__ import annotations
 
 import dataclasses
-import math
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
@@ -33,13 +32,10 @@ from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 
 PathfindingAlgorithm = Callable[
-    [Environment, Position, Position, frozenset[Position]],
+    [Environment, Position, Position],
     Position | None,
 ]
-"""(environment, start, goal, occupied_by_other_robots) -> next_step or None."""
-
-# Goal-reached epsilon: within half a cell counts as "at goal"
-_AT_GOAL_EPS = 0.5
+"""(environment, start, goal) -> next_step or None."""
 
 
 @dataclass
@@ -182,7 +178,8 @@ class Simulation:
             task.set_assignment(task_state, assigned_robot_ids)
 
         # --- Plan phase ---
-        all_positions = {
+        # Current occupancy: positions held by all robots right now
+        current_positions: dict[RobotId, Position] = {
             robot_id: state.position
             for robot_id, state in self.robot_states.items()
         }
@@ -211,46 +208,43 @@ class Simulation:
                 planned_moves[robot_id] = None
                 continue
 
-            if state.position.near(goal, eps=_AT_GOAL_EPS):
+            if state.position == goal:
                 planned_moves[robot_id] = None
                 continue
 
-            occupied = frozenset(
-                pos
-                for other_robot_id, pos in all_positions.items()
-                if other_robot_id != robot_id
-            )
             next_step = self.pathfinding_algorithm(
-                self.environment, state.position, goal, occupied
+                self.environment, state.position, goal
             )
             planned_moves[robot_id] = next_step
 
-        # Detect planned collisions using pairwise radius-based distance check.
-        # Build list of (robot_id, planned_position) for robots that have a move.
-        moving_robots: list[tuple[RobotId, Position]] = [
-            (rid, pos)
-            for rid, pos in planned_moves.items()
-            if pos is not None
-        ]
-        for i in range(len(moving_robots)):
-            rid_a, pos_a = moving_robots[i]
-            if planned_moves[rid_a] is None:
+        # --- Collision resolution ---
+        # No two robots may occupy the same cell. A robot's planned move is
+        # cancelled if its target cell is already occupied by another robot
+        # (current position) or claimed by another robot's planned move.
+        #
+        # We resolve greedily in robot_id order. Priority between equal-priority
+        # robots is arbitrary but deterministic.
+        claimed: dict[Position, RobotId] = {}
+
+        # Robots that aren't moving hold their current cell
+        for robot_id, next_pos in planned_moves.items():
+            if next_pos is None:
+                pos = current_positions[robot_id]
+                claimed[pos] = robot_id
+
+        # Process moving robots in stable order
+        for robot_id in sorted(planned_moves):
+            next_pos = planned_moves[robot_id]
+            if next_pos is None:
                 continue
-            robot_a = self._robot_by_id[rid_a]
-            for j in range(i + 1, len(moving_robots)):
-                rid_b, pos_b = moving_robots[j]
-                if planned_moves[rid_b] is None:
-                    continue
-                robot_b = self._robot_by_id[rid_b]
-                dist = pos_a.distance(pos_b)
-                if dist < robot_a.radius + robot_b.radius:
-                    # Block the second robot
-                    planned_moves[rid_b] = None
+            if next_pos in claimed:
+                # Cell taken — robot stays put
+                planned_moves[robot_id] = None
+                claimed[current_positions[robot_id]] = robot_id
+            else:
+                claimed[next_pos] = robot_id
 
         # --- Execute phase: movement ---
-        # Move robots that have a planned step. Track which robots moved so the
-        # work phase below knows not to update their state a second time.
-        obstacles = self.environment.obstacles
         moved_set: set[RobotId] = set()
 
         for robot_id, next_pos in planned_moves.items():
@@ -258,9 +252,7 @@ class Simulation:
                 continue
             state = self.robot_states[robot_id]
             robot = self._robot_by_id[robot_id]
-            robot.move_towards(state, next_pos, self.dt)
-            # Layer 2: push robot out of any obstacle AABBs it may clip
-            self._push_out_of_obstacles(state, robot.radius, obstacles)
+            robot.step_to(state, next_pos)
             moved_set.add(robot_id)
 
         # --- Execute phase: work ---
@@ -294,54 +286,16 @@ class Simulation:
             for robot_id in eligible:
                 if robot_id not in moved_set:
                     robot = self._robot_by_id[robot_id]
-                    robot.work(self.robot_states[robot_id], self.dt)
+                    robot.work(self.robot_states[robot_id])
                     worked_set.add(robot_id)
 
         # Robots that neither moved nor worked this tick are idling.
         for robot_id, state in self.robot_states.items():
             if robot_id not in moved_set and robot_id not in worked_set:
-                self._robot_by_id[robot_id].idle(state, self.dt)
+                self._robot_by_id[robot_id].idle(state)
 
         # Record snapshot at new time
         self.history[self.t_now] = self.snapshot()
-
-    @staticmethod
-    def _push_out_of_obstacles(
-        state: RobotState,
-        radius: float,
-        obstacles: frozenset[Position],
-    ) -> None:
-        """Layer 2 safety: push robot center out of any obstacle AABB it overlaps.
-
-        Checks only the 9 cells surrounding the robot's current cell for performance.
-        Each obstacle occupies the unit square [cx, cx+1] × [cy, cy+1].
-        """
-        cx = int(state.position.x)
-        cy = int(state.position.y)
-        for dox in range(-1, 2):
-            for doy in range(-1, 2):
-                cell = Position(float(cx + dox), float(cy + doy))
-                if cell not in obstacles:
-                    continue
-                ox = float(cx + dox)
-                oy = float(cy + doy)
-                # Nearest point on AABB [ox, ox+1] × [oy, oy+1] to robot center
-                nearest_x = max(ox, min(state.position.x, ox + 1.0))
-                nearest_y = max(oy, min(state.position.y, oy + 1.0))
-                dx = state.position.x - nearest_x
-                dy = state.position.y - nearest_y
-                dist = math.sqrt(dx * dx + dy * dy)
-                if dist < radius:
-                    if dist > 1e-9:
-                        # Push robot to AABB surface along penetration vector
-                        scale = radius / dist
-                        state.position = Position(
-                            nearest_x + dx * scale,
-                            nearest_y + dy * scale,
-                        )
-                    else:
-                        # Robot center is inside obstacle — push upward
-                        state.position = Position(state.position.x, oy - radius)
 
     @staticmethod
     def _get_eligible_robot_ids_for_task(
@@ -382,19 +336,23 @@ class Simulation:
             if task.spatial_constraint is not None:
                 sc = task.spatial_constraint
                 if isinstance(sc.target, Position):
-                    tolerance = sc.max_distance if sc.max_distance > 0 else _AT_GOAL_EPS
-                    if state.position.distance(sc.target) > tolerance:
+                    dist = state.position.manhattan(sc.target)
+                    tolerance = sc.max_distance if sc.max_distance > 0 else 0
+                    if dist > tolerance:
                         continue
                 else:
                     zone = environment.get_zone(sc.target)
                     if zone is None:
                         continue
-                    in_zone = zone.contains(state.position)
-                    if not in_zone and sc.max_distance == 0:
+                    if zone.contains(state.position):
+                        pass  # in zone, eligible
+                    elif sc.max_distance == 0:
                         continue
-                    if not in_zone and sc.max_distance > 0:
-                        nearest = min(zone.cells, key=lambda cell: state.position.distance(cell))
-                        if state.position.distance(nearest) > sc.max_distance:
+                    else:
+                        nearest_dist = min(
+                            state.position.manhattan(cell) for cell in zone.cells
+                        )
+                        if nearest_dist > sc.max_distance:
                             continue
 
             eligible.append(robot_id)
@@ -414,16 +372,15 @@ class Simulation:
         if isinstance(sc.target, Position):
             return sc.target
 
-        # ZoneId — find nearest zone cell to the robot
+        # ZoneId — find nearest zone cell to the robot (Manhattan distance)
         zone = self.environment.get_zone(sc.target)
         if zone is None:
             return None
 
-        nearest = min(
+        return min(
             zone.cells,
-            key=lambda cell: abs(cell.x - robot_pos.x) + abs(cell.y - robot_pos.y),
+            key=lambda cell: robot_pos.manhattan(cell),
         )
-        return Position(nearest.x + 0.5, nearest.y + 0.5)
 
     def _get_active_assignments(self) -> list[Assignment]:
         """Return the active assignments at t_now via the assignment service."""
