@@ -14,6 +14,7 @@ The Simulation class holds all state and data needed to run a simulation:
 from __future__ import annotations
 
 import dataclasses
+import random
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
@@ -66,6 +67,7 @@ class Simulation:
     t_now: Time = field(default_factory=lambda: Time(0))
     dt: Time = field(default_factory=lambda: Time(1))
     history: dict[Time, SimulationSnapshot] = field(default_factory=dict)
+    rescue_found: dict = field(default_factory=dict)  # dict[RescuePointId, bool]
 
     def __post_init__(self) -> None:
         if self.environment is None:
@@ -82,6 +84,11 @@ class Simulation:
         # Build lookups for immutable robot/task lists
         self._robot_by_id: dict[RobotId, Robot] = {r.id: r for r in self.robots}
         self._task_by_id: dict[TaskId, Task] = {t.id: t for t in self.tasks}
+
+        # Initialize rescue_found tracking from environment rescue points
+        for rp_id in self.environment.rescue_points:
+            if rp_id not in self.rescue_found:
+                self.rescue_found[rp_id] = False
 
         # Record initial snapshot at t_now=0
         self.history[self.t_now] = self.snapshot()
@@ -202,7 +209,10 @@ class Simulation:
                 planned_moves[robot_id] = None
                 continue
 
-            goal = self._resolve_task_target_position(task, state.position)
+            if task.type == TaskType.SEARCH:
+                goal = self._compute_search_goal(robot_id, state)
+            else:
+                goal = self._resolve_task_target_position(task, state.position)
             if goal is None:
                 # No spatial constraint — robot works in place
                 planned_moves[robot_id] = None
@@ -358,6 +368,48 @@ class Simulation:
             eligible.append(robot_id)
 
         return eligible
+
+    def _compute_search_goal(self, robot_id: RobotId, state: RobotState) -> Position | None:
+        """Compute the roaming goal for a SEARCH robot.
+
+        Priority order:
+        1. Proximity lock: if any unfound rescue point is within Manhattan ≤ 4,
+           lock the robot onto that rescue point's position.
+        2. Keep current waypoint: if one is set and still reachable via A*.
+        3. Random walkable cell: pick a new random non-obstacle position.
+
+        Returns:
+            The goal Position, or None if the environment is fully blocked.
+        """
+        # Step 1: Proximity lock onto any nearby unfound rescue point
+        for rp in self.environment.rescue_points.values():
+            if self.rescue_found.get(rp.id):
+                continue
+            if state.position.manhattan(rp.position) <= 4:
+                state.current_waypoint = rp.position
+                return rp.position
+
+        # Step 2: Keep existing waypoint if reachable and not yet reached
+        if state.current_waypoint is not None and state.current_waypoint != state.position:
+            next_step = self.pathfinding_algorithm(
+                self.environment, state.position, state.current_waypoint
+            )
+            if next_step is not None:
+                return state.current_waypoint
+            # Waypoint unreachable — fall through to pick a new one
+            state.current_waypoint = None
+
+        # Step 3: Pick a random walkable position
+        env = self.environment
+        for _ in range(1000):
+            x = random.randint(0, env.width - 1)
+            y = random.randint(0, env.height - 1)
+            pos = Position(x, y)
+            if pos not in env.obstacles and pos != state.position:
+                state.current_waypoint = pos
+                return pos
+
+        return None
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
         """Resolve a task's spatial constraint to a concrete Position.
