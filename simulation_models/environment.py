@@ -18,6 +18,9 @@ from __future__ import annotations
 from .position import Position
 from .zone import Zone, ZoneId
 
+# RescuePoint imported inside methods to avoid circular imports at module load.
+# Environment → RescuePoint → Task → (no back-reference to Environment)
+
 class Obstacle:
     """Marker object representing an impassable obstacle on the grid."""
 
@@ -41,6 +44,7 @@ class Environment:
                       for _ in range(height)]
         self._zones: dict[ZoneId, Zone] = {}
         self._obstacles: set[Position] = set()
+        self._rescue_points: dict = {}  # dict[RescuePointId, RescuePoint]
 
     @property
     def width(self) -> int:
@@ -178,6 +182,31 @@ class Environment:
 
         # All validations passed - commit the zone
         self._zones[zone.id] = zone
+
+    def add_rescue_point(self, rp: object) -> None:
+        """
+        Register a RescuePoint in the environment.
+
+        Rescue points are metadata only — they are not placed in the grid.
+
+        Raises:
+            IndexError: If the position is out of bounds.
+            ValueError: If the position is on an obstacle.
+        """
+        if not self._position_in_bounds(rp.position):
+            raise IndexError(
+                f"Rescue point '{rp.name}' position {rp.position} is out of bounds"
+            )
+        if rp.position in self._obstacles:
+            raise ValueError(
+                f"Rescue point '{rp.name}' position {rp.position} is on an obstacle"
+            )
+        self._rescue_points[rp.id] = rp
+
+    @property
+    def rescue_points(self) -> dict:
+        """Return a shallow copy of the rescue points dict (RescuePointId → RescuePoint)."""
+        return dict(self._rescue_points)
 
     def in_bounds(self, pos: Position) -> bool:
         """Return True if `pos` is within the grid bounds."""

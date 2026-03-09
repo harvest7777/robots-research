@@ -6,6 +6,7 @@ from pathlib import Path
 from simulation_models.simulation import PathfindingAlgorithm, Simulation
 
 from .load_environment import load_environment
+from .load_rescue_points import load_rescue_points
 from .load_robot_states import load_robot_states
 from .load_robots import load_robots
 from .load_task_states import load_task_states
@@ -32,6 +33,11 @@ def load_simulation_from_dict(
         zones = load_zones(env_raw["zones"])
         for zone in zones:
             environment.add_zone(zone)
+
+    if "rescue_points" in env_raw:
+        rescue_points = load_rescue_points(env_raw["rescue_points"])
+        for rp in rescue_points:
+            environment.add_rescue_point(rp)
 
     if "robots" not in raw:
         raise KeyError("scenario missing required key: 'robots'")
