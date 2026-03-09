@@ -424,11 +424,6 @@ class Simulation:
         for robot_id in all_search_robot_ids:
             self.robot_states[robot_id].current_waypoint = None
 
-        print(
-            f"[t={self.t_now.tick}] '{rp.name}' found! "
-            f"Reassigning {len(all_search_robot_ids)} robot(s) to RESCUE task {rp.rescue_task_id}"
-        )
-
     def _compute_search_goal(self, robot_id: RobotId, state: RobotState) -> Position | None:
         """Compute the roaming goal for a SEARCH robot.
 
