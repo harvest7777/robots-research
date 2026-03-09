@@ -14,7 +14,6 @@ The Simulation class holds all state and data needed to run a simulation:
 from __future__ import annotations
 
 import dataclasses
-import random
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
@@ -32,6 +31,7 @@ from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 from simulation_models.movement_planner import resolve_collisions, resolve_task_target_position
+from simulation_models.search_goal import compute_search_goal
 from simulation_models.work_eligibility import get_eligible_robots
 
 PathfindingAlgorithm = Callable[
@@ -213,7 +213,12 @@ class Simulation:
                 continue
 
             if task.type == TaskType.SEARCH:
-                goal = self._compute_search_goal(robot_id, state)
+                goal, new_waypoint = compute_search_goal(
+                    state, self.environment.rescue_points, self.rescue_found,
+                    self.rescue_proximity_threshold, self.pathfinding_algorithm,
+                    self.environment,
+                )
+                state.current_waypoint = new_waypoint
             else:
                 goal = self._resolve_task_target_position(task, state.position)
             if goal is None:
@@ -339,48 +344,6 @@ class Simulation:
 
         for robot_id in all_search_robot_ids:
             self.robot_states[robot_id].current_waypoint = None
-
-    def _compute_search_goal(self, robot_id: RobotId, state: RobotState) -> Position | None:
-        """Compute the roaming goal for a SEARCH robot.
-
-        Priority order:
-        1. Proximity lock: if any unfound rescue point is within Manhattan ≤ 4,
-           lock the robot onto that rescue point's position.
-        2. Keep current waypoint: if one is set and still reachable via A*.
-        3. Random walkable cell: pick a new random non-obstacle position.
-
-        Returns:
-            The goal Position, or None if the environment is fully blocked.
-        """
-        # Step 1: Proximity lock onto any nearby unfound rescue point
-        for rp in self.environment.rescue_points.values():
-            if self.rescue_found.get(rp.id):
-                continue
-            if state.position.manhattan(rp.position) <= self.rescue_proximity_threshold:
-                state.current_waypoint = rp.position
-                return rp.position
-
-        # Step 2: Keep existing waypoint if reachable and not yet reached
-        if state.current_waypoint is not None and state.current_waypoint != state.position:
-            next_step = self.pathfinding_algorithm(
-                self.environment, state.position, state.current_waypoint
-            )
-            if next_step is not None:
-                return state.current_waypoint
-            # Waypoint unreachable — fall through to pick a new one
-            state.current_waypoint = None
-
-        # Step 3: Pick a random walkable position
-        env = self.environment
-        for _ in range(1000):
-            x = random.randint(0, env.width - 1)
-            y = random.randint(0, env.height - 1)
-            pos = Position(x, y)
-            if pos not in env.obstacles and pos != state.position:
-                state.current_waypoint = pos
-                return pos
-
-        return None
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
         return resolve_task_target_position(task, robot_pos, self.environment)
