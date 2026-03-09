@@ -178,7 +178,7 @@ class Simulation:
         moved_set = self._apply_robot_moves(planned_moves)
         eligible_by_task = self._snapshot_work_eligibility()
         self._advance_task_progress(eligible_by_task)
-        worked_set = self._mark_working_robots(eligible_by_task, moved_set)
+        worked_set = self._apply_robot_work(eligible_by_task, moved_set)
         self._mark_idle_robots(moved_set, worked_set)
 
         self.history[self.t_now] = self.snapshot()
@@ -295,7 +295,7 @@ class Simulation:
                 self.t_now,
             )
 
-    def _mark_working_robots(
+    def _apply_robot_work(
         self,
         eligible_by_task: dict[TaskId, list[RobotId]],
         moved_set: set[RobotId],
