@@ -68,6 +68,7 @@ class Simulation:
     dt: Time = field(default_factory=lambda: Time(1))
     history: dict[Time, SimulationSnapshot] = field(default_factory=dict)
     rescue_found: dict = field(default_factory=dict)  # dict[RescuePointId, bool]
+    rescue_proximity_threshold: int = 10  # Manhattan distance at which a SEARCH robot locks onto a rescue point
 
     def __post_init__(self) -> None:
         if self.environment is None:
@@ -444,7 +445,7 @@ class Simulation:
         for rp in self.environment.rescue_points.values():
             if self.rescue_found.get(rp.id):
                 continue
-            if state.position.manhattan(rp.position) <= 4:
+            if state.position.manhattan(rp.position) <= self.rescue_proximity_threshold:
                 state.current_waypoint = rp.position
                 return rp.position
 

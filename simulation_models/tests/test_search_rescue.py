@@ -61,7 +61,7 @@ def _make_search_sim(
     *,
     robot_pos: Position = Position(0, 0),
     rescue_pos: Position | None = None,
-    env_size: int = 10,
+    env_size: int = 20,
 ) -> Simulation:
     """Create a minimal simulation with one SEARCH robot and optional rescue point."""
     env = Environment(env_size, env_size)
@@ -130,11 +130,12 @@ def test_search_robot_picks_waypoint_when_none_set():
 
 
 # ---------------------------------------------------------------------------
-# 2. Search robot locks onto rescue point within distance 4
+# 2. Search robot locks onto rescue point within proximity threshold
 # ---------------------------------------------------------------------------
 
-def test_search_robot_locks_onto_rescue_point_within_distance_4():
-    rescue_pos = Position(4, 0)  # Manhattan distance 4 from (0,0)
+def test_search_robot_locks_onto_rescue_point_within_threshold():
+    # Default threshold is 10; place rescue at Manhattan distance 10 from robot
+    rescue_pos = Position(10, 0)  # Manhattan distance 10 from (0,0)
     sim = _make_search_sim(robot_pos=Position(0, 0), rescue_pos=rescue_pos)
     robot_id = RobotId(1)
     state = sim.robot_states[robot_id]
@@ -146,30 +147,29 @@ def test_search_robot_locks_onto_rescue_point_within_distance_4():
 
 
 # ---------------------------------------------------------------------------
-# 3. Search robot does NOT lock outside distance 5
+# 3. Search robot does NOT lock beyond proximity threshold
 # ---------------------------------------------------------------------------
 
-def test_search_robot_does_not_lock_outside_distance_5():
-    rescue_pos = Position(5, 0)  # Manhattan distance 5 from (0,0)
+def test_search_robot_does_not_lock_beyond_threshold():
+    # Default threshold is 10; place rescue at Manhattan distance 11 from robot
+    rescue_pos = Position(11, 0)  # Manhattan distance 11 from (0,0)
     sim = _make_search_sim(robot_pos=Position(0, 0), rescue_pos=rescue_pos)
     robot_id = RobotId(1)
     state = sim.robot_states[robot_id]
 
     goal = sim._compute_search_goal(robot_id, state)
 
-    # Should pick a random waypoint, not the rescue point at distance 5
+    # Should pick a random waypoint, not the rescue point beyond threshold
     assert goal != rescue_pos
 
 
 # ---------------------------------------------------------------------------
-# 4. Search robot immediately locks if it starts within Manhattan ≤ 4
+# 4. Search robot immediately locks if it starts within threshold
 # ---------------------------------------------------------------------------
 
-def test_search_robot_locks_immediately_if_starts_within_4():
+def test_search_robot_locks_immediately_if_starts_within_threshold():
     rescue_pos = Position(3, 3)
-    robot_pos = Position(0, 0)  # Manhattan = 6 — actually not within 4 here
-    # Use exact distance 4
-    robot_pos = Position(3, 7)  # Manhattan = 4
+    robot_pos = Position(3, 13)  # Manhattan = 10, exactly at threshold
     sim = _make_search_sim(robot_pos=robot_pos, rescue_pos=rescue_pos)
     robot_id = RobotId(1)
     state = sim.robot_states[robot_id]
@@ -363,7 +363,7 @@ def test_load_search_rescue_scenario():
     rp = list(rescue_points.values())[0]
     assert rp.id == RescuePointId(1)
     assert rp.name == "Survivor Alpha"
-    assert rp.position == Position(10, 10)
+    assert rp.position == Position(33, 33)
     assert rp.rescue_task_id == TaskId(20)
 
     task_types = {t.id: t.type for t in sim.tasks}
