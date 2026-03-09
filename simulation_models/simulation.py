@@ -162,27 +162,31 @@ class Simulation:
         )
 
     def _step(self) -> None:
-        """Execute one simulation tick.
-
-        Three-phase approach to prevent move-order and work-order bias:
-
-        Plan phase:      compute next positions for all robots before moving any.
-        Execute/move:    apply planned moves; track which robots moved.
-        Execute/work:    snapshot eligibility across all tasks, then apply work
-                         task-centrically so mid-loop completions cannot affect
-                         sibling tasks within the same tick.
-        """
-
-        # Advance simulation time
+        """Execute one simulation tick."""
         self.t_now = self.t_now.advance(self.dt)
 
         assignments = self._get_active_assignments()
-        #
-        robot_to_task: dict[RobotId, TaskId] = {
-            rid: a.task_id for a in assignments for rid in a.robot_ids
-        }
+        robot_to_task = self._map_robots_to_tasks(assignments)
+        self._apply_task_assignments(assignments)
 
-        # Update task assignment states based on active assignments
+        ctx = self._build_step_context(robot_to_task)
+        planned_moves = self._plan_robot_moves(ctx, robot_to_task)
+        planned_moves = self._resolve_robot_collisions(planned_moves)
+        for rp in self._find_rescue_discoveries(robot_to_task):
+            self._trigger_rescue_found(rp, robot_to_task)
+
+        moved_set = self._apply_robot_moves(planned_moves)
+        eligible_by_task = self._snapshot_work_eligibility()
+        self._advance_task_progress(eligible_by_task)
+        worked_set = self._mark_working_robots(eligible_by_task, moved_set)
+        self._mark_idle_robots(moved_set, worked_set)
+
+        self.history[self.t_now] = self.snapshot()
+
+    def _map_robots_to_tasks(self, assignments: list[Assignment]) -> dict[RobotId, TaskId]:
+        return {rid: a.task_id for a in assignments for rid in a.robot_ids}
+
+    def _apply_task_assignments(self, assignments: list[Assignment]) -> None:
         for task in self.tasks:
             task_state = self.task_states[task.id]
             assigned_robot_ids = {
@@ -190,8 +194,8 @@ class Simulation:
             }
             task.set_assignment(task_state, assigned_robot_ids)
 
-        # --- Plan phase ---
-        ctx = StepContext(
+    def _build_step_context(self, robot_to_task: dict[RobotId, TaskId]) -> StepContext:
+        return StepContext(
             robot_states=self.robot_states,
             task_states=self.task_states,
             robot_to_task=robot_to_task,
@@ -200,11 +204,9 @@ class Simulation:
             t_now=self.t_now,
         )
 
-        current_positions: dict[RobotId, Position] = {
-            robot_id: state.position
-            for robot_id, state in self.robot_states.items()
-        }
-
+    def _plan_robot_moves(
+        self, ctx: StepContext, robot_to_task: dict[RobotId, TaskId]
+    ) -> dict[RobotId, Position | None]:
         def _goal_resolver(robot_id: RobotId, state: RobotState) -> Position | None:
             task = self._task_by_id[robot_to_task[robot_id]]
             if task.type == TaskType.SEARCH:
@@ -217,15 +219,21 @@ class Simulation:
                 return goal
             return self._resolve_task_target_position(task, state.position)
 
-        planned_moves = plan_moves(ctx, self.pathfinding_algorithm, _goal_resolver)
+        return plan_moves(ctx, self.pathfinding_algorithm, _goal_resolver)
 
-        # --- Collision resolution ---
-        planned_moves = resolve_collisions(planned_moves, current_positions)
+    def _resolve_robot_collisions(
+        self, planned_moves: dict[RobotId, Position | None]
+    ) -> dict[RobotId, Position | None]:
+        current_positions: dict[RobotId, Position] = {
+            robot_id: state.position for robot_id, state in self.robot_states.items()
+        }
+        return resolve_collisions(planned_moves, current_positions)
 
-        # --- Post-plan rescue detection ---
-        # Check if any SEARCH robot has reached an unfound rescue point.
-        # Iterate in sorted robot_id order so the lowest-id robot wins if
-        # multiple robots land on the same point in the same tick.
+    def _find_rescue_discoveries(
+        self, robot_to_task: dict[RobotId, TaskId]
+    ) -> list[object]:
+        """Return rescue points reached by search robots this tick, lowest robot_id wins ties."""
+        discovered = []
         search_robot_ids = [
             rid for rid, tid in robot_to_task.items()
             if self._task_by_id[tid].type == TaskType.SEARCH
@@ -236,25 +244,29 @@ class Simulation:
                 if self.rescue_found.get(rp.id):
                     continue
                 if state.position == rp.position:
-                    self._trigger_rescue_found(rp, robot_to_task)
+                    discovered.append(rp)
                     break
+        return discovered
 
-        # --- Execute phase: movement ---
+    def _apply_robot_moves(
+        self, planned_moves: dict[RobotId, Position | None]
+    ) -> set[RobotId]:
         moved_set: set[RobotId] = set()
-
         for robot_id, next_pos in planned_moves.items():
             if next_pos is None:
                 continue
-            state = self.robot_states[robot_id]
             robot = self._robot_by_id[robot_id]
-            robot.step_to(state, next_pos)
+            robot.step_to(self.robot_states[robot_id], next_pos)
             moved_set.add(robot_id)
+        return moved_set
 
-        # --- Execute phase: work ---
-        # Snapshot eligibility against post-movement state before applying any
-        # work, so task completions mid-loop cannot affect sibling tasks'
-        # eligibility within the same tick.
-        eligible_by_task: dict[TaskId, list[RobotId]] = {
+    def _snapshot_work_eligibility(self) -> dict[TaskId, list[RobotId]]:
+        """Snapshot which robots are eligible to work on each task.
+
+        Computed before applying any work so that task completions mid-loop
+        cannot affect sibling tasks' eligibility within the same tick.
+        """
+        return {
             task.id: (
                 []
                 if task.type == TaskType.IDLE
@@ -270,27 +282,38 @@ class Simulation:
             for task in self.tasks
         }
 
-        # Apply work for each task using the snapshot, then update robot states.
-        worked_set: set[RobotId] = set()
+    def _advance_task_progress(
+        self, eligible_by_task: dict[TaskId, list[RobotId]]
+    ) -> None:
         for task in self.tasks:
             eligible = eligible_by_task[task.id]
             if not eligible:
                 continue
-            task_state = self.task_states[task.id]
-            task.apply_work(task_state, Time(self.dt.tick * len(eligible)), self.t_now)
-            for robot_id in eligible:
-                if robot_id not in moved_set:
-                    robot = self._robot_by_id[robot_id]
-                    robot.work(self.robot_states[robot_id])
-                    worked_set.add(robot_id)
+            task.apply_work(
+                self.task_states[task.id],
+                Time(self.dt.tick * len(eligible)),
+                self.t_now,
+            )
 
-        # Robots that neither moved nor worked this tick are idling.
+    def _mark_working_robots(
+        self,
+        eligible_by_task: dict[TaskId, list[RobotId]],
+        moved_set: set[RobotId],
+    ) -> set[RobotId]:
+        worked_set: set[RobotId] = set()
+        for task in self.tasks:
+            for robot_id in eligible_by_task[task.id]:
+                if robot_id not in moved_set:
+                    self._robot_by_id[robot_id].work(self.robot_states[robot_id])
+                    worked_set.add(robot_id)
+        return worked_set
+
+    def _mark_idle_robots(
+        self, moved_set: set[RobotId], worked_set: set[RobotId]
+    ) -> None:
         for robot_id, state in self.robot_states.items():
             if robot_id not in moved_set and robot_id not in worked_set:
                 self._robot_by_id[robot_id].idle(state)
-
-        # Record snapshot at new time
-        self.history[self.t_now] = self.snapshot()
 
     def _trigger_rescue_found(
         self, rp: object, robot_to_task: dict[RobotId, TaskId]
