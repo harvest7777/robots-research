@@ -22,6 +22,7 @@ class RobotStateSnapshot:
     x: float
     y: float
     battery_level: float
+    current_waypoint: tuple[int, int] | None = None
 
 
 @dataclass

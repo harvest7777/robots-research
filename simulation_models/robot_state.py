@@ -30,3 +30,4 @@ class RobotState:
     robot_id: RobotId
     position: Position
     battery_level: float = 1.0
+    current_waypoint: Position | None = None

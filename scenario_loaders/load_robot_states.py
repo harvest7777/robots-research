@@ -65,10 +65,27 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
                 f"got: {battery_level!r}"
             )
 
+        current_waypoint = None
+        waypoint_raw = state_raw.get("current_waypoint")
+        if waypoint_raw is not None:
+            if not isinstance(waypoint_raw, list) or len(waypoint_raw) != 2:
+                raise ValueError(
+                    f"robot_state {robot_id}: current_waypoint must be [x, y] or null, "
+                    f"got: {waypoint_raw!r}"
+                )
+            wx, wy = waypoint_raw
+            if not isinstance(wx, (int, float)) or not isinstance(wy, (int, float)):
+                raise ValueError(
+                    f"robot_state {robot_id}: current_waypoint coordinates must be numbers, "
+                    f"got: {waypoint_raw!r}"
+                )
+            current_waypoint = Position(int(wx), int(wy))
+
         robot_state = RobotState(
             robot_id=RobotId(robot_id),
             position=Position(int(x), int(y)),
             battery_level=float(battery_level),
+            current_waypoint=current_waypoint,
         )
         robot_states.append(robot_state)
 

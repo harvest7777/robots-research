@@ -40,6 +40,7 @@ class JsonSimulationStateService(BaseSimulationStateService):
                     "x": r.x,
                     "y": r.y,
                     "battery_level": r.battery_level,
+                    "current_waypoint": list(r.current_waypoint) if r.current_waypoint is not None else None,
                 }
                 for r in state.robots
             ],
@@ -72,6 +73,7 @@ class JsonSimulationStateService(BaseSimulationStateService):
                 x=r["x"],
                 y=r["y"],
                 battery_level=r["battery_level"],
+                current_waypoint=tuple(r["current_waypoint"]) if r.get("current_waypoint") is not None else None,
             )
             for r in data["robots"]
         ]
