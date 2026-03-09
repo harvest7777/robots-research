@@ -59,6 +59,7 @@ TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
 ROBOT_SYMBOL = "R"
 OBSTACLE_SYMBOL = "#"
 TASK_AREA_SYMBOL = "+"
+RESCUE_POINT_SYMBOL = "^"
 EMPTY_SYMBOL = "."
 
 
@@ -82,6 +83,10 @@ class SimulationView:
 
         row = self._render_tasks(frame, row)
         row += 1  # blank separator
+
+        if self.snapshot.env.rescue_points:
+            row = self._render_rescue_points(frame, row)
+            row += 1  # blank separator
 
         self._render_robot_activity(frame, row)
 
@@ -121,6 +126,9 @@ class SimulationView:
             robot_positions[cell] = rid
 
         targets, areas = self._compute_task_work_areas()
+        rescue_point_positions: set[Position] = {
+            rp.position for rp in env.rescue_points.values()
+        }
 
         for y in range(env.height):
             frame_row = start_row + y
@@ -132,6 +140,8 @@ class SimulationView:
                     symbol = ROBOT_SYMBOL
                 elif pos in env.obstacles:
                     symbol = OBSTACLE_SYMBOL
+                elif pos in rescue_point_positions:
+                    symbol = RESCUE_POINT_SYMBOL
                 elif pos in targets:
                     symbol = self._task_id_symbol(targets[pos])
                 elif pos in areas:
@@ -224,6 +234,27 @@ class SimulationView:
                     f"  Robot {robot.id} ({rstate.position.x:.2f},{rstate.position.y:.2f})"
                     f" is idle"
                 )
+            stamp(frame, row, 0, text)
+            row += 1
+
+        return row
+
+    def _render_rescue_points(self, frame: Frame, start_row: int) -> int:
+        row = start_row
+        if row >= len(frame):
+            return row
+        stamp(frame, row, 0, "Rescue Points:")
+        row += 1
+
+        for rp in sorted(self.snapshot.env.rescue_points.values(), key=lambda r: r.id):
+            if row >= len(frame):
+                break
+            found = self.snapshot.rescue_found.get(rp.id, False)
+            status = "FOUND!" if found else "      "
+            text = (
+                f"  {RESCUE_POINT_SYMBOL} [{status}] {rp.name}"
+                f" at ({rp.position.x},{rp.position.y})"
+            )
             stamp(frame, row, 0, text)
             row += 1
 
