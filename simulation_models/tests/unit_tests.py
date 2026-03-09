@@ -518,6 +518,61 @@ def test_returns_empty_when_robot_is_just_outside_position_max_distance():
     assert result == []
 
 
+def test_returns_robot_id_when_robot_is_within_goal_epsilon_of_position_target():
+    # Arrange: max_distance=0 (exact), but robot is 0.3 units away — within _AT_GOAL_EPS (0.5)
+    # The movement phase stops here; eligibility must agree.
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+        spatial_constraint=SpatialConstraint(target=Position(0.0, 0.0), max_distance=0),
+    )
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
+    robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
+    robot_state = RobotState(robot_id=RobotId(1), position=Position(0.3, 0.0))
+
+    # Act
+    result = Simulation._get_eligible_robot_ids_for_task(
+        task,
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
+        environment=Environment(width=5, height=5),
+        time=Time(0),
+    )
+
+    # Assert
+    assert result == [RobotId(1)]
+
+
+def test_returns_empty_when_robot_is_outside_goal_epsilon_of_position_target():
+    # Arrange: max_distance=0, robot is 0.6 units away — outside _AT_GOAL_EPS (0.5)
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=1,
+        required_work_time=Time(1),
+        spatial_constraint=SpatialConstraint(target=Position(0.0, 0.0), max_distance=0),
+    )
+    task_state = TaskState(task_id=TaskId(1), status=TaskStatus.ASSIGNED, assigned_robot_ids={RobotId(1)})
+    robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1.0)
+    robot_state = RobotState(robot_id=RobotId(1), position=Position(0.6, 0.0))
+
+    # Act
+    result = Simulation._get_eligible_robot_ids_for_task(
+        task,
+        task_states={TaskId(1): task_state},
+        robots={RobotId(1): robot},
+        robot_states={RobotId(1): robot_state},
+        environment=Environment(width=5, height=5),
+        time=Time(0),
+    )
+
+    # Assert
+    assert result == []
+
+
 # ---------------------------------------------------------------------------
 # Spatial constraint — Zone target  (⚠ zone check not yet implemented)
 # ---------------------------------------------------------------------------

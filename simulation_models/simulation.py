@@ -363,7 +363,8 @@ class Simulation:
             if task.spatial_constraint is not None:
                 sc = task.spatial_constraint
                 if isinstance(sc.target, Position):
-                    if state.position.distance(sc.target) > sc.max_distance:
+                    tolerance = sc.max_distance if sc.max_distance > 0 else _AT_GOAL_EPS
+                    if state.position.distance(sc.target) > tolerance:
                         continue
                 else:
                     zone = environment.get_zone(sc.target)
