@@ -67,7 +67,7 @@ def load_robot_states(raw: list[dict[str, Any]]) -> list[RobotState]:
 
         robot_state = RobotState(
             robot_id=RobotId(robot_id),
-            position=Position(float(x), float(y)),
+            position=Position(int(x), int(y)),
             battery_level=float(battery_level),
         )
         robot_states.append(robot_state)
