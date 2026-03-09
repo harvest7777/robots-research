@@ -59,7 +59,6 @@ def test_proximity_lock_returns_rescue_point_when_within_threshold():
     )
 
     assert goal == Position(3, 0)
-    assert goal == Position(3, 0)
 
 
 def test_proximity_lock_not_triggered_when_outside_threshold():
@@ -117,7 +116,6 @@ def test_keeps_existing_reachable_waypoint():
     )
 
     assert goal == waypoint
-    assert goal == waypoint
 
 
 def test_clears_unreachable_waypoint_and_picks_new_random():
@@ -136,7 +134,6 @@ def test_clears_unreachable_waypoint_and_picks_new_random():
 
     # Waypoint was unreachable — should pick the only other walkable cell
     assert goal == Position(1, 0)
-    assert goal == Position(1, 0)
 
 
 def test_robot_at_waypoint_falls_through_to_new_random():
@@ -154,7 +151,6 @@ def test_robot_at_waypoint_falls_through_to_new_random():
         environment=env,
     )
 
-    assert goal == Position(1, 0)
     assert goal == Position(1, 0)
 
 
@@ -177,7 +173,6 @@ def test_picks_random_walkable_cell_when_no_waypoint():
     )
 
     assert goal == Position(1, 0)
-    assert goal == Position(1, 0)
 
 
 # ---------------------------------------------------------------------------
@@ -198,7 +193,6 @@ def test_returns_none_when_no_walkable_cell_exists():
         environment=env,
     )
 
-    assert goal is None
     assert goal is None
 
 

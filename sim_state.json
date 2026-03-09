@@ -1,76 +1,76 @@
 {
   "scenario_id": "search_rescue",
-  "current_tick": 53,
+  "current_tick": 25,
   "max_tick": 500,
   "robots": [
     {
       "robot_id": 1,
-      "x": 20,
-      "y": 33,
-      "battery_level": 0.947,
+      "x": 0,
+      "y": 25,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 2,
-      "x": 28,
-      "y": 33,
-      "battery_level": 0.9495000000000002,
+      "x": 26,
+      "y": 12,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 3,
-      "x": 27,
+      "x": 19,
       "y": 33,
-      "battery_level": 0.9500000000000003,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 4,
       "x": 33,
       "y": 33,
-      "battery_level": 0.9075,
+      "battery_level": 0.9635,
       "current_waypoint": null
     },
     {
       "robot_id": 5,
-      "x": 30,
+      "x": 12,
       "y": 33,
-      "battery_level": 0.9520000000000005,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 6,
-      "x": 32,
-      "y": 33,
-      "battery_level": 0.9625000000000017,
+      "x": 27,
+      "y": 31,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 7,
-      "x": 29,
-      "y": 33,
-      "battery_level": 0.9505000000000003,
+      "x": 21,
+      "y": 24,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 8,
-      "x": 31,
+      "x": 25,
       "y": 33,
-      "battery_level": 0.9580000000000012,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 9,
-      "x": 25,
-      "y": 33,
-      "battery_level": 0.9495000000000002,
+      "x": 4,
+      "y": 29,
+      "battery_level": 0.975,
       "current_waypoint": null
     },
     {
       "robot_id": 10,
       "x": 26,
-      "y": 33,
-      "battery_level": 0.9505000000000003,
+      "y": 22,
+      "battery_level": 0.975,
       "current_waypoint": null
     }
   ],
@@ -83,9 +83,20 @@
     },
     {
       "task_id": 20,
-      "status": "done",
-      "work_done_ticks": 40,
-      "assigned_robot_ids": []
+      "status": "in_progress",
+      "work_done_ticks": 12,
+      "assigned_robot_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
     },
     {
       "task_id": 0,

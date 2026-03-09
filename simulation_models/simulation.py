@@ -177,6 +177,7 @@ class Simulation:
         self.t_now = self.t_now.advance(self.dt)
 
         assignments = self._get_active_assignments()
+        #
         robot_to_task: dict[RobotId, TaskId] = {
             rid: a.task_id for a in assignments for rid in a.robot_ids
         }
