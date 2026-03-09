@@ -254,6 +254,23 @@ class Simulation:
             else:
                 claimed[next_pos] = robot_id
 
+        # --- Post-plan rescue detection ---
+        # Check if any SEARCH robot has reached an unfound rescue point.
+        # Iterate in sorted robot_id order so the lowest-id robot wins if
+        # multiple robots land on the same point in the same tick.
+        search_robot_ids = [
+            rid for rid, tid in robot_to_task.items()
+            if self._task_by_id[tid].type == TaskType.SEARCH
+        ]
+        for robot_id in sorted(search_robot_ids):
+            state = self.robot_states[robot_id]
+            for rp in self.environment.rescue_points.values():
+                if self.rescue_found.get(rp.id):
+                    continue
+                if state.position == rp.position:
+                    self._trigger_rescue_found(rp, robot_to_task)
+                    break
+
         # --- Execute phase: movement ---
         moved_set: set[RobotId] = set()
 
@@ -368,6 +385,48 @@ class Simulation:
             eligible.append(robot_id)
 
         return eligible
+
+    def _trigger_rescue_found(
+        self, rp: object, robot_to_task: dict[RobotId, TaskId]
+    ) -> None:
+        """Mark a rescue point found and reassign all SEARCH robots to its RESCUE task.
+
+        Effects:
+        1. Sets rescue_found[rp.id] = True.
+        2. Collects all robot IDs currently on any SEARCH task.
+        3. Adds an assignment for the RESCUE task covering all search robots.
+        4. Marks all SEARCH tasks DONE (so the simulation can terminate).
+        5. Clears current_waypoint for all reassigned robots.
+        """
+        self.rescue_found[rp.id] = True
+
+        all_search_robot_ids = [
+            rid for rid, tid in robot_to_task.items()
+            if self._task_by_id[tid].type == TaskType.SEARCH
+        ]
+
+        if self.assignment_service is not None:
+            self.assignment_service.add_assignments([
+                Assignment(
+                    task_id=rp.rescue_task_id,
+                    robot_ids=frozenset(all_search_robot_ids),
+                    assign_at=self.t_now,
+                )
+            ])
+
+        # Mark SEARCH tasks done so the simulation termination check passes
+        for task in self.tasks:
+            if task.type == TaskType.SEARCH:
+                task_state = self.task_states[task.id]
+                task.mark_done(task_state, self.t_now)
+
+        for robot_id in all_search_robot_ids:
+            self.robot_states[robot_id].current_waypoint = None
+
+        print(
+            f"[t={self.t_now.tick}] '{rp.name}' found! "
+            f"Reassigning {len(all_search_robot_ids)} robot(s) to RESCUE task {rp.rescue_task_id}"
+        )
 
     def _compute_search_goal(self, robot_id: RobotId, state: RobotState) -> Position | None:
         """Compute the roaming goal for a SEARCH robot.
