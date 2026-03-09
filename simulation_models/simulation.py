@@ -31,6 +31,7 @@ from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
 from simulation_models.movement_planner import resolve_collisions, resolve_task_target_position
+from simulation_models.rescue_handler import compute_rescue_effect
 from simulation_models.search_goal import compute_search_goal
 from simulation_models.work_eligibility import get_eligible_robots
 
@@ -311,38 +312,17 @@ class Simulation:
     def _trigger_rescue_found(
         self, rp: object, robot_to_task: dict[RobotId, TaskId]
     ) -> None:
-        """Mark a rescue point found and reassign all SEARCH robots to its RESCUE task.
+        effect = compute_rescue_effect(rp, robot_to_task, self._task_by_id, self.tasks, self.t_now)
 
-        Effects:
-        1. Sets rescue_found[rp.id] = True.
-        2. Collects all robot IDs currently on any SEARCH task.
-        3. Adds an assignment for the RESCUE task covering all search robots.
-        4. Marks all SEARCH tasks DONE (so the simulation can terminate).
-        5. Clears current_waypoint for all reassigned robots.
-        """
-        self.rescue_found[rp.id] = True
-
-        all_search_robot_ids = [
-            rid for rid, tid in robot_to_task.items()
-            if self._task_by_id[tid].type == TaskType.SEARCH
-        ]
+        self.rescue_found.update(effect.rescue_found_updates)
 
         if self.assignment_service is not None:
-            self.assignment_service.add_assignments([
-                Assignment(
-                    task_id=rp.rescue_task_id,
-                    robot_ids=frozenset(all_search_robot_ids),
-                    assign_at=self.t_now,
-                )
-            ])
+            self.assignment_service.add_assignments([effect.new_assignment])
 
-        # Mark SEARCH tasks done so the simulation termination check passes
-        for task in self.tasks:
-            if task.type == TaskType.SEARCH:
-                task_state = self.task_states[task.id]
-                task.mark_done(task_state, self.t_now)
+        for task_id in effect.tasks_to_mark_done:
+            self._task_by_id[task_id].mark_done(self.task_states[task_id], self.t_now)
 
-        for robot_id in all_search_robot_ids:
+        for robot_id in effect.waypoints_to_clear:
             self.robot_states[robot_id].current_waypoint = None
 
     def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
