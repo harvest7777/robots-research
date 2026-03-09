@@ -419,10 +419,11 @@ class Simulation:
         if zone is None:
             return None
 
-        return min(
+        nearest = min(
             zone.cells,
             key=lambda cell: abs(cell.x - robot_pos.x) + abs(cell.y - robot_pos.y),
         )
+        return Position(nearest.x + 0.5, nearest.y + 0.5)
 
     def _get_active_assignments(self) -> list[Assignment]:
         """Return the active assignments at t_now via the assignment service."""
