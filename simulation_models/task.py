@@ -44,6 +44,8 @@ class TaskType(Enum):
     EMERGENCY_RESPONSE = "emergency_response"
     PICKUP = "pickup"
     IDLE = "idle"
+    SEARCH = "search"
+    RESCUE = "rescue"
 
 
 @dataclass(frozen=True)

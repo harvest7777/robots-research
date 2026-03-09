@@ -9,7 +9,7 @@ Assigns robots to tasks based on capability matching.
 
 from simulation_models.assignment import Assignment, RobotId
 from simulation_models.robot import Robot
-from simulation_models.task import Task
+from simulation_models.task import Task, TaskType
 from simulation_models.time import Time
 
 
@@ -31,6 +31,8 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
     assigned_robots: set[RobotId] = set()
 
     for task in tasks:
+        if task.type in (TaskType.SEARCH, TaskType.RESCUE):
+            continue
         for robot in robots:
             if robot.id in assigned_robots:
                 continue

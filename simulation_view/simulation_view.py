@@ -41,6 +41,8 @@ TASK_TYPE_LABELS: dict[TaskType, str] = {
     TaskType.EMERGENCY_RESPONSE: "ER",
     TaskType.PICKUP: "PU",
     TaskType.IDLE: "--",
+    TaskType.SEARCH: "SR",
+    TaskType.RESCUE: "RS",
 }
 
 TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
@@ -50,6 +52,8 @@ TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
     TaskType.EMERGENCY_RESPONSE: "Emergency Response",
     TaskType.PICKUP: "Pickup",
     TaskType.IDLE: "Idle",
+    TaskType.SEARCH: "Search",
+    TaskType.RESCUE: "Rescue",
 }
 
 ROBOT_SYMBOL = "R"
