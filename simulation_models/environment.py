@@ -15,6 +15,8 @@ Core invariant:
 """
 from __future__ import annotations
 
+from types import MappingProxyType
+
 from .position import Position
 from .zone import Zone, ZoneId
 
@@ -102,8 +104,7 @@ class Environment:
         """
         if not self._position_in_bounds(pos):
             raise IndexError(f"Invalid position {pos}")
-        cx, cy = self._cell(pos)
-        return self._grid[cy][cx]
+        return self._grid[pos.y][pos.x]
 
     def is_empty(self, pos: Position) -> bool:
         """
@@ -126,10 +127,9 @@ class Environment:
         """
         if not self._position_in_bounds(pos):
             raise IndexError(f"Invalid position {pos}")
-        cx, cy = self._cell(pos)
-        if self._grid[cy][cx] is not None:
+        if self._grid[pos.y][pos.x] is not None:
             raise ValueError("Position occupied")
-        self._grid[cy][cx] = obj
+        self._grid[pos.y][pos.x] = obj
 
     @property
     def obstacles(self) -> frozenset[Position]:
@@ -205,8 +205,8 @@ class Environment:
 
     @property
     def rescue_points(self) -> dict:  # dict[RescuePointId, RescuePoint] — typed at call sites
-        """Return a shallow copy of the rescue points dict (RescuePointId → RescuePoint)."""
-        return dict(self._rescue_points)
+        """Return a read-only view of the rescue points dict (RescuePointId → RescuePoint)."""
+        return MappingProxyType(self._rescue_points)
 
     def in_bounds(self, pos: Position) -> bool:
         """Return True if `pos` is within the grid bounds."""
@@ -215,10 +215,6 @@ class Environment:
     def get_zone(self, zone_id: ZoneId) -> Zone | None:
         """Return the Zone with the given ID, or None if not found."""
         return self._zones.get(zone_id)
-
-    def _cell(self, pos: Position) -> tuple[int, int]:
-        """Return grid cell indices (col, row) for a Position."""
-        return (pos.x, pos.y)
 
     def _get_zone_id_at(self, pos: Position) -> ZoneId | None:
         """Return the zone ID containing `pos`, or None if not in any zone."""
