@@ -95,8 +95,8 @@ class Simulation:
             if rp_id not in self.rescue_found:
                 self.rescue_found[rp_id] = False
 
-        # Record initial snapshot at t_now=0
-        self.history[self.t_now] = self.snapshot()
+        # Record initial snapshot at t_now=0 (no active assignments yet)
+        self.history[self.t_now] = self.snapshot([])
 
     def _validate_ready(self) -> None:
         """Validate that simulation is ready to step.
@@ -167,6 +167,7 @@ class Simulation:
 
         assignments = self._get_active_assignments()
         robot_to_task = self._map_robots_to_tasks(assignments)
+
         self._apply_task_assignments(assignments)
 
         ctx = self._build_step_context(robot_to_task)
@@ -181,7 +182,7 @@ class Simulation:
         worked_set = self._apply_robot_work(eligible_by_task, moved_set)
         self._mark_idle_robots(moved_set, worked_set)
 
-        self.history[self.t_now] = self.snapshot()
+        self.history[self.t_now] = self.snapshot(assignments)
 
     def _map_robots_to_tasks(self, assignments: list[Assignment]) -> dict[RobotId, TaskId]:
         return {rid: a.task_id for a in assignments for rid in a.robot_ids}
@@ -335,16 +336,28 @@ class Simulation:
             return []
         return self.assignment_service.get_assignments_for_time(self.t_now)
 
-    def snapshot(self) -> SimulationSnapshot:
+    def snapshot(self, active_assignments: list[Assignment] | None = None) -> SimulationSnapshot:
         """
         Create a read-only snapshot of current simulation state.
 
         The snapshot contains copies of all mutable state, so modifications to
         the returned snapshot will not affect the live simulation.
 
+        Args:
+            active_assignments: Active assignments at the current tick. If not
+                provided, they are fetched from the assignment service. Pass the
+                assignments already retrieved this tick to avoid a second lookup.
+
         Returns:
             SimulationSnapshot with copied state data wrapped in immutable views.
         """
+        if active_assignments is None:
+            active_assignments = (
+                self.assignment_service.get_assignments_for_time(self.t_now)
+                if self.assignment_service is not None
+                else []
+            )
+
         # Copy robot states (shallow copy is sufficient; fields are primitives)
         robot_states_copy = {
             rid: dataclasses.replace(state)
@@ -363,12 +376,6 @@ class Simulation:
             )
             for tid, state in self.task_states.items()
         }
-
-        active_assignments = (
-            self.assignment_service.get_assignments_for_time(self.t_now)
-            if self.assignment_service is not None
-            else []
-        )
 
         return SimulationSnapshot(
             env=self.environment,
