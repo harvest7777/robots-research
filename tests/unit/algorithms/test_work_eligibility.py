@@ -4,7 +4,7 @@ from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotState
-from simulation.engine.step_context import StepContext
+from simulation.domain.step_context import StepContext
 from simulation.domain.task import Task, TaskId, TaskType, SpatialConstraint
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
 from simulation.domain.task_state import TaskState, TaskStatus

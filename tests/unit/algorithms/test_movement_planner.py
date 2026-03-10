@@ -7,7 +7,7 @@ from simulation.domain.task_state import TaskState, TaskStatus
 from simulation.primitives.time import Time
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
 from simulation.algorithms.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
-from simulation.engine.step_context import StepContext
+from simulation.domain.step_context import StepContext
 
 
 # ---------------------------------------------------------------------------
