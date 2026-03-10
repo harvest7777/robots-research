@@ -6,8 +6,6 @@ import time
 from pathlib import Path
 
 from scenario_loaders import load_simulation
-from coordinator_algorithms import simple_assign
-from pathfinding_algorithms import astar_pathfind
 from services import (
     JsonAssignmentService,
     JsonSimulationStateService,
@@ -15,9 +13,9 @@ from services import (
     SimulationState,
     TaskStateSnapshot,
 )
-from simulation.domain.assignment import Assignment
-from simulation.domain.robot_state import RobotId
 from simulation.engine.snapshot import SimulationSnapshot
+from simulation.algorithms.simple_assignment import simple_assign
+from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.task import Task, TaskId, TaskType
 from simulation.domain.task_state import TaskState
 from simulation.primitives.time import Time
