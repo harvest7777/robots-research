@@ -14,6 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from simulation_models.environment import Environment
+from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotId, RobotState
 from simulation_models.task import Task, TaskId
 from simulation_models.task_state import TaskState
@@ -28,6 +29,7 @@ class StepContext:
         robot_states:  Live mutable state for every robot, keyed by robot_id.
         task_states:   Live mutable state for every task, keyed by task_id.
         robot_to_task: Active assignment map: robot_id → task_id.
+        robot_by_id:   Immutable robot definitions, keyed by robot_id.
         task_by_id:    Immutable task definitions, keyed by task_id.
         environment:   The grid environment (immutable during a step).
         t_now:         Current simulation time at the start of this tick.
@@ -36,6 +38,7 @@ class StepContext:
     robot_states: dict[RobotId, RobotState]
     task_states: dict[TaskId, TaskState]
     robot_to_task: dict[RobotId, TaskId]
+    robot_by_id: dict[RobotId, Robot]
     task_by_id: dict[TaskId, Task]
     environment: Environment
     t_now: Time

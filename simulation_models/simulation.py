@@ -22,7 +22,7 @@ from simulation_models.robot_state import RobotId
 from services.base_assignment_service import BaseAssignmentService
 from simulation_models.environment import Environment
 from simulation_models.position import Position
-from simulation_models.rescue_point import RescuePointId
+from simulation_models.rescue_point import RescuePointId, RescuePoint
 from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
 from simulation_models.simulation_result import SimulationResult
@@ -160,7 +160,7 @@ class Simulation:
             self._trigger_rescue_found(rescue_point, robot_to_task)
 
         moved_set = self._apply_robot_moves(planned_moves)
-        eligible_by_task = self._snapshot_work_eligibility()
+        eligible_by_task = self._snapshot_work_eligibility(ctx)
         self._advance_task_progress(eligible_by_task)
         worked_set = self._apply_robot_work(eligible_by_task, moved_set)
         self._mark_idle_robots(moved_set, worked_set)
@@ -183,6 +183,7 @@ class Simulation:
             robot_states=self.robot_states,
             task_states=self.task_states,
             robot_to_task=robot_to_task,
+            robot_by_id=self._robot_by_id,
             task_by_id=self._task_by_id,
             environment=self.environment,
             t_now=self.t_now,
@@ -242,25 +243,14 @@ class Simulation:
             moved_set.add(robot_id)
         return moved_set
 
-    def _snapshot_work_eligibility(self) -> dict[TaskId, list[RobotId]]:
+    def _snapshot_work_eligibility(self, ctx: StepContext) -> dict[TaskId, list[RobotId]]:
         """Snapshot which robots are eligible to work on each task.
 
         Computed before applying any work so that task completions mid-loop
         cannot affect sibling tasks' eligibility within the same tick.
         """
         return {
-            task.id: (
-                []
-                if task.type == TaskType.IDLE
-                else get_eligible_robots(
-                    task,
-                    self.task_states,
-                    self._robot_by_id,
-                    self.robot_states,
-                    self.environment,
-                    self.t_now,
-                )
-            )
+            task.id: [] if task.type == TaskType.IDLE else get_eligible_robots(task, ctx)
             for task in self.tasks
         }
 

@@ -179,6 +179,7 @@ def _make_ctx(
             task_id=task_id, status=task_status, assigned_robot_ids={robot_id}
         )},
         robot_to_task={robot_id: task_id},
+        robot_by_id={},
         task_by_id={task_id: Task(
             id=task_id, type=task_type, priority=1, required_work_time=Time(1)
         )},
@@ -200,6 +201,7 @@ def test_plan_moves_unassigned_robot_gets_none():
         robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
         task_states={},
         robot_to_task={},
+        robot_by_id={},
         task_by_id={},
         environment=Environment(width=5, height=5),
         t_now=Time(0),
@@ -291,6 +293,7 @@ def test_plan_moves_covers_all_robots():
             t2: TaskState(task_id=t2, status=TaskStatus.ASSIGNED, assigned_robot_ids={r2}),
         },
         robot_to_task={r1: t1, r2: t2},
+        robot_by_id={},
         task_by_id={
             t1: Task(id=t1, type=TaskType.ROUTINE_INSPECTION, priority=1, required_work_time=Time(1)),
             t2: Task(id=t2, type=TaskType.ROUTINE_INSPECTION, priority=1, required_work_time=Time(1)),
