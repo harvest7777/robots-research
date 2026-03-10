@@ -1,106 +1,163 @@
 {
-  "scenario_id": "search_rescue",
-  "current_tick": 25,
+  "scenario_id": "test_no_robot_collisions",
+  "current_tick": 21,
   "max_tick": 500,
   "robots": [
     {
       "robot_id": 1,
-      "x": 0,
-      "y": 25,
-      "battery_level": 0.975,
+      "x": 19,
+      "y": 2,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 2,
-      "x": 26,
-      "y": 12,
-      "battery_level": 0.975,
+      "x": 19,
+      "y": 7,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 3,
       "x": 19,
-      "y": 33,
-      "battery_level": 0.975,
+      "y": 12,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 4,
-      "x": 33,
-      "y": 33,
-      "battery_level": 0.9635,
+      "x": 19,
+      "y": 17,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 5,
-      "x": 12,
-      "y": 33,
-      "battery_level": 0.975,
+      "x": 19,
+      "y": 4,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 6,
-      "x": 27,
-      "y": 31,
-      "battery_level": 0.975,
+      "x": 3,
+      "y": 19,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 7,
-      "x": 21,
-      "y": 24,
-      "battery_level": 0.975,
+      "x": 8,
+      "y": 19,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 8,
-      "x": 25,
-      "y": 33,
-      "battery_level": 0.975,
+      "x": 13,
+      "y": 19,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 9,
-      "x": 4,
-      "y": 29,
-      "battery_level": 0.975,
+      "x": 18,
+      "y": 19,
+      "battery_level": 0.977,
       "current_waypoint": null
     },
     {
       "robot_id": 10,
-      "x": 26,
-      "y": 22,
-      "battery_level": 0.975,
+      "x": 6,
+      "y": 19,
+      "battery_level": 0.977,
       "current_waypoint": null
     }
   ],
   "tasks": [
     {
-      "task_id": 10,
+      "task_id": 1,
       "status": "done",
-      "work_done_ticks": 120,
-      "assigned_robot_ids": []
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        1
+      ]
     },
     {
-      "task_id": 20,
-      "status": "in_progress",
-      "work_done_ticks": 12,
+      "task_id": 2,
+      "status": "done",
+      "work_done_ticks": 3,
       "assigned_robot_ids": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
+        2
+      ]
+    },
+    {
+      "task_id": 3,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        3
+      ]
+    },
+    {
+      "task_id": 4,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        4
+      ]
+    },
+    {
+      "task_id": 5,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        5
+      ]
+    },
+    {
+      "task_id": 6,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        6
+      ]
+    },
+    {
+      "task_id": 7,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        7
+      ]
+    },
+    {
+      "task_id": 8,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        8
+      ]
+    },
+    {
+      "task_id": 9,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
+        9
+      ]
+    },
+    {
+      "task_id": 10,
+      "status": "done",
+      "work_done_ticks": 3,
+      "assigned_robot_ids": [
         10
       ]
     },
     {
       "task_id": 0,
-      "status": "unassigned",
+      "status": "pending",
       "work_done_ticks": 0,
       "assigned_robot_ids": []
     }
