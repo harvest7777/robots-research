@@ -18,9 +18,9 @@ from __future__ import annotations
 from types import MappingProxyType
 from typing import Mapping
 
-from .position import Position
-from .rescue_point import RescuePoint, RescuePointId
-from .zone import Zone, ZoneId
+from simulation.primitives.position import Position
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.primitives.zone import Zone, ZoneId
 
 class Obstacle:
     """Marker object representing an impassable obstacle on the grid."""
