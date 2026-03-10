@@ -7,12 +7,10 @@ This module separates:
 - `Robot`: immutable robot definition (capabilities, speed)
 - `RobotState`: mutable runtime state (position, battery)
 
-The robot updates runtime state but:
-- Does NOT own tasks
-- Does NOT make decisions
-- Does NOT enforce invariants
-
-The robot is a dumb executor. All coordination lives in the Simulation.
+State mutation is handled by free functions (`move_robot`, `work_robot`,
+`idle_robot`) rather than methods on `Robot`, because `Robot` carries no
+per-instance data that these operations depend on. The functions are named
+explicitly to make call sites self-describing.
 """
 
 from __future__ import annotations
@@ -33,13 +31,10 @@ _DRAIN_IDLE_PER_TICK = 0.0005  # per tick idle
 @dataclass(frozen=True)
 class Robot:
     """
-    Immutable robot definition + execution model.
+    Immutable robot definition.
 
-    The robot:
-    - Executes movement and work
-    - Updates physical state via `RobotState` (position, battery)
-    - Does NOT know what a task is
-    - Does NOT decide what to work on
+    Carries identity and capability data only. All state mutation is done
+    by the free functions in this module.
 
     speed: cells moved per tick (each cell step is collision-checked separately).
     """
@@ -48,26 +43,29 @@ class Robot:
     capabilities: frozenset[Capability]
     speed: int = 1
 
-    def step_to(self, state: RobotState, target: Position) -> None:
-        """
-        Teleport robot to an adjacent cell.
 
-        The caller is responsible for ensuring `target` is exactly one
-        cardinal step away and is not blocked. Drains battery for movement.
-        """
-        state.position = target
-        state.battery_level -= _DRAIN_MOVE_PER_TICK
+# ---------------------------------------------------------------------------
+# State-mutation functions
+# ---------------------------------------------------------------------------
 
-    def work(self, state: RobotState) -> None:
-        """
-        Apply one tick of work effort. Drains battery.
+def move_robot(state: RobotState, target: Position) -> None:
+    """Move the robot to an adjacent cell and drain movement battery.
 
-        The robot does NOT know what task is being worked on.
-        """
-        state.battery_level -= _DRAIN_WORK_PER_TICK
+    The caller is responsible for ensuring `target` is exactly one
+    cardinal step away and is not blocked.
+    """
+    state.position = target
+    state.battery_level -= _DRAIN_MOVE_PER_TICK
 
-    def idle(self, state: RobotState) -> None:
-        """
-        Robot is idle for one tick. Applies minimal battery drain.
-        """
-        state.battery_level -= _DRAIN_IDLE_PER_TICK
+
+def work_robot(state: RobotState) -> None:
+    """Apply one tick of work effort and drain work battery.
+
+    The robot does not know what task is being worked on.
+    """
+    state.battery_level -= _DRAIN_WORK_PER_TICK
+
+
+def idle_robot(state: RobotState) -> None:
+    """Apply one tick of idle drain."""
+    state.battery_level -= _DRAIN_IDLE_PER_TICK

@@ -23,7 +23,7 @@ from services.base_assignment_service import BaseAssignmentService
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.rescue_point import RescuePointId, RescuePoint
-from simulation.domain.robot import Robot
+from simulation.domain.robot import Robot, move_robot, work_robot, idle_robot
 from simulation.domain.robot_state import RobotState
 from simulation.engine.simulation_result import SimulationResult
 from simulation.engine.snapshot import SimulationSnapshot
@@ -226,8 +226,7 @@ class Simulation:
         for robot_id, next_pos in planned_moves.items():
             if next_pos is None:
                 continue
-            robot = self._robot_by_id[robot_id]
-            robot.step_to(self.robot_states[robot_id], next_pos)
+            move_robot(self.robot_states[robot_id], next_pos)
             moved_set.add(robot_id)
         return moved_set
 
@@ -265,7 +264,7 @@ class Simulation:
         for task in self.tasks:
             for robot_id in eligible_by_task[task.id]:
                 if robot_id not in moved_set:
-                    self._robot_by_id[robot_id].work(self.robot_states[robot_id])
+                    work_robot(self.robot_states[robot_id])
                     worked_set.add(robot_id)
         return worked_set
 
@@ -274,7 +273,7 @@ class Simulation:
     ) -> None:
         for robot_id, state in self.robot_states.items():
             if robot_id not in moved_set and robot_id not in worked_set:
-                self._robot_by_id[robot_id].idle(state)
+                idle_robot(state)
 
     def _trigger_rescue_found(
         self, rescue_point: RescuePoint, assignments: list[Assignment]
