@@ -171,12 +171,12 @@ def _make_ctx(
     robot_pos: Position,
     task_id: TaskId = TaskId(1),
     task_type: TaskType = TaskType.ROUTINE_INSPECTION,
-    task_status: TaskStatus = TaskStatus.ASSIGNED,
+    task_status: TaskStatus = TaskStatus.UNASSIGNED,
 ) -> StepContext:
     return StepContext(
         robot_states={robot_id: RobotState(robot_id=robot_id, position=robot_pos)},
         task_states={task_id: TaskState(
-            task_id=task_id, status=task_status, assigned_robot_ids={robot_id}
+            task_id=task_id, status=task_status
         )},
         robot_to_task={robot_id: task_id},
         robot_by_id={},
@@ -289,8 +289,8 @@ def test_plan_moves_covers_all_robots():
             r2: RobotState(robot_id=r2, position=Position(1, 0)),
         },
         task_states={
-            t1: TaskState(task_id=t1, status=TaskStatus.ASSIGNED, assigned_robot_ids={r1}),
-            t2: TaskState(task_id=t2, status=TaskStatus.ASSIGNED, assigned_robot_ids={r2}),
+            t1: TaskState(task_id=t1),
+            t2: TaskState(task_id=t2),
         },
         robot_to_task={r1: t1, r2: t2},
         robot_by_id={},

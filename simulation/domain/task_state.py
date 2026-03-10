@@ -3,23 +3,26 @@ Task runtime state (mutable) and state-transition functions.
 
 `Task` is an immutable definition (intent/constraints). `TaskState` is the per-run,
 mutable state owned by the Simulation engine:
-- lifecycle status (unassigned -> assigned -> in_progress -> done/failed)
-- which robots are currently assigned
+- lifecycle status (unassigned -> in_progress -> done/failed)
 - when the task started and completed (in simulation `Time` ticks)
 - how much work has been applied so far (linear progress in ticks)
 
+Who is assigned to a task is the sole responsibility of the AssignmentService and
+the Assignment objects it produces. TaskState intentionally does not mirror that
+information — doing so would create a second source of truth that can drift.
+
 Separation of concerns:
-- Coordinator produces `Assignment`s.
-- Simulation applies `Assignment`s and mutates `TaskState` via the functions here.
+- Coordinator produces `Assignment`s (owns robot-task binding).
+- Simulation reads active `Assignment`s each tick and passes them to algorithms.
+- `TaskState` tracks only work progress and completion timestamps.
 - `Task` (definition) is pure data; it has no methods that mutate state.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
-from simulation.domain.robot_state import RobotId
 from simulation.domain.task import TaskId
 from simulation.primitives.time import Time
 
@@ -28,7 +31,6 @@ class TaskStatus(Enum):
     """Lifecycle status of a task within a single simulation run."""
 
     UNASSIGNED = "unassigned"
-    ASSIGNED = "assigned"
     IN_PROGRESS = "in_progress"
     DONE = "done"
     FAILED = "failed"
@@ -40,14 +42,12 @@ class TaskState:
     Mutable runtime state for a `Task`.
 
     This is intentionally minimal. It does not store task intent (duration,
-    capabilities, etc.)—that lives on `Task`.
+    capabilities, etc.)—that lives on `Task`. It does not store assignment
+    information—that lives in Assignment objects owned by the AssignmentService.
     """
 
     task_id: TaskId
     status: TaskStatus = TaskStatus.UNASSIGNED
-
-    # Current assignment (task-centric view; supports multi-robot tasks).
-    assigned_robot_ids: set[RobotId] = field(default_factory=set)
 
     # Progress bookkeeping (opaque simulation ticks).
     work_done: Time = Time(0)
@@ -62,18 +62,6 @@ class TaskState:
 # ---------------------------------------------------------------------------
 # These functions own all logic for mutating TaskState. Task (the definition
 # object) is pure data and has no methods that touch TaskState.
-
-def set_assignment(state: TaskState, robot_ids: set[RobotId]) -> None:
-    """Replace the current assignment on `state` with `robot_ids`."""
-    state.assigned_robot_ids = set(robot_ids)
-
-    if not state.assigned_robot_ids and state.status in (TaskStatus.UNASSIGNED, TaskStatus.ASSIGNED):
-        state.status = TaskStatus.UNASSIGNED
-        return
-
-    if state.assigned_robot_ids and state.status == TaskStatus.UNASSIGNED:
-        state.status = TaskStatus.ASSIGNED
-
 
 def apply_work(state: TaskState, required_work_time: Time, dt: Time, t_now: Time) -> None:
     """Apply linear work for `dt` ticks to `state`.
@@ -94,14 +82,12 @@ def apply_work(state: TaskState, required_work_time: Time, dt: Time, t_now: Time
 
 
 def mark_done(state: TaskState, t_now: Time) -> None:
-    """Mark the task complete on `state` and clear assignment."""
+    """Mark the task complete on `state`."""
     state.status = TaskStatus.DONE
     state.completed_at = t_now
-    state.assigned_robot_ids.clear()
 
 
 def mark_failed(state: TaskState, t_now: Time) -> None:
-    """Mark the task failed on `state` and clear assignment."""
+    """Mark the task failed on `state`."""
     state.status = TaskStatus.FAILED
     state.completed_at = t_now
-    state.assigned_robot_ids.clear()

@@ -18,9 +18,10 @@ def get_eligible_robots(task: Task, ctx: StepContext) -> list[RobotId]:
     """Return IDs of robots eligible to work on task this tick.
 
     Returns empty list if the task is in a terminal state, past its
-    deadline, or has unfinished dependencies. Otherwise filters
-    task_states[task.id].assigned_robot_ids down to robots that
-    satisfy all per-robot constraints (capabilities, battery, spatial).
+    deadline, or has unfinished dependencies. Otherwise filters the
+    robots currently assigned to this task (derived from ctx.robot_to_task)
+    down to those that satisfy all per-robot constraints (capabilities,
+    battery, spatial).
     """
     task_state = ctx.task_states[task.id]
 
@@ -32,7 +33,7 @@ def get_eligible_robots(task: Task, ctx: StepContext) -> list[RobotId]:
         return []
 
     eligible = []
-    for robot_id in task_state.assigned_robot_ids:
+    for robot_id in (rid for rid, tid in ctx.robot_to_task.items() if tid == task.id):
         robot = ctx.robot_by_id[robot_id]
         state = ctx.robot_states[robot_id]
 

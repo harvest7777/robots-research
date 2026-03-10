@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation.domain.robot_state import RobotId
 from simulation.domain.task import TaskId
 from simulation.domain.task_state import TaskState, TaskStatus
 from simulation.primitives.time import Time
@@ -16,9 +15,8 @@ def load_task_states(raw: list[dict[str, Any]]) -> list[TaskState]:
             task_id: Integer identifier matching a Task.
 
             Optional keys:
-            status: One of "unassigned", "assigned", "in_progress", "done", "failed".
+            status: One of "unassigned", "in_progress", "done", "failed".
                     Defaults to "unassigned".
-            assigned_robot_ids: Array of robot_id integers.
             work_done: Integer tick count of work completed. Defaults to 0.
             started_at: Integer tick count when task started.
             completed_at: Integer tick count when task completed.
@@ -61,22 +59,6 @@ def load_task_states(raw: list[dict[str, Any]]) -> list[TaskState]:
                     f"must be one of {valid_statuses}"
                 )
 
-        # Parse optional assigned_robot_ids
-        assigned_robot_ids: set[RobotId] = set()
-        if "assigned_robot_ids" in state_raw:
-            robot_ids_raw = state_raw["assigned_robot_ids"]
-            if not isinstance(robot_ids_raw, list):
-                raise ValueError(
-                    f"task_state {task_id}: assigned_robot_ids must be a list"
-                )
-            for robot_id in robot_ids_raw:
-                if not isinstance(robot_id, int) or robot_id < 0:
-                    raise ValueError(
-                        f"task_state {task_id}: robot_id must be a non-negative integer, "
-                        f"got: {robot_id!r}"
-                    )
-                assigned_robot_ids.add(RobotId(robot_id))
-
         # Parse optional work_done
         work_done = Time(0)
         if "work_done" in state_raw:
@@ -113,7 +95,6 @@ def load_task_states(raw: list[dict[str, Any]]) -> list[TaskState]:
         task_state = TaskState(
             task_id=TaskId(task_id),
             status=status,
-            assigned_robot_ids=assigned_robot_ids,
             work_done=work_done,
             started_at=started_at,
             completed_at=completed_at,

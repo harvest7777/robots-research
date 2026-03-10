@@ -27,7 +27,6 @@ ZONE_SYMBOLS: dict[ZoneType, str] = {
 
 TASK_STATUS_SYMBOLS: dict[TaskStatus, str] = {
     TaskStatus.UNASSIGNED: "○",
-    TaskStatus.ASSIGNED: "◐",
     TaskStatus.IN_PROGRESS: "◑",
     TaskStatus.DONE: "●",
     TaskStatus.FAILED: "✗",
@@ -202,12 +201,17 @@ class SimulationView:
         return row
 
     def _render_robot_activity(self, frame: Frame, start_row: int) -> int:
+        task_by_id = {t.id: t for t in self.snapshot.tasks}
         robot_task_map: dict[object, object] = {}
-        for task in self.snapshot.tasks:
-            state = self.snapshot.task_states[task.id]
-            if state.status in (TaskStatus.ASSIGNED, TaskStatus.IN_PROGRESS):
-                for rid in state.assigned_robot_ids:
-                    robot_task_map[rid] = task
+        for assignment in self.snapshot.active_assignments:
+            task = task_by_id.get(assignment.task_id)
+            if task is None:
+                continue
+            task_state = self.snapshot.task_states.get(assignment.task_id)
+            if task_state is None or task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+                continue
+            for rid in assignment.robot_ids:
+                robot_task_map[rid] = task
 
         row = start_row
         if row >= len(frame):

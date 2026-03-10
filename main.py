@@ -18,6 +18,7 @@ from simulation.algorithms.simple_assignment import simple_assign
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.task import Task, TaskId, TaskType
 from simulation.domain.task_state import TaskState
+from simulation.domain.robot_state import RobotId
 from simulation.primitives.time import Time
 from simulation_view.simulation_view import SimulationView
 from simulation_view.terminal_renderer import TerminalRenderer
@@ -40,12 +41,16 @@ def _snapshot_to_simulation_state(
         )
         for robot_id, state in snapshot.robot_states.items()
     ]
+    task_robot_ids: dict[TaskId, list[RobotId]] = {}
+    for a in snapshot.active_assignments:
+        for rid in sorted(a.robot_ids):
+            task_robot_ids.setdefault(a.task_id, []).append(rid)
     tasks = [
         TaskStateSnapshot(
             task_id=task_id,
             status=state.status,
             work_done_ticks=state.work_done.tick,
-            assigned_robot_ids=list(state.assigned_robot_ids),
+            assigned_robot_ids=task_robot_ids.get(task_id, []),
         )
         for task_id, state in snapshot.task_states.items()
     ]

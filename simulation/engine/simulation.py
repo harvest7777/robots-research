@@ -28,7 +28,7 @@ from simulation.domain.robot_state import RobotState
 from simulation.engine.simulation_result import SimulationResult
 from simulation.engine.snapshot import SimulationSnapshot
 from simulation.domain.task import Task, TaskId, TaskType
-from simulation.domain.task_state import TaskState, TaskStatus, set_assignment, apply_work, mark_done
+from simulation.domain.task_state import TaskState, TaskStatus, apply_work, mark_done
 from simulation.primitives.time import Time
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, plan_moves, resolve_collisions, resolve_task_target_position
 from simulation.domain.step_context import StepContext
@@ -151,8 +151,6 @@ class Simulation:
         assignments = self._get_active_assignments()
         robot_to_task = self._map_robots_to_tasks(assignments)
 
-        self._apply_task_assignments(assignments)
-
         ctx = self._build_step_context(robot_to_task)
         planned_moves = self._plan_robot_moves(ctx)
         planned_moves = self._resolve_robot_collisions(planned_moves)
@@ -169,14 +167,6 @@ class Simulation:
 
     def _map_robots_to_tasks(self, assignments: list[Assignment]) -> dict[RobotId, TaskId]:
         return {rid: a.task_id for a in assignments for rid in a.robot_ids}
-
-    def _apply_task_assignments(self, assignments: list[Assignment]) -> None:
-        for task in self.tasks:
-            task_state = self.task_states[task.id]
-            assigned_robot_ids = {
-                rid for a in assignments if a.task_id == task.id for rid in a.robot_ids
-            }
-            set_assignment(task_state, assigned_robot_ids)
 
     def _build_step_context(self, robot_to_task: dict[RobotId, TaskId]) -> StepContext:
         return StepContext(
@@ -338,12 +328,11 @@ class Simulation:
             for rid, state in self.robot_states.items()
         }
 
-        # Copy task states (must copy the mutable assigned_robot_ids set)
+        # Copy task states (shallow copy is sufficient; all fields are immutable values)
         task_states_copy = {
             tid: TaskState(
                 task_id=state.task_id,
                 status=state.status,
-                assigned_robot_ids=set(state.assigned_robot_ids),
                 work_done=state.work_done,
                 started_at=state.started_at,
                 completed_at=state.completed_at,

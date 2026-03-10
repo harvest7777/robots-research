@@ -78,7 +78,7 @@ def _make_search_sim(
         priority=5,
         required_work_time=Time(9999),
     )
-    search_task_state = TaskState(task_id=search_task_id, status=TaskStatus.ASSIGNED, assigned_robot_ids={robot_id})
+    search_task_state = TaskState(task_id=search_task_id)
 
     rescue_task_id = TaskId(20)
     rescue_task = Task(
@@ -216,8 +216,7 @@ def test_all_search_robots_reassigned_to_rescue_after_found():
     # After found, the rescue task should be assigned to our search robot
     rescue_task_id = TaskId(20)
     rescue_task_state = sim.task_states[rescue_task_id]
-    assert RobotId(1) in rescue_task_state.assigned_robot_ids or \
-        sim.rescue_found[RescuePointId(1)] is True
+    assert sim.rescue_found[RescuePointId(1)] is True
 
 
 # ---------------------------------------------------------------------------
@@ -251,7 +250,7 @@ def test_no_rescue_points_simulation_runs_to_budget():
         priority=5,
         required_work_time=Time(9999),
     )
-    search_task_state = TaskState(task_id=search_task_id, status=TaskStatus.ASSIGNED, assigned_robot_ids={robot_id})
+    search_task_state = TaskState(task_id=search_task_id)
 
     assignment_service = _InMemoryAssignmentService([
         Assignment(task_id=search_task_id, robot_ids=frozenset([robot_id]), assign_at=Time(0))
@@ -300,7 +299,7 @@ def test_multiple_robots_at_rescue_point_deterministic():
     rescue_task = Task(id=rescue_task_id, type=TaskType.RESCUE, priority=10, required_work_time=Time(5),
                        spatial_constraint=SpatialConstraint(target=rescue_pos))
     task_states = {
-        search_task_id: TaskState(task_id=search_task_id, status=TaskStatus.ASSIGNED, assigned_robot_ids={r1_id, r2_id}),
+        search_task_id: TaskState(task_id=search_task_id),
         rescue_task_id: TaskState(task_id=rescue_task_id),
     }
 
