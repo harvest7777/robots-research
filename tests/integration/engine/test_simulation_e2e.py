@@ -133,3 +133,60 @@ def test_time_budget_exceeded__returns_not_completed():
     result = sim.run(max_delta_time=5)
     assert result.completed is False
     assert result.makespan is None
+
+
+# ---------------------------------------------------------------------------
+# test_maze_completion scenario
+#
+# 15x10 grid with two vertical obstacle columns that force robots to take
+# an S-shaped detour. The only path through col 5 is at row 9; the only
+# path through col 10 is at row 0.
+# Robot 1 starts at (0,0) → task at (14,0)
+# Robot 2 starts at (0,9) → task at (14,9)
+# ---------------------------------------------------------------------------
+
+def test_maze_completion__loads_scenario_from_json():
+    path = _SCENARIOS_DIR / "test_maze_completion.json"
+    sim = load_simulation(path)
+    assert isinstance(sim, Simulation)
+
+
+def test_maze_completion__both_tasks_complete_despite_obstacles():
+    sim = _load_wired("test_maze_completion")
+    result = sim.run(max_delta_time=150)
+    assert result.completed is True
+    assert result.tasks_succeeded == result.tasks_total
+
+
+# ---------------------------------------------------------------------------
+# test_no_robot_collisions scenario
+#
+# 20x20 open grid with 10 robots: 5 moving horizontally (west→east) and
+# 5 moving vertically (north→south). Their paths cross at multiple cells,
+# exercising the collision resolver. The snapshot history is inspected at
+# every tick to verify that no two robots ever share the same cell.
+# ---------------------------------------------------------------------------
+
+def test_no_robot_collisions__loads_scenario_from_json():
+    path = _SCENARIOS_DIR / "test_no_robot_collisions.json"
+    sim = load_simulation(path)
+    assert isinstance(sim, Simulation)
+
+
+def test_no_robot_collisions__all_tasks_complete():
+    sim = _load_wired("test_no_robot_collisions")
+    result = sim.run(max_delta_time=500)
+    assert result.completed is True
+    assert result.tasks_succeeded == result.tasks_total
+
+
+def test_no_robot_collisions__robots_never_share_a_cell():
+    sim = _load_wired("test_no_robot_collisions")
+    sim.run(max_delta_time=500)
+
+    for t, snapshot in sim.history.items():
+        positions = [state.position for state in snapshot.robot_states.values()]
+        assert len(positions) == len(set(positions)), (
+            f"two robots occupy the same cell at tick {t.tick}: "
+            f"{[p for p in positions if positions.count(p) > 1]}"
+        )
