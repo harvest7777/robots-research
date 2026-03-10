@@ -1,7 +1,7 @@
 import dataclasses
 
 from simulation.domain.robot_state import RobotId
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.rescue_point import RescuePoint, RescuePointId
 from simulation.domain.robot_state import RobotState

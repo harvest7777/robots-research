@@ -18,7 +18,7 @@ from scenario_loaders.load_simulation import load_simulation
 from services.base_assignment_service import BaseAssignmentService
 from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.rescue_point import RescuePoint, RescuePointId
 from simulation.domain.robot import Robot

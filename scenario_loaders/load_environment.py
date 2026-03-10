@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 
 

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.engine.step_context import StepContext

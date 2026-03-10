@@ -1,5 +1,5 @@
 from simulation.domain.robot_state import RobotId
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.robot_state import RobotState
 from simulation.domain.task import Task, TaskId, TaskType, SpatialConstraint

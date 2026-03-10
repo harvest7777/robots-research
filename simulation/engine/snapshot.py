@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Mapping
 
 if TYPE_CHECKING:
     from simulation.domain.assignment import Assignment
-    from simulation.world.environment import Environment
+    from simulation.domain.environment import Environment
     from simulation.domain.rescue_point import RescuePointId
     from simulation.domain.robot import Robot
     from simulation.domain.robot_state import RobotId, RobotState

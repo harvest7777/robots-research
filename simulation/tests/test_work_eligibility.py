@@ -1,6 +1,6 @@
 from simulation.domain.robot_state import RobotId
 from simulation.primitives.capability import Capability
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotState

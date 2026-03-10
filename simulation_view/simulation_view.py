@@ -5,12 +5,11 @@
 # diffing, NO state.  Deterministic: same snapshot + same dimensions → same
 # frame, always.
 
-from simulation.world.environment import Obstacle
 from simulation.primitives.position import Position
 from simulation.engine.snapshot import SimulationSnapshot
 from simulation.domain.task import TaskId, TaskType
 from simulation.domain.task_state import TaskStatus
-from simulation.primitives.zone import ZoneId, ZoneType
+from simulation.primitives.zone import ZoneType
 
 from .frame import Frame, make_frame, stamp
 

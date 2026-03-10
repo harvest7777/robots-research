@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import heapq
 
-from simulation.world.environment import Environment
+from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 
 

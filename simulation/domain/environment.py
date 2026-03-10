@@ -82,7 +82,7 @@ class Environment:
                     if zone_id is not None:
                         row_chars.append(str(zone_id) if zone_id < 10 else "+")
                     else:
-                        row_chars.append(".")
+                        row_chars.append("../world")
                     continue
                 try:
                     s = str(obj)
