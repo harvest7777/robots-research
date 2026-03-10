@@ -69,17 +69,6 @@ class Simulation:
     rescue_proximity_threshold: int = 10  # Manhattan distance at which a SEARCH robot locks onto a rescue point
 
     def __post_init__(self) -> None:
-        if self.environment is None:
-            raise ValueError("Simulation requires 'environment'")
-        if self.robots is None:
-            raise ValueError("Simulation requires 'robots'")
-        if self.tasks is None:
-            raise ValueError("Simulation requires 'tasks'")
-        if self.robot_states is None:
-            raise ValueError("Simulation requires 'robot_states'")
-        if self.task_states is None:
-            raise ValueError("Simulation requires 'task_states'")
-
         # Build lookups for immutable robot/task lists
         self._robot_by_id: dict[RobotId, Robot] = {r.id: r for r in self.robots}
         self._task_by_id: dict[TaskId, Task] = {t.id: t for t in self.tasks}

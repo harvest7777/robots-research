@@ -10,6 +10,9 @@ from __future__ import annotations
 
 import random
 
+_MAX_RANDOM_GOAL_ATTEMPTS = 1000
+"""Max attempts to find a random walkable cell before giving up."""
+
 from simulation_models.environment import Environment
 from simulation_models.movement_planner import PathfindingAlgorithm
 from simulation_models.position import Position
@@ -54,7 +57,7 @@ def compute_search_goal(
         # Waypoint unreachable — fall through to pick a new one
 
     # Step 3: Pick a random walkable position
-    for _ in range(1000):
+    for _ in range(_MAX_RANDOM_GOAL_ATTEMPTS):
         x = random.randint(0, environment.width - 1)
         y = random.randint(0, environment.height - 1)
         pos = Position(x, y)
