@@ -204,7 +204,7 @@ class Environment:
         self._rescue_points[rp.id] = rp
 
     @property
-    def rescue_points(self) -> dict:
+    def rescue_points(self) -> dict:  # dict[RescuePointId, RescuePoint] — typed at call sites
         """Return a shallow copy of the rescue points dict (RescuePointId → RescuePoint)."""
         return dict(self._rescue_points)
 

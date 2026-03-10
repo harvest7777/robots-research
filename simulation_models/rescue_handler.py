@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 from simulation_models.assignment import Assignment
 from simulation_models.robot_state import RobotId
-from simulation_models.rescue_point import RescuePoint
+from simulation_models.rescue_point import RescuePoint, RescuePointId
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.time import Time
 
@@ -28,7 +28,7 @@ class RescueEffect:
         waypoints_to_clear:   IDs of robots whose current_waypoint should be set to None.
     """
 
-    rescue_found_updates: dict
+    rescue_found_updates: dict[RescuePointId, bool]
     new_assignment: Assignment
     tasks_to_mark_done: list[TaskId]
     waypoints_to_clear: list[RobotId]

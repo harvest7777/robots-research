@@ -17,13 +17,13 @@ import dataclasses
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import Optional
 
 from simulation_models.assignment import Assignment
 from simulation_models.robot_state import RobotId
 from services.base_assignment_service import BaseAssignmentService
 from simulation_models.environment import Environment
 from simulation_models.position import Position
+from simulation_models.rescue_point import RescuePointId
 from simulation_models.robot import Robot
 from simulation_models.robot_state import RobotState
 from simulation_models.simulation_result import SimulationResult
@@ -72,7 +72,7 @@ class Simulation:
     t_now: Time = field(default_factory=lambda: Time(0))
     dt: Time = field(default_factory=lambda: Time(1))
     history: dict[Time, SimulationSnapshot] = field(default_factory=dict)
-    rescue_found: dict = field(default_factory=dict)  # dict[RescuePointId, bool]
+    rescue_found: dict[RescuePointId, bool] = field(default_factory=dict)
     rescue_proximity_threshold: int = 10  # Manhattan distance at which a SEARCH robot locks onto a rescue point
 
     def __post_init__(self) -> None:
@@ -113,7 +113,7 @@ class Simulation:
     def run(
         self,
         max_delta_time: int,
-        on_tick: Optional[Callable[["SimulationSnapshot"], None]] = None,
+        on_tick: Callable[["SimulationSnapshot"], None] | None = None,
     ) -> SimulationResult:
         """Run the simulation to completion or until the time budget is exhausted.
 
@@ -231,7 +231,7 @@ class Simulation:
 
     def _find_rescue_discoveries(
         self, robot_to_task: dict[RobotId, TaskId]
-    ) -> list[object]:
+    ) -> list[RescuePoint]:
         """Return rescue points reached by search robots this tick, lowest robot_id wins ties."""
         discovered = []
         search_robot_ids = [
@@ -316,7 +316,7 @@ class Simulation:
                 self._robot_by_id[robot_id].idle(state)
 
     def _trigger_rescue_found(
-        self, rescue_point: object, robot_to_task: dict[RobotId, TaskId]
+        self, rescue_point: RescuePoint, robot_to_task: dict[RobotId, TaskId]
     ) -> None:
         effect = compute_rescue_effect(rescue_point, robot_to_task, self._task_by_id, self.tasks, self.t_now)
 

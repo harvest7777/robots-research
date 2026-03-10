@@ -13,6 +13,7 @@ from collections.abc import Callable
 
 from simulation_models.environment import Environment
 from simulation_models.position import Position
+from simulation_models.rescue_point import RescuePoint, RescuePointId
 from simulation_models.robot_state import RobotState
 
 PathfindingAlgorithm = Callable[
@@ -23,8 +24,8 @@ PathfindingAlgorithm = Callable[
 
 def compute_search_goal(
     state: RobotState,
-    rescue_points: dict,
-    rescue_found: dict,
+    rescue_points: dict[RescuePointId, RescuePoint],
+    rescue_found: dict[RescuePointId, bool],
     proximity_threshold: int,
     pathfinding: PathfindingAlgorithm,
     environment: Environment,
