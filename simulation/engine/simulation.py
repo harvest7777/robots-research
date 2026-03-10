@@ -149,13 +149,12 @@ class Simulation:
         self.t_now = self.t_now.advance(self.dt)
 
         assignments = self._get_active_assignments()
-        robot_to_task = self._map_robots_to_tasks(assignments)
 
-        ctx = self._build_step_context(robot_to_task)
+        ctx = self._build_step_context(assignments)
         planned_moves = self._plan_robot_moves(ctx)
         planned_moves = self._resolve_robot_collisions(planned_moves)
-        for rescue_point in self._find_rescue_discoveries(robot_to_task):
-            self._trigger_rescue_found(rescue_point, robot_to_task)
+        for rescue_point in self._find_rescue_discoveries(ctx):
+            self._trigger_rescue_found(rescue_point, assignments)
 
         moved_set = self._apply_robot_moves(planned_moves)
         eligible_by_task = self._snapshot_work_eligibility(ctx)
@@ -165,14 +164,11 @@ class Simulation:
 
         self.history[self.t_now] = self.snapshot(assignments)
 
-    def _map_robots_to_tasks(self, assignments: list[Assignment]) -> dict[RobotId, TaskId]:
-        return {rid: a.task_id for a in assignments for rid in a.robot_ids}
-
-    def _build_step_context(self, robot_to_task: dict[RobotId, TaskId]) -> StepContext:
+    def _build_step_context(self, assignments: list[Assignment]) -> StepContext:
         return StepContext(
             robot_states=self.robot_states,
             task_states=self.task_states,
-            robot_to_task=robot_to_task,
+            assignments=assignments,
             robot_by_id=self._robot_by_id,
             task_by_id=self._task_by_id,
             environment=self.environment,
@@ -180,8 +176,10 @@ class Simulation:
         )
 
     def _plan_robot_moves(self, ctx: StepContext) -> dict[RobotId, Position | None]:
+        robot_to_task = {rid: a.task_id for a in ctx.assignments for rid in a.robot_ids}
+
         def _goal_resolver(robot_id: RobotId, state: RobotState) -> Position | None:
-            task = self._task_by_id[ctx.robot_to_task[robot_id]]
+            task = self._task_by_id[robot_to_task[robot_id]]
             if task.type == TaskType.SEARCH:
                 goal = compute_search_goal(
                     state, self.environment.rescue_points, self.rescue_found,
@@ -202,14 +200,14 @@ class Simulation:
         }
         return resolve_collisions(planned_moves, current_positions)
 
-    def _find_rescue_discoveries(
-        self, robot_to_task: dict[RobotId, TaskId]
-    ) -> list[RescuePoint]:
+    def _find_rescue_discoveries(self, ctx: StepContext) -> list[RescuePoint]:
         """Return rescue points reached by search robots this tick, lowest robot_id wins ties."""
         discovered = []
         search_robot_ids = [
-            rid for rid, tid in robot_to_task.items()
-            if self._task_by_id[tid].type == TaskType.SEARCH
+            rid
+            for a in ctx.assignments
+            if self._task_by_id[a.task_id].type == TaskType.SEARCH
+            for rid in a.robot_ids
         ]
         for robot_id in sorted(search_robot_ids):
             state = self.robot_states[robot_id]
@@ -279,9 +277,9 @@ class Simulation:
                 self._robot_by_id[robot_id].idle(state)
 
     def _trigger_rescue_found(
-        self, rescue_point: RescuePoint, robot_to_task: dict[RobotId, TaskId]
+        self, rescue_point: RescuePoint, assignments: list[Assignment]
     ) -> None:
-        effect = compute_rescue_effect(rescue_point, robot_to_task, self._task_by_id, self.t_now)
+        effect = compute_rescue_effect(rescue_point, assignments, self._task_by_id, self.t_now)
 
         self.rescue_found.update(effect.rescue_found_updates)
 

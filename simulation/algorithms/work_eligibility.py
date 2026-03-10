@@ -33,7 +33,7 @@ def get_eligible_robots(task: Task, ctx: StepContext) -> list[RobotId]:
         return []
 
     eligible = []
-    for robot_id in (rid for rid, tid in ctx.robot_to_task.items() if tid == task.id):
+    for robot_id in (rid for a in ctx.assignments if a.task_id == task.id for rid in a.robot_ids):
         robot = ctx.robot_by_id[robot_id]
         state = ctx.robot_states[robot_id]
 

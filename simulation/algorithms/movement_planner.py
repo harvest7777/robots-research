@@ -38,14 +38,15 @@ def plan_moves(
     The goal_resolver may write to robot state (e.g. current_waypoint) as a
     side effect; plan_moves itself does not mutate any state directly.
     """
+    robot_to_task = {rid: a.task_id for a in ctx.assignments for rid in a.robot_ids}
     planned: dict[RobotId, Position | None] = {}
 
     for robot_id, state in ctx.robot_states.items():
-        if robot_id not in ctx.robot_to_task:
+        if robot_id not in robot_to_task:
             planned[robot_id] = None
             continue
 
-        task_id = ctx.robot_to_task[robot_id]
+        task_id = robot_to_task[robot_id]
         task = ctx.task_by_id[task_id]
         task_state = ctx.task_states[task_id]
 

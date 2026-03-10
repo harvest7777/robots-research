@@ -1,3 +1,4 @@
+from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
@@ -8,6 +9,10 @@ from simulation.primitives.time import Time
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
 from simulation.algorithms.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
 from simulation.domain.step_context import StepContext
+
+
+def _assign(task_id: TaskId, *robot_ids: RobotId) -> Assignment:
+    return Assignment(task_id=task_id, robot_ids=frozenset(robot_ids))
 
 
 # ---------------------------------------------------------------------------
@@ -178,7 +183,7 @@ def _make_ctx(
         task_states={task_id: TaskState(
             task_id=task_id, status=task_status
         )},
-        robot_to_task={robot_id: task_id},
+        assignments=[_assign(task_id, robot_id)],
         robot_by_id={},
         task_by_id={task_id: Task(
             id=task_id, type=task_type, priority=1, required_work_time=Time(1)
@@ -200,7 +205,7 @@ def test_plan_moves_unassigned_robot_gets_none():
     ctx = StepContext(
         robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
         task_states={},
-        robot_to_task={},
+        assignments=[],
         robot_by_id={},
         task_by_id={},
         environment=Environment(width=5, height=5),
@@ -292,7 +297,7 @@ def test_plan_moves_covers_all_robots():
             t1: TaskState(task_id=t1),
             t2: TaskState(task_id=t2),
         },
-        robot_to_task={r1: t1, r2: t2},
+        assignments=[_assign(t1, r1), _assign(t2, r2)],
         robot_by_id={},
         task_by_id={
             t1: Task(id=t1, type=TaskType.ROUTINE_INSPECTION, priority=1, required_work_time=Time(1)),

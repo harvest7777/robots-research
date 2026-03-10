@@ -1,3 +1,4 @@
+from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.primitives.capability import Capability
 from simulation.domain.environment import Environment
@@ -12,18 +13,22 @@ from simulation.primitives.time import Time
 from simulation.algorithms.work_eligibility import get_eligible_robots
 
 
+def _assign(task_id: int, *robot_ids: int) -> Assignment:
+    return Assignment(task_id=TaskId(task_id), robot_ids=frozenset(RobotId(rid) for rid in robot_ids))
+
+
 def _ctx(
     task_states: dict,
     robots: dict,
     robot_states: dict,
     environment: Environment,
     time: Time,
-    robot_to_task: dict | None = None,
+    assignments: list | None = None,
 ) -> StepContext:
     return StepContext(
         robot_states=robot_states,
         task_states=task_states,
-        robot_to_task=robot_to_task or {},
+        assignments=assignments or [],
         robot_by_id=robots,
         task_by_id={},
         environment=environment,
@@ -66,7 +71,7 @@ def test_returns_robot_id_when_robot_meets_required_capabilities():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -90,7 +95,7 @@ def test_returns_robot_id_when_robot_has_superset_of_required_capabilities():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -113,7 +118,7 @@ def test_returns_robot_id_when_task_has_no_required_capabilities():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -140,7 +145,7 @@ def test_returns_only_capable_robot_ids_when_robots_have_mixed_capabilities():
         },
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1), RobotId(2): TaskId(1)},
+        assignments=[_assign(1, 1, 2)],
     ))
 
     assert result == [RobotId(1)]
@@ -164,7 +169,7 @@ def test_returns_empty_when_no_robot_meets_required_capabilities():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -191,7 +196,7 @@ def test_returns_empty_when_robot_has_no_battery():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -218,7 +223,7 @@ def test_returns_empty_when_task_is_failed():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -241,7 +246,7 @@ def test_returns_empty_when_task_is_completed():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -262,7 +267,7 @@ def test_returns_empty_when_no_robots_are_assigned():
         robot_states={},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={},
+        assignments=[],
     ))
 
     assert result == []
@@ -290,7 +295,7 @@ def test_returns_empty_when_deadline_has_passed():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(6),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -314,7 +319,7 @@ def test_returns_robot_id_when_time_equals_deadline():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(5),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -343,7 +348,7 @@ def test_returns_empty_when_dependency_is_not_done():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -368,7 +373,7 @@ def test_returns_robot_id_when_all_dependencies_are_done():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -399,7 +404,7 @@ def test_returns_all_robot_ids_when_multiple_robots_are_eligible():
         },
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1), RobotId(2): TaskId(1)},
+        assignments=[_assign(1, 1, 2)],
     ))
 
     assert set(result) == {RobotId(1), RobotId(2)}
@@ -427,7 +432,7 @@ def test_returns_empty_when_robot_is_outside_spatial_constraint():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=1, height=1),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -451,7 +456,7 @@ def test_returns_robot_id_when_robot_is_at_position_target():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=5, height=5),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -475,7 +480,7 @@ def test_returns_empty_when_robot_is_one_cell_away_from_exact_target():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=5, height=5),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -499,7 +504,7 @@ def test_returns_robot_id_when_robot_is_within_position_max_distance():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=5, height=5),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -523,7 +528,7 @@ def test_returns_empty_when_robot_is_just_outside_position_max_distance():
         robot_states={RobotId(1): robot_state},
         environment=Environment(width=5, height=5),
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -553,7 +558,7 @@ def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
         robot_states={RobotId(1): robot_state},
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -579,7 +584,7 @@ def test_returns_empty_when_robot_has_capabilities_but_is_outside_required_zone(
         robot_states={RobotId(1): robot_state},
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -604,7 +609,7 @@ def test_returns_robot_id_when_robot_is_in_zone_no_capabilities_required():
         robot_states={RobotId(1): robot_state},
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -630,7 +635,7 @@ def test_returns_empty_when_robot_is_in_zone_but_missing_capabilities():
         robot_states={RobotId(1): robot_state},
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []
@@ -660,7 +665,7 @@ def test_returns_only_in_zone_robot_ids_when_robots_have_mixed_zone_positions():
         },
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1), RobotId(2): TaskId(1)},
+        assignments=[_assign(1, 1, 2)],
     ))
 
     assert result == [RobotId(1)]
@@ -685,7 +690,7 @@ def test_returns_robot_id_when_robot_is_within_zone_max_distance():
         robot_states={RobotId(1): robot_state},
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == [RobotId(1)]
@@ -710,7 +715,7 @@ def test_returns_empty_when_robot_exceeds_zone_max_distance():
         robot_states={RobotId(1): robot_state},
         environment=env,
         time=Time(0),
-        robot_to_task={RobotId(1): TaskId(1)},
+        assignments=[_assign(1, 1)],
     ))
 
     assert result == []

@@ -11,8 +11,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from simulation.domain.assignment import Assignment
-from simulation.domain.robot_state import RobotId
 from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.robot_state import RobotId
 from simulation.domain.task import Task, TaskId, TaskType
 from simulation.primitives.time import Time
 
@@ -36,7 +36,7 @@ class RescueEffect:
 
 def compute_rescue_effect(
     rescue_point: RescuePoint,
-    robot_to_task: dict[RobotId, TaskId],
+    assignments: list[Assignment],
     task_by_id: dict[TaskId, Task],
     t_now: Time,
 ) -> RescueEffect:
@@ -46,8 +46,10 @@ def compute_rescue_effect(
     state change required; the caller (Simulation._step) applies them.
     """
     search_robot_ids = [
-        rid for rid, tid in robot_to_task.items()
-        if task_by_id[tid].type == TaskType.SEARCH
+        rid
+        for a in assignments
+        if task_by_id[a.task_id].type == TaskType.SEARCH
+        for rid in a.robot_ids
     ]
 
     # All SEARCH tasks are marked done when any rescue point is found:

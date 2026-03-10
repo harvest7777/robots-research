@@ -28,6 +28,10 @@ def _rp(rp_id: int, rescue_task_id: int) -> RescuePoint:
     )
 
 
+def _assign(task_id: int, *robot_ids: int) -> Assignment:
+    return Assignment(task_id=TaskId(task_id), robot_ids=frozenset(RobotId(rid) for rid in robot_ids))
+
+
 # ---------------------------------------------------------------------------
 # rescue_found_updates
 # ---------------------------------------------------------------------------
@@ -38,7 +42,7 @@ def test_rescue_found_updates_marks_rescue_point_as_found():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2)},
+        assignments=[_assign(2, 1)],
         task_by_id={TaskId(2): search_task},
         t_now=Time(5),
     )
@@ -56,7 +60,7 @@ def test_new_assignment_targets_rescue_task():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2)},
+        assignments=[_assign(2, 1)],
         task_by_id={TaskId(2): search_task},
         t_now=Time(5),
     )
@@ -70,7 +74,7 @@ def test_new_assignment_includes_all_search_robots():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(2)},
+        assignments=[_assign(2, 1, 2)],
         task_by_id={TaskId(2): search_task},
         t_now=Time(5),
     )
@@ -84,7 +88,7 @@ def test_new_assignment_assign_at_matches_t_now():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2)},
+        assignments=[_assign(2, 1)],
         task_by_id={TaskId(2): search_task},
         t_now=Time(7),
     )
@@ -99,7 +103,7 @@ def test_new_assignment_excludes_non_search_robots():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(10)},
+        assignments=[_assign(2, 1), _assign(10, 2)],
         task_by_id={TaskId(2): search_task, TaskId(10): rescue_task},
         t_now=Time(5),
     )
@@ -119,7 +123,7 @@ def test_tasks_to_mark_done_contains_all_search_task_ids():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2)},
+        assignments=[_assign(2, 1)],
         task_by_id={TaskId(2): search_task_a, TaskId(3): search_task_b},
         t_now=Time(5),
     )
@@ -130,11 +134,10 @@ def test_tasks_to_mark_done_contains_all_search_task_ids():
 def test_tasks_to_mark_done_excludes_non_search_tasks():
     rp = _rp(rp_id=1, rescue_task_id=10)
     search_task = _search_task(2)
-    rescue_task = _rescue_task(10)
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2)},
+        assignments=[_assign(2, 1)],
         task_by_id={TaskId(2): search_task},
         t_now=Time(5),
     )
@@ -152,7 +155,7 @@ def test_waypoints_to_clear_contains_all_search_robot_ids():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(2)},
+        assignments=[_assign(2, 1, 2)],
         task_by_id={TaskId(2): search_task},
         t_now=Time(5),
     )
@@ -167,7 +170,7 @@ def test_waypoints_to_clear_excludes_non_search_robots():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(10)},
+        assignments=[_assign(2, 1), _assign(10, 2)],
         task_by_id={TaskId(2): search_task, TaskId(10): rescue_task},
         t_now=Time(5),
     )
@@ -186,7 +189,7 @@ def test_no_search_robots_produces_empty_assignment_and_no_waypoints():
 
     effect = compute_rescue_effect(
         rescue_point=rp,
-        robot_to_task={RobotId(1): TaskId(10)},
+        assignments=[_assign(10, 1)],
         task_by_id={TaskId(10): rescue_task},
         t_now=Time(5),
     )
