@@ -9,17 +9,12 @@ it back to state.current_waypoint. No state is mutated here.
 from __future__ import annotations
 
 import random
-from collections.abc import Callable
 
 from simulation_models.environment import Environment
+from simulation_models.movement_planner import PathfindingAlgorithm
 from simulation_models.position import Position
 from simulation_models.rescue_point import RescuePoint, RescuePointId
 from simulation_models.robot_state import RobotState
-
-PathfindingAlgorithm = Callable[
-    [Environment, Position, Position],
-    Position | None,
-]
 
 
 def compute_search_goal(

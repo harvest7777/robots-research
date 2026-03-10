@@ -14,7 +14,6 @@ The Simulation class holds all state and data needed to run a simulation:
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import MappingProxyType
 
@@ -31,17 +30,11 @@ from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState, TaskStatus
 from simulation_models.time import Time
-from simulation_models.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
+from simulation_models.movement_planner import PathfindingAlgorithm, plan_moves, resolve_collisions, resolve_task_target_position
 from simulation_models.step_context import StepContext
 from simulation_models.rescue_handler import compute_rescue_effect
 from simulation_models.search_goal import compute_search_goal
 from simulation_models.work_eligibility import get_eligible_robots
-
-PathfindingAlgorithm = Callable[
-    [Environment, Position, Position],
-    Position | None,
-]
-"""(environment, start, goal) -> next_step or None."""
 
 
 @dataclass
