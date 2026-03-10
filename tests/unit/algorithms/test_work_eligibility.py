@@ -338,7 +338,7 @@ def test_returns_empty_when_dependency_is_not_done():
         dependencies=frozenset({TaskId(2)}),
     )
     task_state = TaskState(task_id=TaskId(1))
-    dep_state = TaskState(task_id=TaskId(2), status=TaskStatus.IN_PROGRESS)
+    dep_state = TaskState(task_id=TaskId(2), started_at=Time(1))
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 

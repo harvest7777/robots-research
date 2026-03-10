@@ -47,7 +47,7 @@ class JsonSimulationStateService(BaseSimulationStateService):
             "tasks": [
                 {
                     "task_id": t.task_id,
-                    "status": t.status.value,
+                    "status": t.status.value if t.status is not None else "pending",
                     "work_done_ticks": t.work_done_ticks,
                     "assigned_robot_ids": list(t.assigned_robot_ids),
                 }
@@ -80,7 +80,7 @@ class JsonSimulationStateService(BaseSimulationStateService):
         tasks = [
             TaskStateSnapshot(
                 task_id=TaskId(t["task_id"]),
-                status=TaskStatus(t["status"]),
+                status=TaskStatus(t["status"]) if t["status"] in {s.value for s in TaskStatus} else None,
                 work_done_ticks=t["work_done_ticks"],
                 assigned_robot_ids=[RobotId(rid) for rid in t["assigned_robot_ids"]],
             )

@@ -176,7 +176,7 @@ def _make_ctx(
     robot_pos: Position,
     task_id: TaskId = TaskId(1),
     task_type: TaskType = TaskType.ROUTINE_INSPECTION,
-    task_status: TaskStatus = TaskStatus.UNASSIGNED,
+    task_status: TaskStatus | None = None,
 ) -> StepContext:
     return StepContext(
         robot_states={robot_id: RobotState(robot_id=robot_id, position=robot_pos)},

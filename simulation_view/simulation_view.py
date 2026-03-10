@@ -8,7 +8,7 @@
 from simulation.primitives.position import Position
 from simulation.engine.snapshot import SimulationSnapshot
 from simulation.domain.task import TaskId, TaskType
-from simulation.domain.task_state import TaskStatus
+from simulation.domain.task_state import TaskState, TaskStatus
 from simulation.primitives.zone import ZoneType
 
 from .frame import Frame, make_frame, stamp
@@ -25,12 +25,14 @@ ZONE_SYMBOLS: dict[ZoneType, str] = {
     ZoneType.CHARGING: "C",
 }
 
-TASK_STATUS_SYMBOLS: dict[TaskStatus, str] = {
-    TaskStatus.UNASSIGNED: "○",
-    TaskStatus.IN_PROGRESS: "◑",
-    TaskStatus.DONE: "●",
-    TaskStatus.FAILED: "✗",
-}
+def _task_status_symbol(state: "TaskState") -> str:
+    if state.status == TaskStatus.DONE:
+        return "●"
+    if state.status == TaskStatus.FAILED:
+        return "✗"
+    if state.started_at is not None:
+        return "◑"  # in progress
+    return "○"  # not yet started
 
 TASK_TYPE_LABELS: dict[TaskType, str] = {
     TaskType.ROUTINE_INSPECTION: "RI",
@@ -186,7 +188,7 @@ class SimulationView:
             if row >= len(frame):
                 break
             state = self.snapshot.task_states[task.id]
-            status = TASK_STATUS_SYMBOLS.get(state.status, "?")
+            status = _task_status_symbol(state)
             label = TASK_TYPE_LABELS.get(task.type, "??")
             spatial = self._spatial_info(task)
             text = (

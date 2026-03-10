@@ -28,7 +28,7 @@ class RobotStateSnapshot:
 @dataclass
 class TaskStateSnapshot:
     task_id: TaskId
-    status: TaskStatus
+    status: TaskStatus | None
     work_done_ticks: int
     assigned_robot_ids: list[RobotId]
 

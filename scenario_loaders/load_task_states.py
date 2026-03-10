@@ -15,8 +15,9 @@ def load_task_states(raw: list[dict[str, Any]]) -> list[TaskState]:
             task_id: Integer identifier matching a Task.
 
             Optional keys:
-            status: One of "unassigned", "in_progress", "done", "failed".
-                    Defaults to "unassigned".
+            status: One of "done", "failed". Defaults to None (not yet started).
+                    Only terminal statuses are meaningful to load — non-terminal
+                    state is derived at runtime from started_at and work_done.
             work_done: Integer tick count of work completed. Defaults to 0.
             started_at: Integer tick count when task started.
             completed_at: Integer tick count when task completed.
@@ -46,18 +47,16 @@ def load_task_states(raw: list[dict[str, Any]]) -> list[TaskState]:
             raise ValueError(f"duplicate task_state for task_id: {task_id}")
         seen_ids.add(task_id)
 
-        # Parse optional status
-        status = TaskStatus.UNASSIGNED
+        # Parse optional status — only terminal values are meaningful to load.
+        # Non-terminal values ("unassigned", "in_progress", etc.) are treated
+        # as None; terminal state is set by the engine at runtime, not loaded.
+        status: TaskStatus | None = None
         if "status" in state_raw:
             status_str = state_raw["status"]
-            try:
-                status = TaskStatus(status_str)
-            except ValueError:
-                valid_statuses = [s.value for s in TaskStatus]
-                raise ValueError(
-                    f"task_state {task_id}: invalid status: {status_str!r}, "
-                    f"must be one of {valid_statuses}"
-                )
+            valid = {s.value: s for s in TaskStatus}
+            if status_str in valid:
+                status = valid[status_str]
+            # Non-terminal or unrecognised values → None (not yet started)
 
         # Parse optional work_done
         work_done = Time(0)
