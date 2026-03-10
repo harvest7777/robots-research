@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.capability import Capability
-from simulation_models.position import Position
-from simulation_models.task import SpatialConstraint, Task, TaskId, TaskType
-from simulation_models.time import Time
-from simulation_models.zone import ZoneId
+from simulation.primitives.capability import Capability
+from simulation.primitives.position import Position
+from simulation.domain.task import SpatialConstraint, Task, TaskId, TaskType
+from simulation.primitives.time import Time
+from simulation.primitives.zone import ZoneId
 
 
 def load_tasks(raw: list[dict[str, Any]]) -> list[Task]:

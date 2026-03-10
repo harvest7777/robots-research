@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.position import Position
-from simulation_models.zone import Zone, ZoneId, ZoneType
+from simulation.primitives.position import Position
+from simulation.primitives.zone import Zone, ZoneId, ZoneType
 
 
 def load_zones(raw: list[dict[str, Any]]) -> list[Zone]:

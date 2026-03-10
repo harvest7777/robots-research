@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.position import Position
-from simulation_models.rescue_point import RescuePoint, RescuePointId
-from simulation_models.task import TaskId
+from simulation.primitives.position import Position
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.task import TaskId
 
 
 def load_rescue_points(raw: list[dict[str, Any]]) -> list[RescuePoint]:

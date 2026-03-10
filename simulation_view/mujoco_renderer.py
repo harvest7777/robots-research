@@ -23,12 +23,12 @@ from typing import TYPE_CHECKING
 import mujoco
 import mujoco.viewer
 
-from simulation_models.position import Position
-from simulation_models.task_state import TaskStatus
-from simulation_models.zone import ZoneType
+from simulation.primitives.position import Position
+from simulation.domain.task_state import TaskStatus
+from simulation.primitives.zone import ZoneType
 
 if TYPE_CHECKING:
-    from simulation_models.snapshot import SimulationSnapshot
+    from simulation.engine.snapshot import SimulationSnapshot
 
 CELL_SIZE: float = 1.0
 ROBOT_Z: float = 0.3

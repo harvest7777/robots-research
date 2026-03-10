@@ -7,11 +7,11 @@ Assigns robots to tasks based on capability matching.
 - Uses first-fit: assigns the first available robot with required capabilities
 """
 
-from simulation_models.assignment import Assignment
-from simulation_models.robot_state import RobotId
-from simulation_models.robot import Robot
-from simulation_models.task import Task, TaskType
-from simulation_models.time import Time
+from simulation.domain.assignment import Assignment
+from simulation.domain.robot_state import RobotId
+from simulation.domain.robot import Robot
+from simulation.domain.task import Task, TaskType
+from simulation.primitives.time import Time
 
 
 def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:

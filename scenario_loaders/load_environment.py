@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.environment import Environment
-from simulation_models.position import Position
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
 
 
 def load_environment(raw: dict[str, Any]) -> Environment:

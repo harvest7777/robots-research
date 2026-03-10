@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.robot_state import RobotId
-from simulation_models.task import TaskId
-from simulation_models.task_state import TaskState, TaskStatus
-from simulation_models.time import Time
+from simulation.domain.robot_state import RobotId
+from simulation.domain.task import TaskId
+from simulation.domain.task_state import TaskState, TaskStatus
+from simulation.primitives.time import Time
 
 
 def load_task_states(raw: list[dict[str, Any]]) -> list[TaskState]:

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from simulation_models.simulation import PathfindingAlgorithm, Simulation
+from simulation.engine.simulation import PathfindingAlgorithm, Simulation
 
 from .load_environment import load_environment
 from .load_rescue_points import load_rescue_points

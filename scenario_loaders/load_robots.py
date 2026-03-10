@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.robot_state import RobotId
-from simulation_models.capability import Capability
-from simulation_models.robot import Robot
+from simulation.domain.robot_state import RobotId
+from simulation.primitives.capability import Capability
+from simulation.domain.robot import Robot
 
 
 def load_robots(raw: list[dict[str, Any]]) -> list[Robot]:

@@ -10,10 +10,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
-from simulation_models.robot_state import RobotId
-from simulation_models.task import TaskId
-from simulation_models.task_state import TaskStatus
-from simulation_models.time import Time
+from simulation.domain.robot_state import RobotId
+from simulation.domain.task import TaskId
+from simulation.domain.task_state import TaskStatus
+from simulation.primitives.time import Time
 
 
 @dataclass

@@ -15,12 +15,12 @@ from services import (
     SimulationState,
     TaskStateSnapshot,
 )
-from simulation_models.assignment import Assignment
-from simulation_models.robot_state import RobotId
-from simulation_models.snapshot import SimulationSnapshot
-from simulation_models.task import Task, TaskId, TaskType
-from simulation_models.task_state import TaskState
-from simulation_models.time import Time
+from simulation.domain.assignment import Assignment
+from simulation.domain.robot_state import RobotId
+from simulation.engine.snapshot import SimulationSnapshot
+from simulation.domain.task import Task, TaskId, TaskType
+from simulation.domain.task_state import TaskState
+from simulation.primitives.time import Time
 from simulation_view.simulation_view import SimulationView
 from simulation_view.terminal_renderer import TerminalRenderer
 

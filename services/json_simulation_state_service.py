@@ -19,10 +19,10 @@ from services.base_simulation_state_service import (
     SimulationState,
     TaskStateSnapshot,
 )
-from simulation_models.robot_state import RobotId
-from simulation_models.task import TaskId
-from simulation_models.task_state import TaskStatus
-from simulation_models.time import Time
+from simulation.domain.robot_state import RobotId
+from simulation.domain.task import TaskId
+from simulation.domain.task_state import TaskStatus
+from simulation.primitives.time import Time
 
 
 class JsonSimulationStateService(BaseSimulationStateService):

@@ -10,8 +10,8 @@ from __future__ import annotations
 
 import heapq
 
-from simulation_models.environment import Environment
-from simulation_models.position import Position
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
 
 
 def astar_pathfind(

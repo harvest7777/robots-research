@@ -12,8 +12,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from simulation_models.assignment import Assignment
-from simulation_models.time import Time
+from simulation.domain.assignment import Assignment
+from simulation.primitives.time import Time
 
 
 class BaseAssignmentService(ABC):
