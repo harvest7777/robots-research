@@ -12,9 +12,9 @@ from collections.abc import Callable
 from simulation_models.environment import Environment
 from simulation_models.position import Position
 from simulation_models.robot_state import RobotId, RobotState
-from simulation_models.task import Task
+from simulation_models.step_context import StepContext
+from simulation_models.task import Task, TaskType
 from simulation_models.task_state import TaskStatus
-from simulation_models.task import TaskType
 
 
 PathfindingAlgorithm = Callable[[Environment, Position, Position], Position | None]
@@ -22,7 +22,7 @@ GoalResolver = Callable[[RobotId, RobotState], Position | None]
 
 
 def plan_moves(
-    ctx: "StepContext",
+    ctx: StepContext,
     pathfinding: PathfindingAlgorithm,
     goal_resolver: GoalResolver,
 ) -> dict[RobotId, Position | None]:
@@ -38,8 +38,6 @@ def plan_moves(
     The goal_resolver may write to robot state (e.g. current_waypoint) as a
     side effect; plan_moves itself does not mutate any state directly.
     """
-    from simulation_models.step_context import StepContext  # local to avoid circular import
-
     planned: dict[RobotId, Position | None] = {}
 
     for robot_id, state in ctx.robot_states.items():
