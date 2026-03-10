@@ -4,7 +4,7 @@ This project follows a strict layered architecture.
 
 Dependency direction (one-way only):
 
-primitives → domain → world → algorithms → engine
+primitives → domain → algorithms → engine
 
 Lower layers must never import from higher layers.
 
@@ -20,10 +20,6 @@ Lower layers must never import from higher layers.
 ### domain
 - Core entities of the simulation
 - Depends only on primitives
-
-### world
-- Global simulation state
-- Aggregates domain objects
 
 ### algorithms
 - Planning and decision logic
@@ -51,6 +47,5 @@ Lower layers must never import from higher layers.
 
 1. Pure data? → primitives  
 2. Domain behavior? → domain  
-3. Global state container? → world  
-4. Strategy or planning? → algorithms  
-5. Orchestration or execution? → engine
+3. Strategy or planning? → algorithms
+4. Orchestration or execution? → engine

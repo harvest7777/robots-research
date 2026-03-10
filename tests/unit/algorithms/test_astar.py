@@ -16,7 +16,7 @@ Covers:
 
 from __future__ import annotations
 
-from pathfinding_algorithms.astar_pathfinding import astar_pathfind
+from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 

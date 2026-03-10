@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import pytest
 
-from pathfinding_algorithms.astar_pathfinding import astar_pathfind
+from simulation.algorithms.astar_pathfinding import astar_pathfind
 from scenario_loaders.load_simulation import load_simulation
 from services.base_assignment_service import BaseAssignmentService
 from simulation.domain.assignment import Assignment
