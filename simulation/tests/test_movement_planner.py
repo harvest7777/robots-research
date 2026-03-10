@@ -1,13 +1,13 @@
-from simulation_models.robot_state import RobotId
-from simulation_models.environment import Environment
-from simulation_models.position import Position
-from simulation_models.robot_state import RobotState
-from simulation_models.task import Task, TaskId, TaskType, SpatialConstraint
-from simulation_models.task_state import TaskState, TaskStatus
-from simulation_models.time import Time
-from simulation_models.zone import Zone, ZoneId, ZoneType
-from simulation_models.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
-from simulation_models.step_context import StepContext
+from simulation.domain.robot_state import RobotId
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
+from simulation.domain.robot_state import RobotState
+from simulation.domain.task import Task, TaskId, TaskType, SpatialConstraint
+from simulation.domain.task_state import TaskState, TaskStatus
+from simulation.primitives.time import Time
+from simulation.primitives.zone import Zone, ZoneId, ZoneType
+from simulation.algorithms.movement_planner import plan_moves, resolve_collisions, resolve_task_target_position
+from simulation.engine.step_context import StepContext
 
 
 # ---------------------------------------------------------------------------

@@ -16,18 +16,18 @@ import pytest
 from pathfinding_algorithms.astar_pathfinding import astar_pathfind
 from scenario_loaders.load_simulation import load_simulation
 from services.base_assignment_service import BaseAssignmentService
-from simulation_models.assignment import Assignment
-from simulation_models.robot_state import RobotId
-from simulation_models.environment import Environment
-from simulation_models.position import Position
-from simulation_models.rescue_point import RescuePoint, RescuePointId
-from simulation_models.robot import Robot
-from simulation_models.robot_state import RobotState
-from simulation_models.search_goal import compute_search_goal
-from simulation_models.simulation import Simulation
-from simulation_models.task import Task, TaskId, TaskType, SpatialConstraint
-from simulation_models.task_state import TaskState, TaskStatus
-from simulation_models.time import Time
+from simulation.domain.assignment import Assignment
+from simulation.domain.robot_state import RobotId
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.robot import Robot
+from simulation.domain.robot_state import RobotState
+from simulation.algorithms.search_goal import compute_search_goal
+from simulation.engine.simulation import Simulation
+from simulation.domain.task import Task, TaskId, TaskType, SpatialConstraint
+from simulation.domain.task_state import TaskState, TaskStatus
+from simulation.primitives.time import Time
 
 
 # ---------------------------------------------------------------------------

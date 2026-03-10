@@ -1,12 +1,12 @@
 import dataclasses
 
-from simulation_models.robot_state import RobotId
-from simulation_models.environment import Environment
-from simulation_models.position import Position
-from simulation_models.rescue_point import RescuePoint, RescuePointId
-from simulation_models.robot_state import RobotState
-from simulation_models.search_goal import compute_search_goal
-from simulation_models.task import TaskId
+from simulation.domain.robot_state import RobotId
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.robot_state import RobotState
+from simulation.algorithms.search_goal import compute_search_goal
+from simulation.domain.task import TaskId
 
 
 # ---------------------------------------------------------------------------

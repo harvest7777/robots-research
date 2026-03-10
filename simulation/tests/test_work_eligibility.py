@@ -1,15 +1,15 @@
-from simulation_models.robot_state import RobotId
-from simulation_models.capability import Capability
-from simulation_models.environment import Environment
-from simulation_models.position import Position
-from simulation_models.robot import Robot
-from simulation_models.robot_state import RobotState
-from simulation_models.step_context import StepContext
-from simulation_models.task import Task, TaskId, TaskType, SpatialConstraint
-from simulation_models.zone import Zone, ZoneId, ZoneType
-from simulation_models.task_state import TaskState, TaskStatus
-from simulation_models.time import Time
-from simulation_models.work_eligibility import get_eligible_robots
+from simulation.domain.robot_state import RobotId
+from simulation.primitives.capability import Capability
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
+from simulation.domain.robot import Robot
+from simulation.domain.robot_state import RobotState
+from simulation.engine.step_context import StepContext
+from simulation.domain.task import Task, TaskId, TaskType, SpatialConstraint
+from simulation.primitives.zone import Zone, ZoneId, ZoneType
+from simulation.domain.task_state import TaskState, TaskStatus
+from simulation.primitives.time import Time
+from simulation.algorithms.work_eligibility import get_eligible_robots
 
 
 def _ctx(

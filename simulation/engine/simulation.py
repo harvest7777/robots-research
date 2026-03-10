@@ -17,24 +17,24 @@ import dataclasses
 from dataclasses import dataclass, field
 from types import MappingProxyType
 
-from simulation_models.assignment import Assignment
-from simulation_models.robot_state import RobotId
+from simulation.domain.assignment import Assignment
+from simulation.domain.robot_state import RobotId
 from services.base_assignment_service import BaseAssignmentService
-from simulation_models.environment import Environment
-from simulation_models.position import Position
-from simulation_models.rescue_point import RescuePointId, RescuePoint
-from simulation_models.robot import Robot
-from simulation_models.robot_state import RobotState
-from simulation_models.simulation_result import SimulationResult
-from simulation_models.snapshot import SimulationSnapshot
-from simulation_models.task import Task, TaskId, TaskType
-from simulation_models.task_state import TaskState, TaskStatus, set_assignment, apply_work, mark_done
-from simulation_models.time import Time
-from simulation_models.movement_planner import PathfindingAlgorithm, plan_moves, resolve_collisions, resolve_task_target_position
-from simulation_models.step_context import StepContext
-from simulation_models.rescue_handler import compute_rescue_effect
-from simulation_models.search_goal import compute_search_goal
-from simulation_models.work_eligibility import get_eligible_robots
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
+from simulation.domain.rescue_point import RescuePointId, RescuePoint
+from simulation.domain.robot import Robot
+from simulation.domain.robot_state import RobotState
+from simulation.engine.simulation_result import SimulationResult
+from simulation.engine.snapshot import SimulationSnapshot
+from simulation.domain.task import Task, TaskId, TaskType
+from simulation.domain.task_state import TaskState, TaskStatus, set_assignment, apply_work, mark_done
+from simulation.primitives.time import Time
+from simulation.algorithms.movement_planner import PathfindingAlgorithm, plan_moves, resolve_collisions, resolve_task_target_position
+from simulation.engine.step_context import StepContext
+from simulation.algorithms.rescue_handler import compute_rescue_effect
+from simulation.algorithms.search_goal import compute_search_goal
+from simulation.algorithms.work_eligibility import get_eligible_robots
 
 
 @dataclass

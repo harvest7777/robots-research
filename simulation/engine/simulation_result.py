@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.snapshot import SimulationSnapshot
+from simulation.engine.snapshot import SimulationSnapshot
 
 
 @dataclass

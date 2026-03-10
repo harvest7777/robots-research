@@ -1,9 +1,9 @@
-from simulation_models.assignment import Assignment
-from simulation_models.robot_state import RobotId
-from simulation_models.rescue_handler import RescueEffect, compute_rescue_effect
-from simulation_models.rescue_point import RescuePoint, RescuePointId
-from simulation_models.task import Task, TaskId, TaskType
-from simulation_models.time import Time
+from simulation.domain.assignment import Assignment
+from simulation.domain.robot_state import RobotId
+from simulation.algorithms.rescue_handler import RescueEffect, compute_rescue_effect
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.task import Task, TaskId, TaskType
+from simulation.primitives.time import Time
 
 
 # ---------------------------------------------------------------------------
@@ -19,7 +19,7 @@ def _rescue_task(task_id: int) -> Task:
 
 
 def _rp(rp_id: int, rescue_task_id: int) -> RescuePoint:
-    from simulation_models.position import Position
+    from simulation.primitives.position import Position
     return RescuePoint(
         id=RescuePointId(rp_id),
         position=Position(0, 0),

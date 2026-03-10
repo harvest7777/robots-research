@@ -22,14 +22,14 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Mapping
 
 if TYPE_CHECKING:
-    from simulation_models.assignment import Assignment
-    from simulation_models.environment import Environment
-    from simulation_models.rescue_point import RescuePointId
-    from simulation_models.robot import Robot
-    from simulation_models.robot_state import RobotId, RobotState
-    from simulation_models.task import Task, TaskId
-    from simulation_models.task_state import TaskState
-    from simulation_models.time import Time
+    from simulation.domain.assignment import Assignment
+    from simulation.world.environment import Environment
+    from simulation.domain.rescue_point import RescuePointId
+    from simulation.domain.robot import Robot
+    from simulation.domain.robot_state import RobotId, RobotState
+    from simulation.domain.task import Task, TaskId
+    from simulation.domain.task_state import TaskState
+    from simulation.primitives.time import Time
 
 
 @dataclass(frozen=True)

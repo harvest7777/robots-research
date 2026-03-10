@@ -13,12 +13,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.environment import Environment
-from simulation_models.robot import Robot
-from simulation_models.robot_state import RobotId, RobotState
-from simulation_models.task import Task, TaskId
-from simulation_models.task_state import TaskState
-from simulation_models.time import Time
+from simulation.world.environment import Environment
+from simulation.domain.robot import Robot
+from simulation.domain.robot_state import RobotId, RobotState
+from simulation.domain.task import Task, TaskId
+from simulation.domain.task_state import TaskState
+from simulation.primitives.time import Time
 
 
 @dataclass
