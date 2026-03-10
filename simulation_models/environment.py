@@ -16,12 +16,11 @@ Core invariant:
 from __future__ import annotations
 
 from types import MappingProxyType
+from typing import Mapping
 
 from .position import Position
+from .rescue_point import RescuePoint, RescuePointId
 from .zone import Zone, ZoneId
-
-# RescuePoint imported inside methods to avoid circular imports at module load.
-# Environment → RescuePoint → Task → (no back-reference to Environment)
 
 class Obstacle:
     """Marker object representing an impassable obstacle on the grid."""
@@ -46,7 +45,7 @@ class Environment:
                       for _ in range(height)]
         self._zones: dict[ZoneId, Zone] = {}
         self._obstacles: set[Position] = set()
-        self._rescue_points: dict = {}  # dict[RescuePointId, RescuePoint]
+        self._rescue_points: dict[RescuePointId, RescuePoint] = {}
 
     @property
     def width(self) -> int:
@@ -183,7 +182,7 @@ class Environment:
         # All validations passed - commit the zone
         self._zones[zone.id] = zone
 
-    def add_rescue_point(self, rp: object) -> None:
+    def add_rescue_point(self, rp: RescuePoint) -> None:
         """
         Register a RescuePoint in the environment.
 
@@ -204,7 +203,7 @@ class Environment:
         self._rescue_points[rp.id] = rp
 
     @property
-    def rescue_points(self) -> dict:  # dict[RescuePointId, RescuePoint] — typed at call sites
+    def rescue_points(self) -> Mapping[RescuePointId, RescuePoint]:
         """Return a read-only view of the rescue points dict (RescuePointId → RescuePoint)."""
         return MappingProxyType(self._rescue_points)
 
