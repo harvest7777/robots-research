@@ -42,7 +42,6 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
             continue
 
         if task.type == TaskType.SEARCH:
-            # Assign all unassigned capable robots to the search task together
             robot_ids = frozenset(
                 robot.id
                 for robot in robots
