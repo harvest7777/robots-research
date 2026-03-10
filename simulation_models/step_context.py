@@ -1,18 +1,20 @@
 """
 StepContext
 
-A lightweight bundle of the read-only simulation state slices that multiple
-per-tick functions need. Avoids threading six-plus individual parameters
+A lightweight parameter bundle of simulation state slices that multiple
+per-tick functions need. Avoids threading six-plus individual arguments
 through every call site while keeping each function's dependencies explicit.
+
+Note: robot_states and task_states are live references to the mutable dicts,
+not copies. This is a bundle, not a snapshot.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.robot_state import RobotId
 from simulation_models.environment import Environment
-from simulation_models.robot_state import RobotState
+from simulation_models.robot_state import RobotId, RobotState
 from simulation_models.task import Task, TaskId
 from simulation_models.task_state import TaskState
 from simulation_models.time import Time
@@ -20,11 +22,11 @@ from simulation_models.time import Time
 
 @dataclass
 class StepContext:
-    """Snapshot of simulation state for a single tick.
+    """Per-tick parameter bundle for simulation step functions.
 
     Attributes:
-        robot_states:  Mutable state for every robot, keyed by robot_id.
-        task_states:   Mutable state for every task, keyed by task_id.
+        robot_states:  Live mutable state for every robot, keyed by robot_id.
+        task_states:   Live mutable state for every task, keyed by task_id.
         robot_to_task: Active assignment map: robot_id → task_id.
         task_by_id:    Immutable task definitions, keyed by task_id.
         environment:   The grid environment (immutable during a step).

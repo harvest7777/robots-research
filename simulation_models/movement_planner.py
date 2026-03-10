@@ -9,10 +9,9 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from simulation_models.robot_state import RobotId
 from simulation_models.environment import Environment
 from simulation_models.position import Position
-from simulation_models.robot_state import RobotState
+from simulation_models.robot_state import RobotId, RobotState
 from simulation_models.task import Task
 from simulation_models.task_state import TaskStatus
 from simulation_models.task import TaskType
