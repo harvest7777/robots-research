@@ -25,3 +25,13 @@ With MuJoCo’s Python environment: use `mjpython` instead of `python` when usin
 **Example scenario shape:** `scenarios/example_scenario_shape.json`
 
 ---
+
+## Development
+
+| Command | Description |
+| ------------ | --------------------------------- |
+| `make test` | Run all tests |
+| `make lint` | Check import layer boundaries |
+| `make check` | Run lint + tests (runs automatically before every commit) |
+
+---
