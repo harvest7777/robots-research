@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from simulation.primitives.position import Position
 from simulation.domain.robot_state import RobotId
-from simulation.engine.step_context import StepContext
+from simulation.domain.step_context import StepContext
 from simulation.domain.task import Task
 from simulation.domain.task_state import TaskStatus
 

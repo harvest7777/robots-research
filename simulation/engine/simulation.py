@@ -31,7 +31,7 @@ from simulation.domain.task import Task, TaskId, TaskType
 from simulation.domain.task_state import TaskState, TaskStatus, set_assignment, apply_work, mark_done
 from simulation.primitives.time import Time
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, plan_moves, resolve_collisions, resolve_task_target_position
-from simulation.engine.step_context import StepContext
+from simulation.domain.step_context import StepContext
 from simulation.algorithms.rescue_handler import compute_rescue_effect
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.algorithms.work_eligibility import get_eligible_robots

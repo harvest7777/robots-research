@@ -12,7 +12,7 @@ from collections.abc import Callable
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.engine.step_context import StepContext
+from simulation.domain.step_context import StepContext
 from simulation.domain.task import Task, TaskType
 from simulation.domain.task_state import TaskStatus
 
