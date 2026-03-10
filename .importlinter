@@ -1,0 +1,11 @@
+[importlinter]
+root_package = simulation
+
+[importlinter:contract:layers]
+name = Enforce layered architecture
+type = layers
+layers =
+    simulation.engine
+    simulation.algorithms
+    simulation.domain
+    simulation.primitives
