@@ -9,12 +9,12 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from simulation_models.environment import Environment
-from simulation_models.position import Position
-from simulation_models.robot_state import RobotId, RobotState
-from simulation_models.step_context import StepContext
-from simulation_models.task import Task, TaskType
-from simulation_models.task_state import TaskStatus
+from simulation.world.environment import Environment
+from simulation.primitives.position import Position
+from simulation.domain.robot_state import RobotId, RobotState
+from simulation.engine.step_context import StepContext
+from simulation.domain.task import Task, TaskType
+from simulation.domain.task_state import TaskStatus
 
 
 PathfindingAlgorithm = Callable[[Environment, Position, Position], Position | None]

@@ -13,11 +13,11 @@ import random
 _MAX_RANDOM_GOAL_ATTEMPTS = 1000
 """Max attempts to find a random walkable cell before giving up."""
 
-from simulation_models.environment import Environment
-from simulation_models.movement_planner import PathfindingAlgorithm
-from simulation_models.position import Position
-from simulation_models.rescue_point import RescuePoint, RescuePointId
-from simulation_models.robot_state import RobotState
+from simulation.world.environment import Environment
+from simulation.algorithms.movement_planner import PathfindingAlgorithm
+from simulation.primitives.position import Position
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.robot_state import RobotState
 
 
 def compute_search_goal(

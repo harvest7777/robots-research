@@ -10,11 +10,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.assignment import Assignment
-from simulation_models.robot_state import RobotId
-from simulation_models.rescue_point import RescuePoint, RescuePointId
-from simulation_models.task import Task, TaskId, TaskType
-from simulation_models.time import Time
+from simulation.domain.assignment import Assignment
+from simulation.domain.robot_state import RobotId
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.task import Task, TaskId, TaskType
+from simulation.primitives.time import Time
 
 
 @dataclass
