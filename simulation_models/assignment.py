@@ -17,13 +17,10 @@ Assignments are:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import NewType
 
+from simulation_models.robot_state import RobotId
 from simulation_models.task import TaskId
 from simulation_models.time import Time
-
-RobotId = NewType("RobotId", int)
-"""Opaque identifier for robots. Hashable and comparable."""
 
 
 @dataclass(frozen=True)

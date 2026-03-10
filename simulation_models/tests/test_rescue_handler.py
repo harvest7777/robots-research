@@ -1,4 +1,5 @@
-from simulation_models.assignment import Assignment, RobotId
+from simulation_models.assignment import Assignment
+from simulation_models.robot_state import RobotId
 from simulation_models.rescue_handler import RescueEffect, compute_rescue_effect
 from simulation_models.rescue_point import RescuePoint, RescuePointId
 from simulation_models.task import Task, TaskId, TaskType

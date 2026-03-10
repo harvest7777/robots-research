@@ -3,7 +3,8 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 from services import JsonAssignmentService, JsonSimulationStateService
-from simulation_models.assignment import Assignment, RobotId
+from simulation_models.assignment import Assignment
+from simulation_models.robot_state import RobotId
 from simulation_models.task import TaskId
 from simulation_models.time import Time
 

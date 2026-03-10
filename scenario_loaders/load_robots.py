@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from simulation_models.assignment import RobotId
+from simulation_models.robot_state import RobotId
 from simulation_models.capability import Capability
 from simulation_models.robot import Robot
 

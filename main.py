@@ -15,7 +15,8 @@ from services import (
     SimulationState,
     TaskStateSnapshot,
 )
-from simulation_models.assignment import Assignment, RobotId
+from simulation_models.assignment import Assignment
+from simulation_models.robot_state import RobotId
 from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.task_state import TaskState

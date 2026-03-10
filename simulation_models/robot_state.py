@@ -12,9 +12,12 @@ Separation of concerns:
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import NewType
 
-from simulation_models.assignment import RobotId
 from simulation_models.position import Position
+
+RobotId = NewType("RobotId", int)
+"""Opaque identifier for robots. Hashable and comparable."""
 
 
 @dataclass

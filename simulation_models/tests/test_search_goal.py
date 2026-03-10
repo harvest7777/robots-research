@@ -1,6 +1,6 @@
 import dataclasses
 
-from simulation_models.assignment import RobotId
+from simulation_models.robot_state import RobotId
 from simulation_models.environment import Environment
 from simulation_models.position import Position
 from simulation_models.rescue_point import RescuePoint, RescuePointId

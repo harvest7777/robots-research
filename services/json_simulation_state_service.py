@@ -19,7 +19,7 @@ from services.base_simulation_state_service import (
     SimulationState,
     TaskStateSnapshot,
 )
-from simulation_models.assignment import RobotId
+from simulation_models.robot_state import RobotId
 from simulation_models.task import TaskId
 from simulation_models.task_state import TaskStatus
 from simulation_models.time import Time

@@ -7,7 +7,8 @@ Assigns robots to tasks based on capability matching.
 - Uses first-fit: assigns the first available robot with required capabilities
 """
 
-from simulation_models.assignment import Assignment, RobotId
+from simulation_models.assignment import Assignment
+from simulation_models.robot_state import RobotId
 from simulation_models.robot import Robot
 from simulation_models.task import Task, TaskType
 from simulation_models.time import Time

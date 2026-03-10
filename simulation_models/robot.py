@@ -19,10 +19,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.assignment import RobotId
 from simulation_models.capability import Capability
 from simulation_models.position import Position
-from simulation_models.robot_state import RobotState
+from simulation_models.robot_state import RobotId, RobotState
 
 
 # Battery drain rates (per tick)

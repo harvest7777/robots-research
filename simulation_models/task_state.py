@@ -19,7 +19,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
-from simulation_models.assignment import RobotId
+from simulation_models.robot_state import RobotId
 from simulation_models.task import TaskId
 from simulation_models.time import Time
 

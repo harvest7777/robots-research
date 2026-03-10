@@ -10,7 +10,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.assignment import Assignment, RobotId
+from simulation_models.assignment import Assignment
+from simulation_models.robot_state import RobotId
 from simulation_models.rescue_point import RescuePoint
 from simulation_models.task import Task, TaskId, TaskType
 from simulation_models.time import Time

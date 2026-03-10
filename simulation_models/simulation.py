@@ -19,7 +19,8 @@ from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Optional
 
-from simulation_models.assignment import Assignment, RobotId
+from simulation_models.assignment import Assignment
+from simulation_models.robot_state import RobotId
 from services.base_assignment_service import BaseAssignmentService
 from simulation_models.environment import Environment
 from simulation_models.position import Position

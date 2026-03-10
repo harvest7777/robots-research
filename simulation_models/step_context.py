@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation_models.assignment import RobotId
+from simulation_models.robot_state import RobotId
 from simulation_models.environment import Environment
 from simulation_models.robot_state import RobotState
 from simulation_models.task import Task, TaskId

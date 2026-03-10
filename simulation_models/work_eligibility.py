@@ -7,7 +7,7 @@ in a given tick. No simulation state is held here — all inputs are explicit.
 
 from __future__ import annotations
 
-from simulation_models.assignment import RobotId
+from simulation_models.robot_state import RobotId
 from simulation_models.environment import Environment
 from simulation_models.position import Position
 from simulation_models.robot import Robot
