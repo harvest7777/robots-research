@@ -17,10 +17,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import NewType
 
-from .capability import Capability
-from .position import Position
-from .time import Time
-from .zone import ZoneId
+from simulation.primitives.capability import Capability
+from simulation.primitives.position import Position
+from simulation.primitives.time import Time
+from simulation.primitives.zone import ZoneId
 
 
 # -----------------------------------------------------------------------------

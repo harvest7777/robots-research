@@ -19,9 +19,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
-from simulation_models.robot_state import RobotId
-from simulation_models.task import TaskId
-from simulation_models.time import Time
+from simulation.domain.robot_state import RobotId
+from simulation.domain.task import TaskId
+from simulation.primitives.time import Time
 
 
 class TaskStatus(Enum):

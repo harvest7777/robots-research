@@ -17,8 +17,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import NewType
 
-from simulation_models.position import Position
-from simulation_models.task import TaskId
+from simulation.primitives.position import Position
+from simulation.domain.task import TaskId
 
 RescuePointId = NewType("RescuePointId", int)
 """Opaque identifier for rescue points. Hashable and comparable."""

@@ -14,7 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import NewType
 
-from simulation_models.position import Position
+from simulation.primitives.position import Position
 
 RobotId = NewType("RobotId", int)
 """Opaque identifier for robots. Hashable and comparable."""
