@@ -61,11 +61,9 @@ def get_eligible_robots(
                 zone = environment.get_zone(sc.target)
                 if zone is None:
                     continue
-                if zone.contains(state.position):
-                    pass  # in zone, eligible
-                elif sc.max_distance == 0:
-                    continue
-                else:
+                if not zone.contains(state.position):
+                    if sc.max_distance == 0:
+                        continue
                     nearest_dist = min(
                         state.position.manhattan(cell) for cell in zone.cells
                     )
