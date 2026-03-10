@@ -40,7 +40,6 @@ def test_rescue_found_updates_marks_rescue_point_as_found():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2)},
         task_by_id={TaskId(2): search_task},
-        tasks=[search_task],
         t_now=Time(5),
     )
 
@@ -59,7 +58,6 @@ def test_new_assignment_targets_rescue_task():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2)},
         task_by_id={TaskId(2): search_task},
-        tasks=[search_task],
         t_now=Time(5),
     )
 
@@ -74,7 +72,6 @@ def test_new_assignment_includes_all_search_robots():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(2)},
         task_by_id={TaskId(2): search_task},
-        tasks=[search_task],
         t_now=Time(5),
     )
 
@@ -89,7 +86,6 @@ def test_new_assignment_assign_at_matches_t_now():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2)},
         task_by_id={TaskId(2): search_task},
-        tasks=[search_task],
         t_now=Time(7),
     )
 
@@ -105,7 +101,6 @@ def test_new_assignment_excludes_non_search_robots():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(10)},
         task_by_id={TaskId(2): search_task, TaskId(10): rescue_task},
-        tasks=[search_task, rescue_task],
         t_now=Time(5),
     )
 
@@ -125,8 +120,7 @@ def test_tasks_to_mark_done_contains_all_search_task_ids():
     effect = compute_rescue_effect(
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2)},
-        task_by_id={TaskId(2): search_task_a},
-        tasks=[search_task_a, search_task_b],
+        task_by_id={TaskId(2): search_task_a, TaskId(3): search_task_b},
         t_now=Time(5),
     )
 
@@ -142,7 +136,6 @@ def test_tasks_to_mark_done_excludes_non_search_tasks():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2)},
         task_by_id={TaskId(2): search_task},
-        tasks=[search_task, rescue_task],
         t_now=Time(5),
     )
 
@@ -161,7 +154,6 @@ def test_waypoints_to_clear_contains_all_search_robot_ids():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(2)},
         task_by_id={TaskId(2): search_task},
-        tasks=[search_task],
         t_now=Time(5),
     )
 
@@ -177,7 +169,6 @@ def test_waypoints_to_clear_excludes_non_search_robots():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(2), RobotId(2): TaskId(10)},
         task_by_id={TaskId(2): search_task, TaskId(10): rescue_task},
-        tasks=[search_task, rescue_task],
         t_now=Time(5),
     )
 
@@ -197,7 +188,6 @@ def test_no_search_robots_produces_empty_assignment_and_no_waypoints():
         rescue_point=rp,
         robot_to_task={RobotId(1): TaskId(10)},
         task_by_id={TaskId(10): rescue_task},
-        tasks=[rescue_task],
         t_now=Time(5),
     )
 

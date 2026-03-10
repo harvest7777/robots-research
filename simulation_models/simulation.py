@@ -311,7 +311,7 @@ class Simulation:
     def _trigger_rescue_found(
         self, rescue_point: RescuePoint, robot_to_task: dict[RobotId, TaskId]
     ) -> None:
-        effect = compute_rescue_effect(rescue_point, robot_to_task, self._task_by_id, self.tasks, self.t_now)
+        effect = compute_rescue_effect(rescue_point, robot_to_task, self._task_by_id, self.t_now)
 
         self.rescue_found.update(effect.rescue_found_updates)
 

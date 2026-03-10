@@ -38,7 +38,6 @@ def compute_rescue_effect(
     rescue_point: RescuePoint,
     robot_to_task: dict[RobotId, TaskId],
     task_by_id: dict[TaskId, Task],
-    tasks: list[Task],
     t_now: Time,
 ) -> RescueEffect:
     """Compute the full effect of a rescue point being found.
@@ -51,8 +50,11 @@ def compute_rescue_effect(
         if task_by_id[tid].type == TaskType.SEARCH
     ]
 
+    # All SEARCH tasks are marked done when any rescue point is found:
+    # at that point the search phase is complete regardless of how many
+    # rescue points remain (robots transition to the RESCUE task instead).
     search_task_ids = [
-        task.id for task in tasks
+        task_id for task_id, task in task_by_id.items()
         if task.type == TaskType.SEARCH
     ]
 
