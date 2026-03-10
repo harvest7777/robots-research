@@ -228,11 +228,9 @@ class SimulationView:
             task = robot_task_map.get(robot.id)
             if task is not None:
                 name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
-                tstate = self.snapshot.task_states[task.id]
                 text = (
                     f"  Robot {robot.id} ({rstate.position.x:.2f},{rstate.position.y:.2f})"
                     f" is working on {name} (Task {task.id})"
-                    f" ({tstate.status.value})"
                 )
             else:
                 text = (
