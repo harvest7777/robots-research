@@ -170,7 +170,7 @@ class Simulation:
         self._apply_task_assignments(assignments)
 
         ctx = self._build_step_context(robot_to_task)
-        planned_moves = self._plan_robot_moves(ctx, robot_to_task)
+        planned_moves = self._plan_robot_moves(ctx)
         planned_moves = self._resolve_robot_collisions(planned_moves)
         for rescue_point in self._find_rescue_discoveries(robot_to_task):
             self._trigger_rescue_found(rescue_point, robot_to_task)
@@ -204,11 +204,9 @@ class Simulation:
             t_now=self.t_now,
         )
 
-    def _plan_robot_moves(
-        self, ctx: StepContext, robot_to_task: dict[RobotId, TaskId]
-    ) -> dict[RobotId, Position | None]:
+    def _plan_robot_moves(self, ctx: StepContext) -> dict[RobotId, Position | None]:
         def _goal_resolver(robot_id: RobotId, state: RobotState) -> Position | None:
-            task = self._task_by_id[robot_to_task[robot_id]]
+            task = self._task_by_id[ctx.robot_to_task[robot_id]]
             if task.type == TaskType.SEARCH:
                 goal = compute_search_goal(
                     state, self.environment.rescue_points, self.rescue_found,
@@ -217,7 +215,7 @@ class Simulation:
                 )
                 state.current_waypoint = goal
                 return goal
-            return self._resolve_task_target_position(task, state.position)
+            return resolve_task_target_position(task, state.position, self.environment)
 
         return plan_moves(ctx, self.pathfinding_algorithm, _goal_resolver)
 
@@ -330,9 +328,6 @@ class Simulation:
 
         for robot_id in effect.waypoints_to_clear:
             self.robot_states[robot_id].current_waypoint = None
-
-    def _resolve_task_target_position(self, task: Task, robot_pos: Position) -> Position | None:
-        return resolve_task_target_position(task, robot_pos, self.environment)
 
     def _get_active_assignments(self) -> list[Assignment]:
         """Return the active assignments at t_now via the assignment service."""
