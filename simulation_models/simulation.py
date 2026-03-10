@@ -28,7 +28,7 @@ from simulation_models.robot_state import RobotState
 from simulation_models.simulation_result import SimulationResult
 from simulation_models.snapshot import SimulationSnapshot
 from simulation_models.task import Task, TaskId, TaskType
-from simulation_models.task_state import TaskState, TaskStatus
+from simulation_models.task_state import TaskState, TaskStatus, set_assignment, apply_work, mark_done
 from simulation_models.time import Time
 from simulation_models.movement_planner import PathfindingAlgorithm, plan_moves, resolve_collisions, resolve_task_target_position
 from simulation_models.step_context import StepContext
@@ -176,7 +176,7 @@ class Simulation:
             assigned_robot_ids = {
                 rid for a in assignments if a.task_id == task.id for rid in a.robot_ids
             }
-            task.set_assignment(task_state, assigned_robot_ids)
+            set_assignment(task_state, assigned_robot_ids)
 
     def _build_step_context(self, robot_to_task: dict[RobotId, TaskId]) -> StepContext:
         return StepContext(
@@ -261,8 +261,9 @@ class Simulation:
             eligible = eligible_by_task[task.id]
             if not eligible:
                 continue
-            task.apply_work(
+            apply_work(
                 self.task_states[task.id],
+                task.required_work_time,
                 Time(self.dt.tick * len(eligible)),
                 self.t_now,
             )
@@ -298,7 +299,7 @@ class Simulation:
             self.assignment_service.add_assignments([effect.new_assignment])
 
         for task_id in effect.tasks_to_mark_done:
-            self._task_by_id[task_id].mark_done(self.task_states[task_id], self.t_now)
+            mark_done(self.task_states[task_id], self.t_now)
 
         for robot_id in effect.waypoints_to_clear:
             self.robot_states[robot_id].current_waypoint = None
