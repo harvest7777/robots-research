@@ -32,6 +32,6 @@ With MuJoCo’s Python environment: use `mjpython` instead of `python` when usin
 | ------------ | --------------------------------- |
 | `make test` | Run all tests |
 | `make lint` | Check import layer boundaries |
-| `make check` | Run lint + tests (runs automatically before every commit) |
+| `make check` | Run lint + tests |
 
 ---
