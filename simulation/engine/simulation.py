@@ -34,7 +34,7 @@ from simulation.algorithms.movement_planner import PathfindingAlgorithm, plan_mo
 from simulation.domain.step_context import StepContext
 from simulation.algorithms.rescue_handler import compute_rescue_effect
 from simulation.algorithms.search_goal import compute_search_goal
-from simulation.algorithms.work_eligibility import get_eligible_robots
+from simulation.algorithms.work_eligibility import filter_assignments_for_eligible_robots
 
 
 @dataclass
@@ -238,7 +238,7 @@ class Simulation:
         cannot affect sibling tasks' eligibility within the same tick.
         """
         return {
-            task.id: [] if task.type == TaskType.IDLE else get_eligible_robots(task, ctx)
+            task.id: [] if task.type == TaskType.IDLE else filter_assignments_for_eligible_robots(task, ctx)
             for task in self.tasks
         }
 

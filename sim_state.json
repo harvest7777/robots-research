@@ -1,76 +1,90 @@
 {
-  "scenario_id": "test_no_robot_collisions",
-  "current_tick": 21,
+  "scenario_id": "warehouse_mega",
+  "current_tick": 126,
   "max_tick": 500,
   "robots": [
     {
       "robot_id": 1,
-      "x": 19,
-      "y": 2,
-      "battery_level": 0.977,
+      "x": 1,
+      "y": 1,
+      "battery_level": 0.8750000000000064,
       "current_waypoint": null
     },
     {
       "robot_id": 2,
-      "x": 19,
+      "x": 4,
       "y": 7,
-      "battery_level": 0.977,
+      "battery_level": 0.6125000000000042,
       "current_waypoint": null
     },
     {
       "robot_id": 3,
-      "x": 19,
-      "y": 12,
-      "battery_level": 0.977,
+      "x": 8,
+      "y": 1,
+      "battery_level": 0.4625000000000001,
       "current_waypoint": null
     },
     {
       "robot_id": 4,
-      "x": 19,
-      "y": 17,
-      "battery_level": 0.977,
+      "x": 58,
+      "y": 38,
+      "battery_level": 0.9370000000000069,
       "current_waypoint": null
     },
     {
       "robot_id": 5,
-      "x": 19,
-      "y": 4,
-      "battery_level": 0.977,
+      "x": 1,
+      "y": 10,
+      "battery_level": 0.32399999999999995,
       "current_waypoint": null
     },
     {
       "robot_id": 6,
-      "x": 3,
-      "y": 19,
-      "battery_level": 0.977,
+      "x": 45,
+      "y": 2,
+      "battery_level": 0.7115000000000042,
       "current_waypoint": null
     },
     {
       "robot_id": 7,
-      "x": 8,
-      "y": 19,
-      "battery_level": 0.977,
+      "x": 5,
+      "y": 25,
+      "battery_level": 0.5095000000000042,
       "current_waypoint": null
     },
     {
       "robot_id": 8,
-      "x": 13,
-      "y": 19,
-      "battery_level": 0.977,
+      "x": 3,
+      "y": 18,
+      "battery_level": 0.6600000000000047,
       "current_waypoint": null
     },
     {
       "robot_id": 9,
-      "x": 18,
-      "y": 19,
-      "battery_level": 0.977,
+      "x": 1,
+      "y": 9,
+      "battery_level": 0.837000000000007,
       "current_waypoint": null
     },
     {
       "robot_id": 10,
-      "x": 6,
-      "y": 19,
-      "battery_level": 0.977,
+      "x": 56,
+      "y": 36,
+      "battery_level": 0.7540000000000053,
+      "current_waypoint": null
+    },
+    {
+      "robot_id": 11,
+      "x": 27,
+      "y": 38,
+      "battery_level": 0.5765000000000066,
+      "current_waypoint": null
+    },
+    {
+      "robot_id": 12,
+      "x": 28,
+      "y": 12,
+      "battery_level": 0.2034999999999999,
       "current_waypoint": null
     }
   ],
@@ -78,88 +92,141 @@
     {
       "task_id": 1,
       "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        1
-      ]
+      "work_done_ticks": 8,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 2,
-      "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        2
-      ]
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 3,
-      "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        3
-      ]
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 4,
-      "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        4
-      ]
+      "status": "pending",
+      "work_done_ticks": 2,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 5,
-      "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        5
-      ]
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 6,
-      "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        6
-      ]
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 7,
       "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        7
-      ]
+      "work_done_ticks": 8,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 8,
       "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        8
-      ]
+      "work_done_ticks": 20,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 9,
-      "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        9
-      ]
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 10,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 11,
+      "status": "pending",
+      "work_done_ticks": 10,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 12,
       "status": "done",
-      "work_done_ticks": 3,
-      "assigned_robot_ids": [
-        10
-      ]
+      "work_done_ticks": 7,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 13,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 14,
+      "status": "pending",
+      "work_done_ticks": 7,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 15,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 16,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 17,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 18,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 19,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
+    },
+    {
+      "task_id": 20,
+      "status": "pending",
+      "work_done_ticks": 0,
+      "assigned_robot_ids": []
     },
     {
       "task_id": 0,
       "status": "pending",
       "work_done_ticks": 0,
-      "assigned_robot_ids": []
+      "assigned_robot_ids": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ]
     }
   ]
 }

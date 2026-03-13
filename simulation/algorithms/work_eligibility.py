@@ -14,7 +14,7 @@ from simulation.domain.task import Task
 from simulation.domain.task_state import TaskStatus
 
 
-def get_eligible_robots(task: Task, ctx: StepContext) -> list[RobotId]:
+def filter_assignments_for_eligible_robots(task: Task, ctx: StepContext) -> list[RobotId]:
     """Return IDs of robots eligible to work on task this tick.
 
     Returns empty list if the task is in a terminal state, past its

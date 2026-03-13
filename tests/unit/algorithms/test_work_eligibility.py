@@ -10,7 +10,7 @@ from simulation.domain.task import Task, TaskId, TaskType, SpatialConstraint
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
 from simulation.domain.task_state import TaskState, TaskStatus
 from simulation.primitives.time import Time
-from simulation.algorithms.work_eligibility import get_eligible_robots
+from simulation.algorithms.work_eligibility import filter_assignments_for_eligible_robots
 
 
 def _assign(task_id: int, *robot_ids: int) -> Assignment:
@@ -65,7 +65,7 @@ def test_returns_robot_id_when_robot_meets_required_capabilities():
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -89,7 +89,7 @@ def test_returns_robot_id_when_robot_has_superset_of_required_capabilities():
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION, Capability.MANIPULATION}), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -112,7 +112,7 @@ def test_returns_robot_id_when_task_has_no_required_capabilities():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -136,7 +136,7 @@ def test_returns_only_capable_robot_ids_when_robots_have_mixed_capabilities():
     capable_robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1)
     incapable_robot = Robot(id=RobotId(2), capabilities=frozenset(), speed=1)
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): capable_robot, RobotId(2): incapable_robot},
         robot_states={
@@ -163,7 +163,7 @@ def test_returns_empty_when_no_robot_meets_required_capabilities():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -190,7 +190,7 @@ def test_returns_empty_when_robot_has_no_battery():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0), battery_level=0.0)
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -217,7 +217,7 @@ def test_returns_empty_when_task_is_failed():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -240,7 +240,7 @@ def test_returns_empty_when_task_is_completed():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -261,7 +261,7 @@ def test_returns_empty_when_no_robots_are_assigned():
     )
     task_state = TaskState(task_id=TaskId(1))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={},
         robot_states={},
@@ -289,7 +289,7 @@ def test_returns_empty_when_deadline_has_passed():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -313,7 +313,7 @@ def test_returns_robot_id_when_time_equals_deadline():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -342,7 +342,7 @@ def test_returns_empty_when_dependency_is_not_done():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state, TaskId(2): dep_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -367,7 +367,7 @@ def test_returns_robot_id_when_all_dependencies_are_done():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state, TaskId(2): dep_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -392,7 +392,7 @@ def test_returns_all_robot_ids_when_multiple_robots_are_eligible():
     )
     task_state = TaskState(task_id=TaskId(1))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={
             RobotId(1): Robot(id=RobotId(1), capabilities=frozenset(), speed=1),
@@ -426,7 +426,7 @@ def test_returns_empty_when_robot_is_outside_spatial_constraint():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -450,7 +450,7 @@ def test_returns_robot_id_when_robot_is_at_position_target():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(2, 3))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -474,7 +474,7 @@ def test_returns_empty_when_robot_is_one_cell_away_from_exact_target():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(1, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -498,7 +498,7 @@ def test_returns_robot_id_when_robot_is_within_position_max_distance():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(1, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -522,7 +522,7 @@ def test_returns_empty_when_robot_is_just_outside_position_max_distance():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(2, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -552,7 +552,7 @@ def test_returns_robot_id_when_robot_is_in_zone_with_required_capabilities():
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(4, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -578,7 +578,7 @@ def test_returns_empty_when_robot_has_capabilities_but_is_outside_required_zone(
     robot = Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(0, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -603,7 +603,7 @@ def test_returns_robot_id_when_robot_is_in_zone_no_capabilities_required():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(3, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -629,7 +629,7 @@ def test_returns_empty_when_robot_is_in_zone_but_missing_capabilities():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(3, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -653,7 +653,7 @@ def test_returns_only_in_zone_robot_ids_when_robots_have_mixed_zone_positions():
     )
     task_state = TaskState(task_id=TaskId(1))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={
             RobotId(1): Robot(id=RobotId(1), capabilities=frozenset({Capability.VISION}), speed=1),
@@ -684,7 +684,7 @@ def test_returns_robot_id_when_robot_is_within_zone_max_distance():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(2, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
@@ -709,7 +709,7 @@ def test_returns_empty_when_robot_exceeds_zone_max_distance():
     robot = Robot(id=RobotId(1), capabilities=frozenset(), speed=1)
     robot_state = RobotState(robot_id=RobotId(1), position=Position(1, 0))
 
-    result = get_eligible_robots(task, _ctx(
+    result = filter_assignments_for_eligible_robots(task, _ctx(
         task_states={TaskId(1): task_state},
         robots={RobotId(1): robot},
         robot_states={RobotId(1): robot_state},
