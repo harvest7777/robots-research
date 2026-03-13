@@ -3,29 +3,31 @@ Simple greedy assignment algorithm.
 
 Assigns robots to tasks based on capability matching.
 - Each robot can only be assigned to one task at a time
-- A task can have multiple robots assigned to it
-- Uses first-fit: assigns the first available robot with required capabilities
+- Pass 1: first-fit assigns one capable robot to each task
+- Pass 2: surplus robots are added to the first task they can support
 """
 
 from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.domain.robot import Robot
-from simulation.domain.task import Task, TaskType
+from simulation.domain.task import Task, TaskId, TaskType
 from simulation.primitives.time import Time
 
 
 def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
     """
-    Assign robots to tasks using a simple greedy algorithm.
+    Assign robots to tasks using a two-pass greedy algorithm.
 
-    For each task, finds the first available robot that has all required
-    capabilities and assigns it. A robot can only be assigned to one task.
+    Pass 1: first-fit assigns one capable robot to each eligible task.
+    Pass 2: any remaining unassigned robots are added to the first task
+            they can support (so surplus capacity is not wasted).
+
+    A robot can only be assigned to one task at a time.
 
     Special cases:
-    - SEARCH tasks: all capable unassigned robots are assigned together
-      (search is collaborative — every available robot participates).
     - RESCUE tasks: skipped entirely; the simulation triggers rescue
       assignments automatically when a rescue point is found.
+    - IDLE tasks: skipped entirely; they are placeholder no-ops.
 
     Args:
         tasks: List of tasks to assign robots to
@@ -34,36 +36,34 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
     Returns:
         List of assignments mapping tasks to robots
     """
-    assignments: list[Assignment] = []
+    robot_ids_by_task: dict[TaskId, set[RobotId]] = {}
     assigned_robots: set[RobotId] = set()
 
-    for task in tasks:
-        if task.type == TaskType.RESCUE:
-            continue
+    eligible = [t for t in tasks if t.type not in (TaskType.RESCUE, TaskType.IDLE)]
 
-        if task.type == TaskType.SEARCH:
-            robot_ids = frozenset(
-                robot.id
-                for robot in robots
-                if robot.id not in assigned_robots
-                and task.required_capabilities <= robot.capabilities
-            )
-            if robot_ids:
-                assignments.append(
-                    Assignment(task_id=task.id, robot_ids=robot_ids, assign_at=Time(0))
-                )
-                assigned_robots.update(robot_ids)
-            continue
-
+    # Pass 1: assign one robot per task (first-fit)
+    for task in eligible:
         for robot in robots:
             if robot.id in assigned_robots:
                 continue
-
             if task.required_capabilities <= robot.capabilities:
-                assignments.append(
-                    Assignment(task_id=task.id, robot_ids=frozenset([robot.id]), assign_at=Time(0))
-                )
+                robot_ids_by_task[task.id] = {robot.id}
                 assigned_robots.add(robot.id)
                 break
 
-    return assignments
+    # Pass 2: add surplus robots to the first task they can support
+    for robot in robots:
+        if robot.id in assigned_robots:
+            continue
+        for task in eligible:
+            if task.id not in robot_ids_by_task:
+                continue
+            if task.required_capabilities <= robot.capabilities:
+                robot_ids_by_task[task.id].add(robot.id)
+                assigned_robots.add(robot.id)
+                break
+
+    return [
+        Assignment(task_id=task_id, robot_ids=frozenset(rids), assign_at=Time(0))
+        for task_id, rids in robot_ids_by_task.items()
+    ]

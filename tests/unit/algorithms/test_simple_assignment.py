@@ -57,11 +57,6 @@ def test_no_capable_robot_returns_empty():
 
     assert result == []
 
-
-# ---------------------------------------------------------------------------
-# No double-assignment
-# ---------------------------------------------------------------------------
-
 def test_does_not_double_assign_robot():
     task1 = _task(1, TaskType.ROUTINE_INSPECTION, Capability.MANIPULATION)
     task2 = _task(2, TaskType.ROUTINE_INSPECTION, Capability.MANIPULATION)
@@ -73,10 +68,6 @@ def test_does_not_double_assign_robot():
     assert assigned_robot_ids.count(RobotId(1)) == 1
 
 
-# ---------------------------------------------------------------------------
-# RESCUE tasks are skipped
-# ---------------------------------------------------------------------------
-
 def test_rescue_task_is_skipped():
     rescue = _task(1, TaskType.RESCUE, Capability.MANIPULATION)
     robot = _robot(1, Capability.MANIPULATION)
@@ -86,9 +77,25 @@ def test_rescue_task_is_skipped():
     assert result == []
 
 
-# ---------------------------------------------------------------------------
-# SEARCH tasks
-# ---------------------------------------------------------------------------
+def test_idle_task_is_skipped():
+    idle = _task(1, TaskType.IDLE)
+    robot = _robot(1, Capability.MANIPULATION)
+
+    result = simple_assign([idle], [robot])
+
+    assert result == []
+
+
+def test_idle_task_does_not_consume_robots():
+    idle = _task(1, TaskType.IDLE)
+    work = _task(2, TaskType.ROUTINE_INSPECTION, Capability.MANIPULATION)
+    robot = _robot(1, Capability.MANIPULATION)
+
+    result = simple_assign([idle, work], [robot])
+
+    assert len(result) == 1
+    assert result[0].task_id == TaskId(2)
+
 
 def test_search_task_gets_all_capable_robots():
     search = _task(1, TaskType.SEARCH, Capability.VISION)
@@ -111,11 +118,6 @@ def test_search_with_no_capable_robots_returns_empty():
 
     assert result == []
 
-
-# ---------------------------------------------------------------------------
-# One assignment per task
-# ---------------------------------------------------------------------------
-
 def test_returns_one_assignment_per_task():
     task1 = _task(1, TaskType.ROUTINE_INSPECTION, Capability.VISION)
     task2 = _task(2, TaskType.ROUTINE_INSPECTION, Capability.VISION)
@@ -126,3 +128,11 @@ def test_returns_one_assignment_per_task():
 
     task_ids = [a.task_id for a in result]
     assert len(task_ids) == len(set(task_ids))
+
+def test_returns_multiple_eligible_robots_per_task():
+    task1 = _task(1, TaskType.ROUTINE_INSPECTION, Capability.VISION)
+    r1 = _robot(1, Capability.VISION)
+    r2 = _robot(2, Capability.VISION)
+
+    result = simple_assign([task1], [r1, r2])
+    assert len(result[0].robot_ids) == 2
