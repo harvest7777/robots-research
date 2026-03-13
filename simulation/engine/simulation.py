@@ -134,13 +134,12 @@ class Simulation:
         tasks_succeeded = sum(
             1 for tid in non_idle_task_ids if self.task_states[tid].status == TaskStatus.DONE
         )
-        elapsed = self.t_now.tick - t_start.tick
 
         return SimulationResult(
             completed=all_terminal,
             tasks_succeeded=tasks_succeeded,
             tasks_total=len(non_idle_task_ids),
-            makespan=elapsed if all_terminal else None,
+            makespan=self.dt if all_terminal else None,
             snapshots=list(self.history.values()),
         )
 

@@ -85,14 +85,14 @@ def test_basic_completion__run_returns_correct_makespan():
     sim = _load_wired("test_basic_completion")
     result = sim.run(max_delta_time=Time(100))
     assert result.makespan is not None
-    assert result.makespan > 0
+    assert result.makespan > Time(0)
 
 
 def test_basic_completion__snapshots_recorded_each_tick():
     sim = _load_wired("test_basic_completion")
     result = sim.run(max_delta_time=Time(100))
     # history includes tick 0 snapshot from __post_init__, plus one per step
-    assert len(sim.history) == result.makespan + 1
+    assert len(sim.history) == result.makespan.tick + 1
 
 
 def test_basic_completion__all_tasks_done_at_end():
@@ -121,7 +121,7 @@ def test_basic_completion__on_tick_callback_called_each_tick():
         call_count += 1
 
     result = sim.run(max_delta_time=Time(100), on_tick=on_tick)
-    assert call_count == result.makespan
+    assert call_count == result.makespan.tick
 
 
 # ---------------------------------------------------------------------------

@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from simulation.engine.snapshot import SimulationSnapshot
+from simulation.primitives.time import Time
 
 
 @dataclass
@@ -28,5 +29,5 @@ class SimulationResult:
     completed: bool
     tasks_succeeded: int
     tasks_total: int
-    makespan: int | None
+    makespan: Time| None
     snapshots: list[SimulationSnapshot]
