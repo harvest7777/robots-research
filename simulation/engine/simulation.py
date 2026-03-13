@@ -251,7 +251,7 @@ class Simulation:
             apply_work(
                 self.task_states[task.id],
                 task.required_work_time,
-                Time(self.dt.tick * len(eligible)),
+                Time(len(eligible)),
                 self.t_now,
             )
 

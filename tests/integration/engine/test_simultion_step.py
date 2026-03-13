@@ -109,6 +109,7 @@ def test_dependency_blocks_work():
     two_robot_sim._step()
     assert two_robot_sim.task_states[1].work_done==Time(1)
     assert two_robot_sim.task_states[1].started_at == Time(1)
+    two_robot_sim._step()
     assert two_robot_sim.task_states[2].work_done==Time(0)
     assert two_robot_sim.task_states[2].started_at == None
 
