@@ -26,3 +26,15 @@ class Time:
     def advance(self, dt: "Time") -> "Time":
         return Time(self.tick + dt.tick)
 
+    def __add__(self, other: "Time") -> "Time":
+        return Time(self.tick + other.tick)
+
+    def __sub__(self, other: "Time") -> "Time":
+        return Time(self.tick - other.tick)
+
+    def __lt__(self, other: "Time") -> bool:
+        return self.tick < other.tick
+
+    def __le__(self, other: "Time") -> bool:
+        return self.tick <= other.tick
+
