@@ -63,7 +63,7 @@ class Simulation:
     assignment_service: BaseAssignmentService | None = None
     pathfinding_algorithm: PathfindingAlgorithm | None = None
     t_now: Time = field(default_factory=lambda: Time(0))
-    dt: Time = field(default_factory=lambda: Time(1))
+    dt: Time = field(default_factory=lambda: Time(0))
     history: dict[Time, SimulationSnapshot] = field(default_factory=dict)
     rescue_found: dict[RescuePointId, bool] = field(default_factory=dict)
     rescue_proximity_threshold: int = 10  # Manhattan distance at which a SEARCH robot locks onto a rescue point
@@ -146,7 +146,8 @@ class Simulation:
 
     def _step(self) -> None:
         """Execute one simulation tick."""
-        self.t_now = self.t_now.advance(self.dt)
+        self.dt += Time(1)
+        self.t_now = self.t_now + Time(1)
 
         assignments = self._get_active_assignments()
 
