@@ -94,7 +94,7 @@ class Simulation:
 
     def run(
         self,
-        max_delta_time: int,
+        max_delta_time: Time,
         on_tick: Callable[["SimulationSnapshot"], None] | None = None,
     ) -> SimulationResult:
         """Run the simulation to completion or until the time budget is exhausted.
@@ -123,7 +123,7 @@ class Simulation:
             t.id for t in self.tasks if t.type != TaskType.IDLE
         }
 
-        while (self.t_now.tick - t_start.tick) < max_delta_time:
+        while (self.t_now - t_start) < max_delta_time:
             if all(self.task_states[tid].status in terminal for tid in non_idle_task_ids):
                 break
             self._step()
