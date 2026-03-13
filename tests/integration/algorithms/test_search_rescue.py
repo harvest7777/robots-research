@@ -266,7 +266,7 @@ def test_no_rescue_points_simulation_runs_to_budget():
         pathfinding_algorithm=astar_pathfind,
     )
 
-    result = sim.run(max_delta_time=10)
+    result = sim.run(max_delta_time=Time(10))
     # No rescue points → SEARCH never completes → simulation exhausts budget
     assert not result.completed
     assert result.makespan is None

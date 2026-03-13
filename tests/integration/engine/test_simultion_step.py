@@ -93,7 +93,7 @@ def test_step_increments_delta_time():
 def test_multiple_robots_working_on_one_task_finishes_faster_than_one_robot_working_on_one_task():
     path = "test_two_robots_same_task"
     two_robot_sim = _load_wired(path)
-    LONG_TIME = 1000
+    LONG_TIME = Time(1000)
 
     two_robot_result = two_robot_sim.run(LONG_TIME)
 
