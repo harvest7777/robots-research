@@ -103,3 +103,13 @@ def test_multiple_robots_working_on_one_task_finishes_faster_than_one_robot_work
 
     assert two_robot_result.makespan < one_robot_result.makespan
 
+def test_dependency_blocks_work():
+    path = "test_dependent_tasks"
+    two_robot_sim = _load_wired(path)
+    LONG_TIME = 1000
+    two_robot_sim._step()
+    assert two_robot_sim.task_states[1].work_done==Time(1)
+    assert two_robot_sim.task_states[1].started_at == Time(1)
+    assert two_robot_sim.task_states[2].work_done==Time(0)
+    assert two_robot_sim.task_states[2].started_at == None
+
