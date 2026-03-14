@@ -1,0 +1,33 @@
+{
+  "environment": {
+    "width": 5,
+    "height": 5
+  },
+  "robots": [
+    {"id": 1, "capabilities": ["manipulation"], "speed": 1}
+  ],
+  "tasks": [
+    {
+      "id": 1,
+      "type": "routine_inspection",
+      "priority": 1,
+      "required_work_time": 5,
+      "required_capabilities": ["manipulation"],
+      "spatial_constraint": {"target": [0, 0]},
+      "deadline": 0
+    },
+    {
+      "id": 99,
+      "type": "idle",
+      "priority": 0,
+      "required_work_time": 0
+    }
+  ],
+  "robot_states": [
+    {"robot_id": 1, "position": [0, 0]}
+  ],
+  "task_states": [
+    {"task_id": 1},
+    {"task_id": 99}
+  ]
+}

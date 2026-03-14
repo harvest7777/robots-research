@@ -1,9 +1,8 @@
 """
-End-to-end integration tests for Simulation.run().
+Integration tests for the simulation engine.
 
-Each test is prefixed with the scenario name it exercises so that when
-additional scenarios are added, their expected behaviour can be asserted
-independently.
+Tests are grouped by scenario. Each group exercises a distinct behavioral
+contract of Simulation.run() or Simulation._step().
 """
 
 from __future__ import annotations
@@ -17,7 +16,7 @@ from services.base_assignment_service import BaseAssignmentService
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.algorithms.simple_assignment import simple_assign
 from simulation.domain.assignment import Assignment
-from simulation.domain.task import TaskType
+from simulation.domain.task import TaskId, TaskType
 from simulation.domain.task_state import TaskStatus
 from simulation.engine.simulation import Simulation
 from simulation.primitives.time import Time
@@ -104,7 +103,7 @@ def test_basic_completion__all_tasks_done_at_end():
 
 
 def test_basic_completion__idle_tasks_do_not_block_completion():
-    """IDLE task present in scenario → run() still terminates when non-idle tasks complete."""
+    """IDLE task present → run() still terminates when non-idle tasks complete."""
     sim = _load_wired("test_basic_completion")
     idle_tasks = [t for t in sim.tasks if t.type == TaskType.IDLE]
     assert len(idle_tasks) >= 1, "scenario must contain at least one IDLE task"
@@ -190,3 +189,68 @@ def test_no_robot_collisions__robots_never_share_a_cell():
             f"two robots occupy the same cell at tick {t.tick}: "
             f"{[p for p in positions if positions.count(p) > 1]}"
         )
+
+
+# ---------------------------------------------------------------------------
+# Multi-robot throughput
+#
+# Two robots on the same task should finish it faster than one robot alone.
+# ---------------------------------------------------------------------------
+
+def test_two_robots_on_same_task_finish_faster_than_one():
+    two_robot_sim = _load_wired("test_two_robots_same_task")
+    two_robot_result = two_robot_sim.run(max_delta_time=Time(1000))
+
+    one_robot_sim = _load_wired("test_one_robot_same_task")
+    one_robot_result = one_robot_sim.run(max_delta_time=Time(1000))
+
+    assert two_robot_result.makespan < one_robot_result.makespan
+
+
+# ---------------------------------------------------------------------------
+# test_dependent_tasks scenario
+#
+# Task 2 declares task 1 as a dependency. Robot 2 starts adjacent to task 2
+# but must wait until task 1 is DONE before any work is credited.
+# ---------------------------------------------------------------------------
+
+def test_dependent_tasks__task_b_does_not_start_before_task_a_completes():
+    sim = _load_wired("test_dependent_tasks")
+    sim.run(max_delta_time=Time(200))
+
+    a_state = sim.task_states[TaskId(1)]
+    b_state = sim.task_states[TaskId(2)]
+
+    assert a_state.status == TaskStatus.DONE
+    assert b_state.status == TaskStatus.DONE
+    assert b_state.started_at >= a_state.completed_at
+
+
+# ---------------------------------------------------------------------------
+# test_battery_depletion scenario
+#
+# Robot starts with battery_level=0.001 at the task location.
+# DRAIN_WORK_PER_TICK=0.002, so the robot contributes exactly one tick of
+# work before its battery drops to ≤0. With required_work_time=5, the task
+# can never complete.
+# ---------------------------------------------------------------------------
+
+def test_battery_depletion__task_stalls_when_robot_runs_out():
+    sim = _load_wired("test_battery_depletion")
+    result = sim.run(max_delta_time=Time(50))
+    assert result.completed is False
+    assert sim.task_states[TaskId(1)].status != TaskStatus.DONE
+
+
+# ---------------------------------------------------------------------------
+# test_task_deadline scenario
+#
+# Task has deadline=0. After the first _step(), t_now=1 > 0, so the task
+# is immediately past its deadline and no work is ever applied.
+# ---------------------------------------------------------------------------
+
+def test_task_deadline__task_never_progresses_past_deadline():
+    sim = _load_wired("test_task_deadline")
+    result = sim.run(max_delta_time=Time(50))
+    assert result.completed is False
+    assert sim.task_states[TaskId(1)].status != TaskStatus.DONE
