@@ -7,8 +7,10 @@
 
 from simulation.primitives.position import Position
 from simulation.engine.snapshot import SimulationSnapshot
-from simulation.domain.task import TaskId, TaskType
-from simulation.domain.task_state import TaskState, TaskStatus
+from simulation.domain.base_task import BaseTask, TaskId, TaskStatus
+from simulation.domain.task import Task, TaskType
+from simulation.domain.search_task import SearchTask, SearchTaskState
+from simulation.domain.task_state import TaskState
 from simulation.primitives.zone import ZoneType
 
 from .frame import Frame, make_frame, stamp
@@ -41,7 +43,6 @@ TASK_TYPE_LABELS: dict[TaskType, str] = {
     TaskType.EMERGENCY_RESPONSE: "ER",
     TaskType.PICKUP: "PU",
     TaskType.IDLE: "--",
-    TaskType.SEARCH: "SR",
     TaskType.RESCUE: "RS",
 }
 
@@ -52,9 +53,22 @@ TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
     TaskType.EMERGENCY_RESPONSE: "Emergency Response",
     TaskType.PICKUP: "Pickup",
     TaskType.IDLE: "Idle",
-    TaskType.SEARCH: "Search",
     TaskType.RESCUE: "Rescue",
 }
+
+
+def _task_label(task: BaseTask) -> str:
+    if isinstance(task, SearchTask):
+        return "SR"
+    assert isinstance(task, Task)
+    return TASK_TYPE_LABELS.get(task.type, "??")
+
+
+def _task_full_name(task: BaseTask) -> str:
+    if isinstance(task, SearchTask):
+        return "Search"
+    assert isinstance(task, Task)
+    return TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
 
 ROBOT_SYMBOL = "R"
 OBSTACLE_SYMBOL = "#"
@@ -189,12 +203,21 @@ class SimulationView:
                 break
             state = self.snapshot.task_states[task.id]
             status = _task_status_symbol(state)
-            label = TASK_TYPE_LABELS.get(task.type, "??")
-            spatial = self._spatial_info(task)
+            label = _task_label(task)
+            if isinstance(task, SearchTask):
+                assert isinstance(state, SearchTaskState)
+                found = sum(1 for v in state.rescue_found.values() if v)
+                total = len(state.rescue_found)
+                progress = f"  found={found}/{total}"
+                spatial = ""
+            else:
+                assert isinstance(task, Task) and isinstance(state, TaskState)
+                progress = f"  progress={state.work_done.tick}/{task.required_work_time.tick}"
+                spatial = self._spatial_info(task)
             text = (
                 f"  {status} [{label}] Task {task.id}"
                 f"  priority={task.priority}"
-                f"  progress={state.work_done.tick}/{task.required_work_time.tick}"
+                f"{progress}"
                 f"{spatial}"
             )
             stamp(frame, row, 0, text)
@@ -227,7 +250,7 @@ class SimulationView:
             rstate = self.snapshot.robot_states[robot.id]
             task = robot_task_map.get(robot.id)
             if task is not None:
-                name = TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
+                name = _task_full_name(task)
                 text = (
                     f"  Robot {robot.id} ({rstate.position.x:.2f},{rstate.position.y:.2f})"
                     f" is working on {name} (Task {task.id})"
@@ -249,10 +272,15 @@ class SimulationView:
         stamp(frame, row, 0, "Rescue Points:")
         row += 1
 
+        rescue_found: dict = {}
+        for state in self.snapshot.task_states.values():
+            if isinstance(state, SearchTaskState):
+                rescue_found.update(state.rescue_found)
+
         for rp in sorted(self.snapshot.env.rescue_points.values(), key=lambda r: r.id):
             if row >= len(frame):
                 break
-            found = self.snapshot.rescue_found.get(rp.id, False)
+            found = rescue_found.get(rp.id, False)
             status = "FOUND!" if found else "      "
             text = (
                 f"  {RESCUE_POINT_SYMBOL} [{status}] {rp.name}"
@@ -274,6 +302,9 @@ class SimulationView:
         areas: dict[Position, TaskId] = {}
         env = self.snapshot.env
         for task in self.snapshot.tasks:
+            if isinstance(task, SearchTask):
+                continue  # search tasks roam freely; no fixed spatial target to render
+            assert isinstance(task, Task)
             state = self.snapshot.task_states[task.id]
             if state.status in (TaskStatus.DONE, TaskStatus.FAILED):
                 continue
