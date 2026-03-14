@@ -4,12 +4,14 @@ from typing import Any
 
 from simulation.primitives.capability import Capability
 from simulation.primitives.position import Position
-from simulation.domain.task import SpatialConstraint, Task, TaskId, TaskType
+from simulation.domain.base_task import BaseTask, TaskId
+from simulation.domain.task import SpatialConstraint, Task, TaskType
+from simulation.domain.search_task import SearchTask
 from simulation.primitives.time import Time
 from simulation.primitives.zone import ZoneId
 
 
-def load_tasks(raw: list[dict[str, Any]]) -> list[Task]:
+def load_tasks(raw: list[dict[str, Any]]) -> list[BaseTask]:
     """Load a list of Tasks from raw config data.
 
     Args:
@@ -44,13 +46,9 @@ def load_tasks(raw: list[dict[str, Any]]) -> list[Task]:
             raise KeyError(f"task at index {i} missing required key: 'type'")
         if "priority" not in task_raw:
             raise KeyError(f"task at index {i} missing required key: 'priority'")
-        if "required_work_time" not in task_raw:
-            raise KeyError(f"task at index {i} missing required key: 'required_work_time'")
-
         task_id = task_raw["id"]
         task_type_str = task_raw["type"]
         priority = task_raw["priority"]
-        required_work_time = task_raw["required_work_time"]
 
         if not isinstance(task_id, int) or task_id < 0:
             raise ValueError(f"task id must be a non-negative integer, got: {task_id!r}")
@@ -58,6 +56,58 @@ def load_tasks(raw: list[dict[str, Any]]) -> list[Task]:
         if task_id in seen_ids:
             raise ValueError(f"duplicate task id: {task_id}")
         seen_ids.add(task_id)
+
+        # SearchTask is a distinct type — handle before required_work_time check
+        if task_type_str == "search":
+            proximity_threshold_raw = task_raw.get("proximity_threshold", 10)
+            if not isinstance(proximity_threshold_raw, int) or proximity_threshold_raw < 0:
+                raise ValueError(
+                    f"task {task_id}: proximity_threshold must be a non-negative integer, "
+                    f"got: {proximity_threshold_raw!r}"
+                )
+            required_capabilities: frozenset[Capability] = frozenset()
+            if "required_capabilities" in task_raw:
+                caps_raw = task_raw["required_capabilities"]
+                if not isinstance(caps_raw, list):
+                    raise ValueError(f"task {task_id}: required_capabilities must be a list")
+                caps_list: list[Capability] = []
+                for cap_str in caps_raw:
+                    try:
+                        caps_list.append(Capability(cap_str))
+                    except ValueError:
+                        valid_caps = [c.value for c in Capability]
+                        raise ValueError(
+                            f"task {task_id}: invalid capability: {cap_str!r}, "
+                            f"must be one of {valid_caps}"
+                        )
+                required_capabilities = frozenset(caps_list)
+            dependencies: frozenset[TaskId] = frozenset()
+            if "dependencies" in task_raw:
+                deps_raw = task_raw["dependencies"]
+                if not isinstance(deps_raw, list):
+                    raise ValueError(f"task {task_id}: dependencies must be a list")
+                deps_list: list[TaskId] = []
+                for dep_id in deps_raw:
+                    if not isinstance(dep_id, int) or dep_id < 0:
+                        raise ValueError(
+                            f"task {task_id}: dependency must be a non-negative integer, "
+                            f"got: {dep_id!r}"
+                        )
+                    deps_list.append(TaskId(dep_id))
+                dependencies = frozenset(deps_list)
+            tasks.append(SearchTask(
+                id=TaskId(task_id),
+                priority=priority,
+                proximity_threshold=proximity_threshold_raw,
+                required_capabilities=required_capabilities,
+                dependencies=dependencies,
+            ))
+            continue
+
+        # required_work_time is mandatory for non-search tasks
+        if "required_work_time" not in task_raw:
+            raise KeyError(f"task {task_id} missing required key: 'required_work_time'")
+        required_work_time = task_raw["required_work_time"]
 
         try:
             task_type = TaskType(task_type_str)
@@ -126,6 +176,17 @@ def load_tasks(raw: list[dict[str, Any]]) -> list[Task]:
                 )
             deadline = Time(deadline_raw)
 
+        # Parse optional min_robots_needed
+        min_robots_needed = 1
+        if "min_robots_needed" in task_raw:
+            mnr_raw = task_raw["min_robots_needed"]
+            if not isinstance(mnr_raw, int) or mnr_raw < 1:
+                raise ValueError(
+                    f"task {task_id}: min_robots_needed must be a positive integer, "
+                    f"got: {mnr_raw!r}"
+                )
+            min_robots_needed = mnr_raw
+
         task = Task(
             id=TaskId(task_id),
             type=task_type,
@@ -135,6 +196,7 @@ def load_tasks(raw: list[dict[str, Any]]) -> list[Task]:
             required_capabilities=required_capabilities,
             dependencies=dependencies,
             deadline=deadline,
+            min_robots_needed=min_robots_needed,
         )
         tasks.append(task)
 

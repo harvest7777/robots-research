@@ -11,24 +11,25 @@ Immutability guarantees:
 - State mappings are wrapped in `MappingProxyType` (read-only dict views).
 - State objects are copies, isolated from the live simulation.
 
-Note: `RobotState` and `TaskState` objects within the snapshot are copies but
-remain technically mutable dataclasses. Modifying them will not affect the live
-simulation, but callers should treat them as read-only by convention.
+Note: State objects within the snapshot are copies but remain technically
+mutable dataclasses. Modifying them will not affect the live simulation,
+but callers should treat them as read-only by convention.
+
+Search state (rescue_found) is available via task_states: cast the
+SearchTaskState entry for the relevant search task id.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Mapping
 
 if TYPE_CHECKING:
     from simulation.domain.assignment import Assignment
+    from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
     from simulation.domain.environment import Environment
-    from simulation.domain.rescue_point import RescuePointId
     from simulation.domain.robot import Robot
     from simulation.domain.robot_state import RobotId, RobotState
-    from simulation.domain.task import Task, TaskId
-    from simulation.domain.task_state import TaskState
     from simulation.primitives.time import Time
 
 
@@ -37,23 +38,21 @@ class SimulationSnapshot:
     """
     Immutable, point-in-time view of simulation state.
 
-    This snapshot captures the complete state of a simulation at a specific moment.
-    It is designed for read-only consumption by view layers, analytics, or logging.
-
     Attributes:
         env: The environment (grid, zones, obstacles).
         robots: Tuple of robot definitions (immutable).
         robot_states: Read-only mapping of robot ID to runtime state (copies).
-        tasks: Tuple of task definitions (immutable).
+        tasks: Tuple of task definitions (immutable — Task or SearchTask).
         task_states: Read-only mapping of task ID to runtime state (copies).
+                     SearchTaskState entries carry rescue_found for search tasks.
         t_now: Current simulation time at the moment of the snapshot.
+        active_assignments: Active assignments at this tick.
     """
 
     env: "Environment"
-    robots: tuple["Robot", ...]
-    robot_states: Mapping["RobotId", "RobotState"]
-    tasks: tuple["Task", ...]
-    task_states: Mapping["TaskId", "TaskState"]
+    robots: "tuple[Robot, ...]"
+    robot_states: "Mapping[RobotId, RobotState]"
+    tasks: "tuple[BaseTask, ...]"
+    task_states: "Mapping[TaskId, BaseTaskState]"
     t_now: "Time"
-    active_assignments: tuple["Assignment", ...] = ()
-    rescue_found: Mapping["RescuePointId", bool] = field(default_factory=dict)
+    active_assignments: "tuple[Assignment, ...]" = ()

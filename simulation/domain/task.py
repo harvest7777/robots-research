@@ -1,8 +1,12 @@
 """
 Task Definition Module
 
-A Task is an immutable, declarative description of what outcome is required,
-under what conditions it may start, and what prerequisites and resources it requires.
+A Task is an immutable, declarative description of a work-accumulation goal:
+what outcome is required, where it must happen, what prerequisites it needs,
+and how many robots are needed.
+
+Task extends BaseTask with fields that only apply to work-accumulation tasks.
+Search behaviour lives in SearchTask (see search_task.py).
 
 Design principles:
 - Task describes intent and constraints only
@@ -15,24 +19,21 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import NewType
 
-from simulation.primitives.capability import Capability
+from simulation.primitives.capability import Capability  # noqa: F401 (re-export via BaseTask)
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
 from simulation.primitives.zone import ZoneId
+
+from simulation.domain.base_task import BaseTask, TaskId, TaskStatus  # noqa: F401 (re-export)
 
 
 # -----------------------------------------------------------------------------
 # Supporting Types
 # -----------------------------------------------------------------------------
 
-TaskId = NewType("TaskId", int)
-"""Opaque identifier for tasks. Hashable and comparable."""
-
-
 class TaskType(Enum):
-    """The kind of task to be performed."""
+    """The kind of work-accumulation task to be performed."""
 
     ROUTINE_INSPECTION = "routine_inspection"
     ANOMALY_INVESTIGATION = "anomaly_investigation"
@@ -40,7 +41,6 @@ class TaskType(Enum):
     EMERGENCY_RESPONSE = "emergency_response"
     PICKUP = "pickup"
     IDLE = "idle"
-    SEARCH = "search"
     RESCUE = "rescue"
 
 
@@ -61,28 +61,23 @@ class SpatialConstraint:
 # -----------------------------------------------------------------------------
 
 @dataclass(frozen=True)
-class Task:
+class Task(BaseTask):
     """
-    Immutable description of a task's intent and constraints.
+    Immutable description of a work-accumulation task.
 
-    A Task declares:
-    - What outcome is required (type, spatial_constraint)
-    - What prerequisites it requires (dependencies, required_capabilities)
-    - Scheduling hints (estimated_duration, deadline, priority)
+    Extends BaseTask with fields specific to tasks that complete by
+    accumulating robot-ticks of work:
+    - type: what kind of work (RESCUE, PICKUP, INSPECTION, etc.)
+    - required_work_time: ticks of work needed for completion
+    - spatial_constraint: where the work must happen
+    - deadline: latest tick at which work is accepted
+    - min_robots_needed: minimum robots to assign when triggered by a rescue
 
-    A Task does NOT contain:
-    - Execution state (progress, start_time, completion_time)
-    - Assignment state (assigned robots)
-    - Runtime results (actual_duration)
-
-    This object is safe to share, serialize, and reuse.
+    Does NOT contain execution state (progress, timestamps, assigned robots).
     """
 
-    id: TaskId
-    type: TaskType
-    priority: int
-    required_work_time: Time
+    type: TaskType = TaskType.ROUTINE_INSPECTION
+    required_work_time: Time = Time(0)
     spatial_constraint: SpatialConstraint | None = None
-    required_capabilities: frozenset[Capability] = frozenset()
-    dependencies: frozenset[TaskId] = frozenset()
     deadline: Time | None = None
+    min_robots_needed: int = 1

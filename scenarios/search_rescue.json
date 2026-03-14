@@ -58,7 +58,7 @@
       "id": 10,
       "type": "search",
       "priority": 8,
-      "required_work_time": 9999,
+      "proximity_threshold": 10,
       "required_capabilities": [],
       "dependencies": []
     },
@@ -67,6 +67,7 @@
       "type": "rescue",
       "priority": 10,
       "required_work_time": 40,
+      "min_robots_needed": 3,
       "spatial_constraint": {
         "target": [33, 33],
         "max_distance": 0

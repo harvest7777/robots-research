@@ -14,7 +14,8 @@ from simulation.primitives.position import Position
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.step_context import StepContext
 from simulation.domain.task import Task, TaskType
-from simulation.domain.task_state import TaskStatus
+from simulation.domain.search_task import SearchTask
+from simulation.domain.base_task import TaskStatus
 
 
 PathfindingAlgorithm = Callable[[Environment, Position, Position], Position | None]
@@ -54,7 +55,7 @@ def plan_moves(
             planned[robot_id] = None
             continue
 
-        if task.type == TaskType.IDLE:
+        if isinstance(task, Task) and task.type == TaskType.IDLE:
             planned[robot_id] = None
             continue
 

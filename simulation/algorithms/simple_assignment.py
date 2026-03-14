@@ -8,13 +8,15 @@ Assigns robots to tasks based on capability matching.
 """
 
 from simulation.domain.assignment import Assignment
+from simulation.domain.base_task import BaseTask, TaskId
 from simulation.domain.robot_state import RobotId
 from simulation.domain.robot import Robot
-from simulation.domain.task import Task, TaskId, TaskType
+from simulation.domain.task import Task, TaskType
+from simulation.domain.search_task import SearchTask
 from simulation.primitives.time import Time
 
 
-def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
+def simple_assign(tasks: list[BaseTask], robots: list[Robot]) -> list[Assignment]:
     """
     Assign robots to tasks using a two-pass greedy algorithm.
 
@@ -28,6 +30,8 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
     - RESCUE tasks: skipped entirely; the simulation triggers rescue
       assignments automatically when a rescue point is found.
     - IDLE tasks: skipped entirely; they are placeholder no-ops.
+    - SearchTask: skipped entirely; search assignments are managed by
+      the operator or scenario config, not by the greedy scheduler.
 
     Args:
         tasks: List of tasks to assign robots to
@@ -39,7 +43,12 @@ def simple_assign(tasks: list[Task], robots: list[Robot]) -> list[Assignment]:
     robot_ids_by_task: dict[TaskId, set[RobotId]] = {}
     assigned_robots: set[RobotId] = set()
 
-    eligible = [t for t in tasks if t.type not in (TaskType.RESCUE, TaskType.IDLE)]
+    eligible = [
+        t for t in tasks
+        if not isinstance(t, SearchTask)
+        and isinstance(t, Task)
+        and t.type not in (TaskType.RESCUE, TaskType.IDLE)
+    ]
 
     # Pass 1: assign one robot per task (first-fit)
     for task in eligible:

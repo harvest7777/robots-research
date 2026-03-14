@@ -19,11 +19,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from simulation.domain.assignment import Assignment
+from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
 from simulation.domain.environment import Environment
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import Task, TaskId
-from simulation.domain.task_state import TaskState
 from simulation.primitives.time import Time
 
 
@@ -44,9 +43,9 @@ class StepContext:
     """
 
     robot_states: dict[RobotId, RobotState]
-    task_states: dict[TaskId, TaskState]
+    task_states: dict[TaskId, BaseTaskState]
     assignments: list[Assignment]
     robot_by_id: dict[RobotId, Robot]
-    task_by_id: dict[TaskId, Task]
+    task_by_id: dict[TaskId, BaseTask]
     environment: Environment
     t_now: Time

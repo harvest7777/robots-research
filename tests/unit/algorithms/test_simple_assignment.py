@@ -97,25 +97,15 @@ def test_idle_task_does_not_consume_robots():
     assert result[0].task_id == TaskId(2)
 
 
-def test_search_task_gets_all_capable_robots():
-    search = _task(1, TaskType.SEARCH, Capability.VISION)
+def test_search_task_is_skipped_by_simple_assign():
+    from simulation.domain.search_task import SearchTask
+    search = SearchTask(id=TaskId(1), priority=5, proximity_threshold=10)
     r1 = _robot(1, Capability.VISION)
     r2 = _robot(2, Capability.VISION)
-    r3 = _robot(3, Capability.MANIPULATION)  # incapable
 
-    result = simple_assign([search], [r1, r2, r3])
+    result = simple_assign([search], [r1, r2])
 
-    assert len(result) == 1
-    assert result[0].task_id == TaskId(1)
-    assert result[0].robot_ids == frozenset([RobotId(1), RobotId(2)])
-
-
-def test_search_with_no_capable_robots_returns_empty():
-    search = _task(1, TaskType.SEARCH, Capability.MANIPULATION)
-    robot = _robot(1, Capability.VISION)
-
-    result = simple_assign([search], [robot])
-
+    # SearchTask is managed externally — simple_assign never assigns to it
     assert result == []
 
 def test_returns_one_assignment_per_task():

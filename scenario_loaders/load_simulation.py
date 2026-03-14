@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from simulation.domain.search_task import SearchTask, SearchTaskState
 from simulation.engine.simulation import PathfindingAlgorithm, Simulation
 
 from .load_environment import load_environment
@@ -55,7 +56,22 @@ def load_simulation_from_dict(
     if "task_states" not in raw:
         raise KeyError("scenario missing required key: 'task_states'")
     task_states_list = load_task_states(raw["task_states"])
-    task_states = {ts.task_id: ts for ts in task_states_list}
+
+    # For SearchTask IDs, replace the generic TaskState with a SearchTaskState
+    # initialised with rescue_found covering all environment rescue points.
+    search_task_ids = {t.id for t in tasks if isinstance(t, SearchTask)}
+    rescue_found_init = {rp_id: False for rp_id in environment.rescue_points}
+    task_states = {}
+    for ts in task_states_list:
+        if ts.task_id in search_task_ids:
+            task_states[ts.task_id] = SearchTaskState(
+                task_id=ts.task_id,
+                status=ts.status,
+                completed_at=ts.completed_at,
+                rescue_found=dict(rescue_found_init),
+            )
+        else:
+            task_states[ts.task_id] = ts
 
     return Simulation(
         environment=environment,

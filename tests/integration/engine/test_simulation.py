@@ -13,7 +13,7 @@ from scenario_loaders.load_simulation import load_simulation
 from services.in_memory_assignment_service import InMemoryAssignmentService
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.algorithms.simple_assignment import simple_assign
-from simulation.domain.task import TaskId, TaskType
+from simulation.domain.task import TaskId, TaskType, Task
 from simulation.domain.task_state import TaskStatus
 from simulation.engine.simulation import Simulation
 from simulation.primitives.time import Time
@@ -69,7 +69,7 @@ def test_basic_completion__snapshots_recorded_each_tick():
 def test_basic_completion__all_tasks_done_at_end():
     sim = _load_wired("test_basic_completion")
     sim.run(max_delta_time=Time(100))
-    non_idle_tasks = [t for t in sim.tasks if t.type != TaskType.IDLE]
+    non_idle_tasks = [t for t in sim.tasks if not (isinstance(t, Task) and t.type == TaskType.IDLE)]
     for task in non_idle_tasks:
         assert sim.task_states[task.id].status == TaskStatus.DONE
 
