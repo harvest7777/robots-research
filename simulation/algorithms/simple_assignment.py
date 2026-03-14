@@ -30,8 +30,6 @@ def simple_assign(tasks: list[BaseTask], robots: list[Robot]) -> list[Assignment
     - RESCUE tasks: skipped entirely; the simulation triggers rescue
       assignments automatically when a rescue point is found.
     - IDLE tasks: skipped entirely; they are placeholder no-ops.
-    - SearchTask: skipped entirely; search assignments are managed by
-      the operator or scenario config, not by the greedy scheduler.
 
     Args:
         tasks: List of tasks to assign robots to
@@ -45,9 +43,8 @@ def simple_assign(tasks: list[BaseTask], robots: list[Robot]) -> list[Assignment
 
     eligible = [
         t for t in tasks
-        if not isinstance(t, SearchTask)
-        and isinstance(t, Task)
-        and t.type not in (TaskType.RESCUE, TaskType.IDLE)
+        if isinstance(t, (Task, SearchTask))
+        and not (isinstance(t, Task) and t.type in (TaskType.RESCUE, TaskType.IDLE))
     ]
 
     # Pass 1: assign one robot per task (first-fit)
