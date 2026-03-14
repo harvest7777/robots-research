@@ -49,6 +49,10 @@ def _snapshot_to_simulation_state(
         TaskStateSnapshot(
             task_id=task_id,
             status=state.status,
+            # TODO: instead of this boolean, we should just append the actual
+            # implemented type as a state snapshot like SearchTaskStateSnapshot
+            # We can have snapshots mirror the composition of classes from our
+            # models
             work_done_ticks=state.work_done.tick if isinstance(state, TaskState) else 0,
             assigned_robot_ids=task_robot_ids.get(task_id, []),
         )

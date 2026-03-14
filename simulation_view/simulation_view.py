@@ -58,6 +58,13 @@ TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
 
 
 def _task_label(task: BaseTask) -> str:
+    # TODO: this is pretty noisy too. As we add more tasks
+    # this will just grow into an unmaintainable if else block
+    # We should prefer a pure function that take in base tasks and map them to
+    # a label
+
+    # The labels are currently defined elsewhere in the file
+    # We need to break this huge God file up into components
     if isinstance(task, SearchTask):
         return "SR"
     assert isinstance(task, Task)
@@ -206,6 +213,14 @@ class SimulationView:
             label = _task_label(task)
             if isinstance(task, SearchTask):
                 assert isinstance(state, SearchTaskState)
+                # TODO: this is an anti pattern, the simulation view should
+                # never know about the states or simulation itself.
+                # It should only know how to render snapshots.
+                # This means our snapshot just does not have
+                # enough information.
+
+                # We should consider adding metadata to our snapshot in this
+                # case, NOT perform calculations in the view
                 found = sum(1 for v in state.rescue_found.values() if v)
                 total = len(state.rescue_found)
                 progress = f"  found={found}/{total}"

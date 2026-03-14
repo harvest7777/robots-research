@@ -41,6 +41,9 @@ def simple_assign(tasks: list[BaseTask], robots: list[Robot]) -> list[Assignment
     robot_ids_by_task: dict[TaskId, set[RobotId]] = {}
     assigned_robots: set[RobotId] = set()
 
+    # TODO: this is a bit noisy and not clear, why are these eligible
+    # RESCUE and IDLE tasks not eligible? Although it is true, it is a
+    # nuance to remember
     eligible = [
         t for t in tasks
         if isinstance(t, (Task, SearchTask))
