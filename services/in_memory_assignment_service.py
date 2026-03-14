@@ -10,7 +10,7 @@ the assignment with the highest assign_at still <= time wins.
 
 from __future__ import annotations
 
-from services.base_assignment_service import BaseAssignmentService
+from simulation.engine.base_assignment_service import BaseAssignmentService
 from simulation.domain.assignment import Assignment
 from simulation.primitives.time import Time
 

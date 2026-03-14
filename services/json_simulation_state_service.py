@@ -13,7 +13,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from services.base_simulation_state_service import (
+from simulation.engine.base_simulation_state_service import (
     BaseSimulationStateService,
     RobotStateSnapshot,
     SimulationState,

@@ -15,7 +15,7 @@ import os
 import tempfile
 from pathlib import Path
 
-from services.base_assignment_service import BaseAssignmentService
+from simulation.engine.base_assignment_service import BaseAssignmentService
 from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.domain.task import TaskId

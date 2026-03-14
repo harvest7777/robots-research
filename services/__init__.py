@@ -1,5 +1,5 @@
-from services.base_assignment_service import BaseAssignmentService
-from services.base_simulation_state_service import BaseSimulationStateService, SimulationState, RobotStateSnapshot, TaskStateSnapshot
+from simulation.engine.base_assignment_service import BaseAssignmentService
+from simulation.engine.base_simulation_state_service import BaseSimulationStateService, SimulationState, RobotStateSnapshot, TaskStateSnapshot
 from services.json_assignment_service import JsonAssignmentService
 from services.json_simulation_state_service import JsonSimulationStateService
 
