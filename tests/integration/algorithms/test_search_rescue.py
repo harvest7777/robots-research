@@ -15,7 +15,7 @@ import pytest
 
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from scenario_loaders.load_simulation import load_simulation
-from services.base_assignment_service import BaseAssignmentService
+from services.in_memory_assignment_service import InMemoryAssignmentService
 from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.domain.environment import Environment
@@ -33,31 +33,6 @@ from simulation.primitives.time import Time
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-class _InMemoryAssignmentService(BaseAssignmentService):
-    """Minimal in-memory assignment service for testing."""
-
-    def __init__(self, assignments: list[Assignment] | None = None) -> None:
-        self._assignments: list[Assignment] = assignments or []
-
-    def get_assignments_for_time(self, time: Time) -> list[Assignment]:
-        all_robot_ids = {rid for a in self._assignments for rid in a.robot_ids}
-        seen: set[Assignment] = set()
-        for robot_id in all_robot_ids:
-            applicable = [
-                a for a in self._assignments
-                if robot_id in a.robot_ids and a.assign_at.tick <= time.tick
-            ]
-            if applicable:
-                seen.add(max(applicable, key=lambda a: a.assign_at.tick))
-        return list(seen)
-
-    def set_assignments(self, assignments: list[Assignment]) -> None:
-        self._assignments = list(assignments)
-
-    def add_assignments(self, assignments: list[Assignment]) -> None:
-        self._assignments.extend(assignments)
-
 
 def _make_search_sim(
     *,
@@ -94,7 +69,7 @@ def _make_search_sim(
         rp = RescuePoint(id=RescuePointId(1), position=rescue_pos, name="Test Point", rescue_task_id=rescue_task_id)
         env.add_rescue_point(rp)
 
-    assignment_service = _InMemoryAssignmentService([
+    assignment_service = InMemoryAssignmentService([
         Assignment(task_id=search_task_id, robot_ids=frozenset([robot_id]), assign_at=Time(0))
     ])
 
@@ -252,7 +227,7 @@ def test_no_rescue_points_simulation_runs_to_budget():
     )
     search_task_state = TaskState(task_id=search_task_id)
 
-    assignment_service = _InMemoryAssignmentService([
+    assignment_service = InMemoryAssignmentService([
         Assignment(task_id=search_task_id, robot_ids=frozenset([robot_id]), assign_at=Time(0))
     ])
 
@@ -303,7 +278,7 @@ def test_multiple_robots_at_rescue_point_deterministic():
         rescue_task_id: TaskState(task_id=rescue_task_id),
     }
 
-    assignment_service = _InMemoryAssignmentService([
+    assignment_service = InMemoryAssignmentService([
         Assignment(task_id=search_task_id, robot_ids=frozenset([r1_id, r2_id]), assign_at=Time(0))
     ])
 
