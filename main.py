@@ -49,7 +49,7 @@ def _snapshot_to_simulation_state(
         TaskStateSnapshot(
             task_id=task_id,
             status=state.status,
-            work_done_ticks=state.work_done.tick,
+            work_done_ticks=state.work_done.tick if isinstance(state, TaskState) else 0,
             assigned_robot_ids=task_robot_ids.get(task_id, []),
         )
         for task_id, state in snapshot.task_states.items()
@@ -107,7 +107,7 @@ def main() -> None:
                 renderer.update(snapshot)
                 time.sleep(1.5)
 
-            sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
+            sim.run(max_delta_time=Time(MAX_DELTA_TIME), on_tick=on_tick)
             renderer.wait_for_close()
         finally:
             renderer.cleanup()
@@ -121,7 +121,7 @@ def main() -> None:
                 renderer.draw(frame)
                 time.sleep(.5)
 
-            sim.run(max_delta_time=MAX_DELTA_TIME, on_tick=on_tick)
+            sim.run(max_delta_time=Time(MAX_DELTA_TIME), on_tick=on_tick)
         finally:
             renderer.cleanup()
 

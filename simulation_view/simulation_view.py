@@ -7,7 +7,7 @@
 
 from simulation.primitives.position import Position
 from simulation.engine.snapshot import SimulationSnapshot
-from simulation.domain.base_task import BaseTask, TaskId, TaskStatus
+from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
 from simulation.domain.task import Task, TaskType
 from simulation.domain.search_task import SearchTask, SearchTaskState
 from simulation.domain.task_state import TaskState
@@ -27,12 +27,12 @@ ZONE_SYMBOLS: dict[ZoneType, str] = {
     ZoneType.CHARGING: "C",
 }
 
-def _task_status_symbol(state: "TaskState") -> str:
+def _task_status_symbol(state: BaseTaskState) -> str:
     if state.status == TaskStatus.DONE:
         return "●"
     if state.status == TaskStatus.FAILED:
         return "✗"
-    if state.started_at is not None:
+    if isinstance(state, TaskState) and state.started_at is not None:
         return "◑"  # in progress
     return "○"  # not yet started
 
