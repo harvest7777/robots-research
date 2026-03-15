@@ -1,0 +1,346 @@
+"""
+Unit tests for classify_step (Observer).
+
+Each test exercises one business rule in isolation.
+No file I/O, no services, no MCP.
+"""
+
+from __future__ import annotations
+
+import pytest
+
+from simulation.algorithms.astar_pathfinding import astar_pathfind
+from simulation.domain.base_task import TaskId
+from simulation.domain.environment import Environment
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.robot import Robot
+from simulation.domain.robot_state import RobotId, RobotState
+from simulation.domain.search_task import SearchTask, SearchTaskState
+from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task_state import TaskState
+from simulation.primitives.capability import Capability
+from simulation.primitives.position import Position
+from simulation.primitives.time import Time
+
+from simulation.engine_rewrite.assignment import Assignment
+from simulation.engine_rewrite.observer import classify_step
+from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.engine_rewrite.step_outcome import IgnoreReason
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _env(width: int = 20, height: int = 20) -> Environment:
+    return Environment(width=width, height=height)
+
+
+def _robot(rid: int, capabilities: frozenset = frozenset()) -> Robot:
+    return Robot(id=RobotId(rid), capabilities=capabilities)
+
+
+def _robot_state(rid: int, x: int, y: int, battery: float = 1.0) -> RobotState:
+    return RobotState(robot_id=RobotId(rid), position=Position(x, y), battery_level=battery)
+
+
+def _work_task(tid: int, x: int, y: int, work: int = 10, caps: frozenset = frozenset()) -> Task:
+    return Task(
+        id=TaskId(tid),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=5,
+        required_work_time=Time(work),
+        spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
+        required_capabilities=caps,
+    )
+
+
+def _task_state(tid: int, work_done: int = 0) -> TaskState:
+    return TaskState(task_id=TaskId(tid), work_done=Time(work_done))
+
+
+def _state(
+    robots: list[Robot],
+    robot_states: list[RobotState],
+    tasks: list,
+    task_states: list,
+    env: Environment | None = None,
+) -> SimulationState:
+    return SimulationState(
+        environment=env or _env(),
+        robots={r.id: r for r in robots},
+        robot_states={rs.robot_id: rs for rs in robot_states},
+        tasks={t.id: t for t in tasks},
+        task_states={ts.task_id: ts for ts in task_states},
+    )
+
+
+def _assign(robot_id: int, task_id: int) -> Assignment:
+    return Assignment(task_id=TaskId(task_id), robot_id=RobotId(robot_id))
+
+
+# ---------------------------------------------------------------------------
+# Movement
+# ---------------------------------------------------------------------------
+
+def test_robot_moves_toward_task():
+    task = _work_task(1, x=5, y=0)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert len(outcome.moved) == 1
+    rid, pos = outcome.moved[0]
+    assert rid == RobotId(1)
+    assert pos != Position(0, 0)
+
+
+def test_robot_at_goal_does_not_move():
+    task = _work_task(1, x=3, y=3)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=3, y=3)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.moved == []
+    assert (RobotId(1), TaskId(1)) in outcome.worked
+
+
+def test_collision_resolution_only_one_robot_moves_to_contested_cell():
+    task1 = _work_task(1, x=5, y=0)
+    task2 = _work_task(2, x=5, y=0)
+    state = _state(
+        robots=[_robot(1), _robot(2)],
+        robot_states=[_robot_state(1, x=4, y=0), _robot_state(2, x=6, y=0)],
+        tasks=[task1, task2],
+        task_states=[_task_state(1), _task_state(2)],
+    )
+    outcome = classify_step(state, [_assign(1, 1), _assign(2, 2)], astar_pathfind)
+    destinations = [pos for _, pos in outcome.moved]
+    assert len(destinations) == len(set(destinations)), "two robots ended on same cell"
+
+
+# ---------------------------------------------------------------------------
+# Work
+# ---------------------------------------------------------------------------
+
+def test_robot_works_when_at_task_location():
+    task = _work_task(1, x=2, y=2)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=2, y=2)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert (RobotId(1), TaskId(1)) in outcome.worked
+
+
+def test_robot_not_at_task_location_does_not_work():
+    task = _work_task(1, x=10, y=10)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.worked == []
+
+
+def test_task_completes_when_work_reaches_required():
+    task = _work_task(1, x=0, y=0, work=3)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1, work_done=2)],  # 1 tick away from done
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert TaskId(1) in outcome.tasks_completed
+
+
+def test_task_not_complete_when_work_below_required():
+    task = _work_task(1, x=0, y=0, work=5)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1, work_done=2)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert TaskId(1) not in outcome.tasks_completed
+
+
+def test_multiple_robots_contribute_work_this_tick():
+    task = _work_task(1, x=0, y=0, work=10)
+    state = _state(
+        robots=[_robot(1), _robot(2)],
+        robot_states=[_robot_state(1, x=0, y=0), _robot_state(2, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1, work_done=8)],  # needs 2 more; 2 robots = done
+    )
+    outcome = classify_step(state, [_assign(1, 1), _assign(2, 1)], astar_pathfind)
+    assert TaskId(1) in outcome.tasks_completed
+
+
+# ---------------------------------------------------------------------------
+# IgnoreReason — business rules
+# ---------------------------------------------------------------------------
+
+def test_dead_battery_is_ignored():
+    task = _work_task(1, x=0, y=0)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0, battery=0.0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    reasons = [r for _, r in outcome.assignments_ignored]
+    assert IgnoreReason.NO_BATTERY in reasons
+
+
+def test_wrong_capability_is_ignored():
+    caps = frozenset([Capability.VISION])
+    task = _work_task(1, x=0, y=0, caps=caps)
+    state = _state(
+        robots=[_robot(1, capabilities=frozenset())],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    reasons = [r for _, r in outcome.assignments_ignored]
+    assert IgnoreReason.WRONG_CAPABILITY in reasons
+
+
+def test_terminal_task_is_ignored():
+    from simulation.domain.base_task import TaskStatus
+    task = _work_task(1, x=0, y=0)
+    ts = TaskState(task_id=TaskId(1), status=TaskStatus.DONE)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[ts],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    reasons = [r for _, r in outcome.assignments_ignored]
+    assert IgnoreReason.TASK_TERMINAL in reasons
+
+
+def test_no_path_is_ignored():
+    env = Environment(width=5, height=5)
+    for y in range(5):
+        env.add_obstacle(Position(1, y))
+    task = _work_task(1, x=4, y=0)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+        env=env,
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    reasons = [r for _, r in outcome.assignments_ignored]
+    assert IgnoreReason.NO_PATH in reasons
+
+
+# ---------------------------------------------------------------------------
+# Search and rescue
+# ---------------------------------------------------------------------------
+
+def test_search_robot_discovers_rescue_point_when_at_position():
+    rp = RescuePoint(
+        id=RescuePointId(1),
+        position=Position(5, 5),
+        name="Alpha",
+        required_work_time=20,
+        min_robots_needed=1,
+    )
+    env = _env()
+    env.add_rescue_point(rp)
+
+    search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=3)
+    search_state = SearchTaskState(
+        task_id=TaskId(1),
+        rescue_found={RescuePointId(1): False},
+    )
+    state = SimulationState(
+        environment=env,
+        robots={RobotId(1): _robot(1)},
+        robot_states={RobotId(1): _robot_state(1, x=5, y=5)},
+        tasks={TaskId(1): search_task},
+        task_states={TaskId(1): search_state},
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert (TaskId(1), RescuePointId(1)) in outcome.rescue_points_found
+    assert len(outcome.tasks_spawned) == 1
+    assert TaskId(1) in outcome.tasks_completed
+
+
+def test_already_found_rescue_point_not_re_discovered():
+    rp = RescuePoint(
+        id=RescuePointId(1),
+        position=Position(5, 5),
+        name="Alpha",
+        required_work_time=20,
+        min_robots_needed=1,
+    )
+    env = _env()
+    env.add_rescue_point(rp)
+
+    search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=3)
+    search_state = SearchTaskState(
+        task_id=TaskId(1),
+        rescue_found={RescuePointId(1): True},  # already found
+    )
+    state = SimulationState(
+        environment=env,
+        robots={RobotId(1): _robot(1)},
+        robot_states={RobotId(1): _robot_state(1, x=5, y=5)},
+        tasks={TaskId(1): search_task},
+        task_states={TaskId(1): search_state},
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.rescue_points_found == []
+    assert outcome.tasks_spawned == []
+
+
+def test_spawned_rescue_task_has_correct_location_and_work_time():
+    rp = RescuePoint(
+        id=RescuePointId(1),
+        position=Position(3, 3),
+        name="Bravo",
+        required_work_time=30,
+        min_robots_needed=2,
+    )
+    env = _env()
+    env.add_rescue_point(rp)
+
+    search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=0)
+    search_state = SearchTaskState(
+        task_id=TaskId(1),
+        rescue_found={RescuePointId(1): False},
+    )
+    state = SimulationState(
+        environment=env,
+        robots={RobotId(1): _robot(1)},
+        robot_states={RobotId(1): _robot_state(1, x=3, y=3)},
+        tasks={TaskId(1): search_task},
+        task_states={TaskId(1): search_state},
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert len(outcome.tasks_spawned) == 1
+    spawned = outcome.tasks_spawned[0]
+    assert isinstance(spawned, Task)
+    assert spawned.required_work_time == Time(30)
+    assert spawned.min_robots_needed == 2
+    assert spawned.spatial_constraint is not None
+    assert spawned.spatial_constraint.target == Position(3, 3)
