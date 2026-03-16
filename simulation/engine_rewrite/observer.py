@@ -81,6 +81,9 @@ def classify_step(
 
         goal = _goal_for(task, robot_state, task_state, state, pathfinding)
 
+        if goal is not None:
+            outcome.waypoints[a.robot_id] = goal
+
         if goal is None or robot_state.position == goal:
             intended_moves[a.robot_id] = None
         else:
@@ -213,7 +216,7 @@ def _goal_for(
 ) -> Position | None:
     if isinstance(task, SearchTask):
         assert isinstance(task_state, SearchTaskState)
-        goal = compute_search_goal(
+        return compute_search_goal(
             robot_state,
             state.environment.rescue_points,
             task_state.rescue_found,
@@ -221,8 +224,6 @@ def _goal_for(
             pathfinding,
             state.environment,
         )
-        robot_state.current_waypoint = goal
-        return goal
     assert isinstance(task, Task)
     return _resolve_spatial_target(task.spatial_constraint, robot_state.position, state)
 

@@ -44,3 +44,6 @@ class StepOutcome:
     rescue_points_found: list[tuple[TaskId, RescuePointId]]      = field(default_factory=list)
     # rescue_points_found: needed so apply_outcome can update SearchTaskState.rescue_found
     # without re-deriving it (which would be business logic leaking into apply_outcome).
+    waypoints:           dict[RobotId, Position]                 = field(default_factory=dict)
+    # waypoints: proposed next waypoint per robot this tick, written by Observer and
+    # applied to RobotState.current_waypoint by apply_outcome. Keeps classify_step pure.

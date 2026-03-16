@@ -52,6 +52,8 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
             new_rs.battery_level = max(0.0, rs.battery_level - _DRAIN_WORK)
         else:
             new_rs.battery_level = max(0.0, rs.battery_level - _DRAIN_IDLE)
+        if rid in outcome.waypoints:
+            new_rs.current_waypoint = outcome.waypoints[rid]
         new_robot_states[rid] = new_rs
 
     # --- Task states ----------------------------------------------------------
