@@ -26,14 +26,15 @@ from __future__ import annotations
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, resolve_collisions
 from simulation.algorithms.search_goal import compute_search_goal
-from simulation.domain.base_task import TaskId, TaskStatus
-from simulation.domain.rescue_point import RescuePointId
+from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
+from simulation.domain.rescue_point import RescuePoint, RescuePointId
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
 from simulation.domain.task import Task, TaskType, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
+from simulation.primitives.time import Time
 
 from .assignment import Assignment
 from .simulation_state import SimulationState
@@ -194,13 +195,11 @@ def _ignore_reason(
     robot: Robot,
     robot_state: RobotState,
 ) -> IgnoreReason | None:
-    from simulation.domain.base_task import BaseTaskState, TaskStatus
     assert isinstance(task_state, BaseTaskState)
     if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
         return IgnoreReason.TASK_TERMINAL
     if robot_state.battery_level <= 0.0:
         return IgnoreReason.NO_BATTERY
-    from simulation.domain.base_task import BaseTask
     assert isinstance(task, BaseTask)
     if not task.required_capabilities.issubset(robot.capabilities):
         return IgnoreReason.WRONG_CAPABILITY
@@ -261,9 +260,6 @@ def _robot_can_work(task: Task, position: Position, state: SimulationState) -> b
 
 
 def _make_rescue_task(rp: object, state: SimulationState) -> Task:
-    from simulation.domain.rescue_point import RescuePoint
-    from simulation.domain.base_task import TaskId
-    from simulation.primitives.time import Time
     assert isinstance(rp, RescuePoint)
     new_id = TaskId(max(state.tasks.keys(), default=0) + 1)
     return Task(
