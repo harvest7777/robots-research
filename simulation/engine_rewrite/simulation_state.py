@@ -17,7 +17,7 @@ from simulation.domain.robot_state import RobotId, RobotState
 from simulation.primitives.time import Time
 
 
-@dataclass
+@dataclass(frozen=True)
 class SimulationState:
     environment: Environment
     robots: dict[RobotId, Robot]
