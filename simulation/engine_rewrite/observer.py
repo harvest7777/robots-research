@@ -58,7 +58,8 @@ def classify_step(
     # Pass 1: validate assignments, compute intended moves
     # -------------------------------------------------------------------------
     valid: list[Assignment] = []
-    intended_moves: dict[RobotId, Position | None] = {}
+    # Seed all robots as stayers so idle robots block movers in collision resolution.
+    intended_moves: dict[RobotId, Position | None] = {rid: None for rid in state.robot_states}
 
     for a in assignments:
         # Skip if this robot was superseded by a later assignment in the list.
