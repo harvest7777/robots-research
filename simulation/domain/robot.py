@@ -37,11 +37,17 @@ class Robot:
     by the free functions in this module.
 
     speed: cells moved per tick (each cell step is collision-checked separately).
+    battery_drain_per_unit_of_movement: battery lost per one-cell move.
+    battery_drain_per_unit_of_work_execution: battery lost per one-tick work contribution.
+    battery_drain_per_tick_idle: battery lost when neither moving nor working.
     """
 
     id: RobotId
     capabilities: frozenset[Capability]
     speed: int = 1
+    battery_drain_per_unit_of_movement:       float = _DRAIN_MOVE_PER_TICK
+    battery_drain_per_unit_of_work_execution: float = _DRAIN_WORK_PER_TICK
+    battery_drain_per_tick_idle:              float = _DRAIN_IDLE_PER_TICK
 
 
 # ---------------------------------------------------------------------------

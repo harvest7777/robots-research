@@ -18,7 +18,7 @@ from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
 
-from simulation.engine_rewrite.applicator import apply_outcome, _DRAIN_MOVE, _DRAIN_WORK, _DRAIN_IDLE
+from simulation.engine_rewrite.applicator import apply_outcome
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.engine_rewrite.step_outcome import StepOutcome
@@ -59,23 +59,32 @@ def test_moved_robot_updates_position():
 
 def test_moved_robot_drains_move_battery():
     state = _base_state()
+    robot = state.robots[RobotId(1)]
     outcome = StepOutcome(moved=[(RobotId(1), Position(1, 0))])
     new_state = apply_outcome(state, outcome)
-    assert new_state.robot_states[RobotId(1)].battery_level == pytest.approx(1.0 - _DRAIN_MOVE)
+    assert new_state.robot_states[RobotId(1)].battery_level == pytest.approx(
+        1.0 - robot.battery_drain_per_unit_of_movement
+    )
 
 
 def test_worked_robot_drains_work_battery():
     state = _base_state()
+    robot = state.robots[RobotId(1)]
     outcome = StepOutcome(worked=[(RobotId(1), TaskId(1))])
     new_state = apply_outcome(state, outcome)
-    assert new_state.robot_states[RobotId(1)].battery_level == pytest.approx(1.0 - _DRAIN_WORK)
+    assert new_state.robot_states[RobotId(1)].battery_level == pytest.approx(
+        1.0 - robot.battery_drain_per_unit_of_work_execution
+    )
 
 
 def test_idle_robot_drains_idle_battery():
     state = _base_state()
+    robot = state.robots[RobotId(1)]
     outcome = StepOutcome()  # robot not in moved or worked
     new_state = apply_outcome(state, outcome)
-    assert new_state.robot_states[RobotId(1)].battery_level == pytest.approx(1.0 - _DRAIN_IDLE)
+    assert new_state.robot_states[RobotId(1)].battery_level == pytest.approx(
+        1.0 - robot.battery_drain_per_tick_idle
+    )
 
 
 def test_battery_does_not_go_below_zero():

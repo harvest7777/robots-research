@@ -26,12 +26,6 @@ from simulation.primitives.time import Time
 from .simulation_state import SimulationState
 from .step_outcome import StepOutcome
 
-# Battery drain rates — mirrors robot.py constants
-_DRAIN_MOVE = 0.001
-_DRAIN_WORK = 0.002
-_DRAIN_IDLE = 0.0005
-
-
 def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationState:
     """Apply a StepOutcome to state and return the new state for the next tick.
 
@@ -43,15 +37,16 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
     # --- Robot states ---------------------------------------------------------
     new_robot_states: dict[RobotId, RobotState] = {}
     for rid, rs in state.robot_states.items():
+        robot = state.robots[rid]
         new_rs = copy.copy(rs)
         if rid in moved_robots:
             new_pos = next(pos for r, pos in outcome.moved if r == rid)
             new_rs.position = new_pos
-            new_rs.battery_level = max(0.0, rs.battery_level - _DRAIN_MOVE)
+            new_rs.battery_level = max(0.0, rs.battery_level - robot.battery_drain_per_unit_of_movement)
         elif rid in worked_robots:
-            new_rs.battery_level = max(0.0, rs.battery_level - _DRAIN_WORK)
+            new_rs.battery_level = max(0.0, rs.battery_level - robot.battery_drain_per_unit_of_work_execution)
         else:
-            new_rs.battery_level = max(0.0, rs.battery_level - _DRAIN_IDLE)
+            new_rs.battery_level = max(0.0, rs.battery_level - robot.battery_drain_per_tick_idle)
         if rid in outcome.waypoints:
             new_rs.current_waypoint = outcome.waypoints[rid]
         new_robot_states[rid] = new_rs
