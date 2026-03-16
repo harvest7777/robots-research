@@ -103,9 +103,9 @@ def test_work_accumulates_on_worked_task():
     state = _base_state()
     outcome = StepOutcome(worked=[(RobotId(1), TaskId(1))])
     new_state = apply_outcome(state, outcome)
-    ts = new_state.task_states[TaskId(1)]
-    assert isinstance(ts, TaskState)
-    assert ts.work_done == Time(1)
+    task_state = new_state.task_states[TaskId(1)]
+    assert isinstance(task_state, TaskState)
+    assert task_state.work_done == Time(1)
 
 
 def test_two_robots_contribute_two_ticks():
@@ -114,18 +114,18 @@ def test_two_robots_contribute_two_ticks():
     state.robot_states[RobotId(2)] = RobotState(robot_id=RobotId(2), position=Position(0, 0))
     outcome = StepOutcome(worked=[(RobotId(1), TaskId(1)), (RobotId(2), TaskId(1))])
     new_state = apply_outcome(state, outcome)
-    ts = new_state.task_states[TaskId(1)]
-    assert isinstance(ts, TaskState)
-    assert ts.work_done == Time(2)
+    task_state = new_state.task_states[TaskId(1)]
+    assert isinstance(task_state, TaskState)
+    assert task_state.work_done == Time(2)
 
 
 def test_started_at_set_on_first_work():
     state = _base_state()
     outcome = StepOutcome(worked=[(RobotId(1), TaskId(1))])
     new_state = apply_outcome(state, outcome)
-    ts = new_state.task_states[TaskId(1)]
-    assert isinstance(ts, TaskState)
-    assert ts.started_at == Time(0)  # state.t_now before advancing
+    task_state = new_state.task_states[TaskId(1)]
+    assert isinstance(task_state, TaskState)
+    assert task_state.started_at == Time(0)  # state.t_now before advancing
 
 
 # ---------------------------------------------------------------------------
@@ -170,8 +170,8 @@ def test_spawned_task_added_to_state():
 
 def test_rescue_point_marked_found_in_search_state():
     env = _env()
-    rp = RescuePoint(id=RescuePointId(1), position=Position(5, 5), name="A", required_work_time=10)
-    env.add_rescue_point(rp)
+    rescue_point = RescuePoint(id=RescuePointId(1), position=Position(5, 5), name="A", required_work_time=10)
+    env.add_rescue_point(rescue_point)
 
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
@@ -188,9 +188,9 @@ def test_rescue_point_marked_found_in_search_state():
     )
     outcome = StepOutcome(rescue_points_found=[(TaskId(1), RescuePointId(1))])
     new_state = apply_outcome(state, outcome)
-    new_ts = new_state.task_states[TaskId(1)]
-    assert isinstance(new_ts, SearchTaskState)
-    assert new_ts.rescue_found[RescuePointId(1)] is True
+    updated_task_state = new_state.task_states[TaskId(1)]
+    assert isinstance(updated_task_state, SearchTaskState)
+    assert updated_task_state.rescue_found[RescuePointId(1)] is True
 
 
 # ---------------------------------------------------------------------------

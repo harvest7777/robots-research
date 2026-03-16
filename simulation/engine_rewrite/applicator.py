@@ -26,68 +26,78 @@ from simulation.primitives.time import Time
 from .simulation_state import SimulationState
 from .step_outcome import StepOutcome
 
+
 def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationState:
     """Apply a StepOutcome to state and return the new state for the next tick.
 
     Pure function — does not mutate the input state.
     """
-    moved_robots: set[RobotId] = {rid for rid, _ in outcome.moved}
-    worked_robots: set[RobotId] = {rid for rid, _ in outcome.worked}
+    moved_robots: set[RobotId] = {robot_id for robot_id, _ in outcome.moved}
+    worked_robots: set[RobotId] = {robot_id for robot_id, _ in outcome.worked}
 
     # --- Robot states ---------------------------------------------------------
     new_robot_states: dict[RobotId, RobotState] = {}
-    for rid, rs in state.robot_states.items():
-        robot = state.robots[rid]
-        new_rs = copy.copy(rs)
-        if rid in moved_robots:
-            new_pos = next(pos for r, pos in outcome.moved if r == rid)
-            new_rs.position = new_pos
-            new_rs.battery_level = max(0.0, rs.battery_level - robot.battery_drain_per_unit_of_movement)
-        elif rid in worked_robots:
-            new_rs.battery_level = max(0.0, rs.battery_level - robot.battery_drain_per_unit_of_work_execution)
+    for robot_id, robot_state in state.robot_states.items():
+        robot = state.robots[robot_id]
+        new_robot_state = copy.copy(robot_state)
+        if robot_id in moved_robots:
+            new_position = next(
+                position for moved_robot_id, position in outcome.moved
+                if moved_robot_id == robot_id
+            )
+            new_robot_state.position = new_position
+            new_robot_state.battery_level = max(
+                0.0, robot_state.battery_level - robot.battery_drain_per_unit_of_movement
+            )
+        elif robot_id in worked_robots:
+            new_robot_state.battery_level = max(
+                0.0, robot_state.battery_level - robot.battery_drain_per_unit_of_work_execution
+            )
         else:
-            new_rs.battery_level = max(0.0, rs.battery_level - robot.battery_drain_per_tick_idle)
-        if rid in outcome.waypoints:
-            new_rs.current_waypoint = outcome.waypoints[rid]
-        new_robot_states[rid] = new_rs
+            new_robot_state.battery_level = max(
+                0.0, robot_state.battery_level - robot.battery_drain_per_tick_idle
+            )
+        if robot_id in outcome.waypoints:
+            new_robot_state.current_waypoint = outcome.waypoints[robot_id]
+        new_robot_states[robot_id] = new_robot_state
 
     # --- Task states ----------------------------------------------------------
     new_task_states = dict(state.task_states)
 
     # Apply work progress
-    work_by_task: dict[TaskId, int] = {}
-    for rid, task_id in outcome.worked:
-        work_by_task[task_id] = work_by_task.get(task_id, 0) + 1
+    work_ticks_by_task: dict[TaskId, int] = {}
+    for robot_id, task_id in outcome.worked:
+        work_ticks_by_task[task_id] = work_ticks_by_task.get(task_id, 0) + 1
 
-    for task_id, ticks in work_by_task.items():
-        ts = new_task_states[task_id]
-        assert isinstance(ts, TaskState)
-        new_ts = copy.copy(ts)
-        if new_ts.started_at is None:
-            new_ts.started_at = state.t_now
-        new_ts.work_done = Time(new_ts.work_done.tick + ticks)
-        new_task_states[task_id] = new_ts
+    for task_id, ticks in work_ticks_by_task.items():
+        task_state = new_task_states[task_id]
+        assert isinstance(task_state, TaskState)
+        new_task_state = copy.copy(task_state)
+        if new_task_state.started_at is None:
+            new_task_state.started_at = state.t_now
+        new_task_state.work_done = Time(new_task_state.work_done.tick + ticks)
+        new_task_states[task_id] = new_task_state
 
     # Apply rescue point discoveries to SearchTaskState
-    for search_task_id, rp_id in outcome.rescue_points_found:
-        ts = new_task_states[search_task_id]
-        assert isinstance(ts, SearchTaskState)
-        new_ts = SearchTaskState(
-            task_id=ts.task_id,
-            status=ts.status,
-            completed_at=ts.completed_at,
-            rescue_found={**ts.rescue_found, rp_id: True},
+    for search_task_id, rescue_point_id in outcome.rescue_points_found:
+        task_state = new_task_states[search_task_id]
+        assert isinstance(task_state, SearchTaskState)
+        new_task_state = SearchTaskState(
+            task_id=task_state.task_id,
+            status=task_state.status,
+            completed_at=task_state.completed_at,
+            rescue_found={**task_state.rescue_found, rescue_point_id: True},
         )
-        new_task_states[search_task_id] = new_ts
+        new_task_states[search_task_id] = new_task_state
 
     # Mark completed tasks
-    new_t = state.t_now + Time(1)
+    new_time = state.t_now + Time(1)
     for task_id in outcome.tasks_completed:
-        ts = new_task_states[task_id]
-        new_ts = copy.copy(ts)
-        new_ts.status = TaskStatus.DONE
-        new_ts.completed_at = new_t
-        new_task_states[task_id] = new_ts
+        task_state = new_task_states[task_id]
+        new_task_state = copy.copy(task_state)
+        new_task_state.status = TaskStatus.DONE
+        new_task_state.completed_at = new_time
+        new_task_states[task_id] = new_task_state
 
     # --- Add spawned tasks ----------------------------------------------------
     new_tasks = dict(state.tasks)
@@ -103,5 +113,5 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
         robot_states=new_robot_states,
         tasks=new_tasks,
         task_states=new_task_states,
-        t_now=new_t,
+        t_now=new_time,
     )

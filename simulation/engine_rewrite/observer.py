@@ -53,54 +53,59 @@ def classify_step(
     outcome = StepOutcome()
 
     # Last assignment wins if a robot appears multiple times.
-    robot_to_task: dict[RobotId, TaskId] = {a.robot_id: a.task_id for a in assignments}
+    robot_to_task: dict[RobotId, TaskId] = {
+        assignment.robot_id: assignment.task_id for assignment in assignments
+    }
 
     # -------------------------------------------------------------------------
     # Pass 1: validate assignments, compute intended moves
     # -------------------------------------------------------------------------
     valid: list[Assignment] = []
     # Seed all robots as stayers so idle robots block movers in collision resolution.
-    intended_moves: dict[RobotId, Position | None] = {rid: None for rid in state.robot_states}
+    intended_moves: dict[RobotId, Position | None] = {
+        robot_id: None for robot_id in state.robot_states
+    }
 
-    for a in assignments:
+    for assignment in assignments:
         # Skip if this robot was superseded by a later assignment in the list.
-        if robot_to_task.get(a.robot_id) != a.task_id:
+        if robot_to_task.get(assignment.robot_id) != assignment.task_id:
             continue
 
-        task = state.tasks.get(a.task_id)
-        task_state = state.task_states.get(a.task_id)
-        robot = state.robots.get(a.robot_id)
-        robot_state = state.robot_states.get(a.robot_id)
+        task = state.tasks.get(assignment.task_id)
+        task_state = state.task_states.get(assignment.task_id)
+        robot = state.robots.get(assignment.robot_id)
+        robot_state = state.robot_states.get(assignment.robot_id)
 
         if None in (task, task_state, robot, robot_state):
             continue
 
         reason = _ignore_reason(task, task_state, robot, robot_state)
         if reason is not None:
-            outcome.assignments_ignored.append((a, reason))
+            outcome.assignments_ignored.append((assignment, reason))
             continue
 
         goal = _goal_for(task, robot_state, task_state, state, pathfinding)
 
         if goal is not None:
-            outcome.waypoints[a.robot_id] = goal
+            outcome.waypoints[assignment.robot_id] = goal
 
         if goal is None or robot_state.position == goal:
-            intended_moves[a.robot_id] = None
+            intended_moves[assignment.robot_id] = None
         else:
-            next_step = pathfinding(state.environment, robot_state.position, goal)
-            if next_step is None:
-                outcome.assignments_ignored.append((a, IgnoreReason.NO_PATH))
+            next_position = pathfinding(state.environment, robot_state.position, goal)
+            if next_position is None:
+                outcome.assignments_ignored.append((assignment, IgnoreReason.NO_PATH))
                 continue
-            intended_moves[a.robot_id] = next_step
+            intended_moves[assignment.robot_id] = next_position
 
-        valid.append(a)
+        valid.append(assignment)
 
     # -------------------------------------------------------------------------
     # Pass 2: resolve movement collisions
     # -------------------------------------------------------------------------
     current_positions: dict[RobotId, Position] = {
-        rid: s.position for rid, s in state.robot_states.items()
+        robot_id: robot_state.position
+        for robot_id, robot_state in state.robot_states.items()
     }
     resolved = resolve_collisions(intended_moves, current_positions)
 
@@ -109,24 +114,24 @@ def classify_step(
     # -------------------------------------------------------------------------
     worked_by_task: dict[TaskId, list[RobotId]] = {}
 
-    for a in valid:
-        robot_state = state.robot_states[a.robot_id]
-        task = state.tasks[a.task_id]
+    for assignment in valid:
+        robot_state = state.robot_states[assignment.robot_id]
+        task = state.tasks[assignment.task_id]
 
-        next_pos = resolved.get(a.robot_id)
-        effective_pos = next_pos if next_pos is not None else robot_state.position
+        next_position = resolved.get(assignment.robot_id)
+        effective_position = next_position if next_position is not None else robot_state.position
 
-        if next_pos is not None:
-            outcome.moved.append((a.robot_id, next_pos))
+        if next_position is not None:
+            outcome.moved.append((assignment.robot_id, next_position))
 
         # Search robots move but do not accumulate work — completion is event-driven.
         if isinstance(task, SearchTask):
             continue
 
         assert isinstance(task, Task)
-        if _robot_can_work(task, effective_pos, state):
-            outcome.worked.append((a.robot_id, a.task_id))
-            worked_by_task.setdefault(a.task_id, []).append(a.robot_id)
+        if _robot_can_work(task, effective_position, state):
+            outcome.worked.append((assignment.robot_id, assignment.task_id))
+            worked_by_task.setdefault(assignment.task_id, []).append(assignment.robot_id)
 
     # -------------------------------------------------------------------------
     # Pass 4: work-accumulation task completions
@@ -142,42 +147,52 @@ def classify_step(
     # -------------------------------------------------------------------------
     # Pass 5: search discoveries and rescue task spawning
     # -------------------------------------------------------------------------
-    search_valid = [a for a in valid if isinstance(state.tasks.get(a.task_id), SearchTask)]
+    search_assignments = [
+        assignment for assignment in valid
+        if isinstance(state.tasks.get(assignment.task_id), SearchTask)
+    ]
     seen_rescue_ids: set[RescuePointId] = set()
 
-    for a in sorted(search_valid, key=lambda x: x.robot_id):  # deterministic order
-        task_id = a.task_id
+    for assignment in sorted(search_assignments, key=lambda assignment: assignment.robot_id):  # deterministic order
+        task_id = assignment.task_id
         task_state = state.task_states[task_id]
         assert isinstance(task_state, SearchTaskState)
 
-        next_pos = resolved.get(a.robot_id)
-        effective_pos = next_pos if next_pos is not None else state.robot_states[a.robot_id].position
+        next_position = resolved.get(assignment.robot_id)
+        effective_position = (
+            next_position if next_position is not None
+            else state.robot_states[assignment.robot_id].position
+        )
 
-        for rp in state.environment.rescue_points.values():
-            if task_state.rescue_found.get(rp.id):
+        for rescue_point in state.environment.rescue_points.values():
+            if task_state.rescue_found.get(rescue_point.id):
                 continue
-            if rp.id in seen_rescue_ids:
+            if rescue_point.id in seen_rescue_ids:
                 continue
-            if effective_pos == rp.position:
-                outcome.rescue_points_found.append((task_id, rp.id))
-                seen_rescue_ids.add(rp.id)
-                outcome.tasks_spawned.append(_make_rescue_task(rp, state))
+            if effective_position == rescue_point.position:
+                outcome.rescue_points_found.append((task_id, rescue_point.id))
+                seen_rescue_ids.add(rescue_point.id)
+                outcome.tasks_spawned.append(_make_rescue_task(rescue_point, state))
                 break
 
     # -------------------------------------------------------------------------
     # Pass 6: search task completions
     # -------------------------------------------------------------------------
-    for a in search_valid:
-        task_id = a.task_id
+    for assignment in search_assignments:
+        task_id = assignment.task_id
         if task_id in outcome.tasks_completed:
             continue
         task_state = state.task_states[task_id]
         assert isinstance(task_state, SearchTaskState)
 
-        newly_found = {rp_id for tid, rp_id in outcome.rescue_points_found if tid == task_id}
+        newly_found = {
+            rescue_point_id
+            for found_task_id, rescue_point_id in outcome.rescue_points_found
+            if found_task_id == task_id
+        }
         all_found = all(
-            task_state.rescue_found.get(rp_id, False) or rp_id in newly_found
-            for rp_id in state.environment.rescue_points
+            task_state.rescue_found.get(rescue_point_id, False) or rescue_point_id in newly_found
+            for rescue_point_id in state.environment.rescue_points
         )
         if all_found:
             outcome.tasks_completed.append(task_id)
@@ -228,45 +243,45 @@ def _goal_for(
 
 
 def _resolve_spatial_target(
-    sc: SpatialConstraint | None,
-    robot_pos: Position,
+    spatial_constraint: SpatialConstraint | None,
+    robot_position: Position,
     state: SimulationState,
 ) -> Position | None:
-    if sc is None:
+    if spatial_constraint is None:
         return None
-    if isinstance(sc.target, Position):
-        return sc.target
-    zone = state.environment.get_zone(sc.target)
+    if isinstance(spatial_constraint.target, Position):
+        return spatial_constraint.target
+    zone = state.environment.get_zone(spatial_constraint.target)
     if zone is None:
         return None
-    return min(zone.cells, key=lambda cell: robot_pos.manhattan(cell))
+    return min(zone.cells, key=lambda cell: robot_position.manhattan(cell))
 
 
 def _robot_can_work(task: Task, position: Position, state: SimulationState) -> bool:
-    sc = task.spatial_constraint
-    if sc is None:
+    spatial_constraint = task.spatial_constraint
+    if spatial_constraint is None:
         return True
-    if isinstance(sc.target, Position):
-        tolerance = sc.max_distance if sc.max_distance > 0 else 0
-        return position.manhattan(sc.target) <= tolerance
-    zone = state.environment.get_zone(sc.target)
+    if isinstance(spatial_constraint.target, Position):
+        tolerance = spatial_constraint.max_distance if spatial_constraint.max_distance > 0 else 0
+        return position.manhattan(spatial_constraint.target) <= tolerance
+    zone = state.environment.get_zone(spatial_constraint.target)
     if zone is None:
         return False
     if zone.contains(position):
         return True
-    if sc.max_distance > 0:
-        return min(position.manhattan(cell) for cell in zone.cells) <= sc.max_distance
+    if spatial_constraint.max_distance > 0:
+        return min(position.manhattan(cell) for cell in zone.cells) <= spatial_constraint.max_distance
     return False
 
 
-def _make_rescue_task(rp: object, state: SimulationState) -> Task:
-    assert isinstance(rp, RescuePoint)
-    new_id = TaskId(max(state.tasks.keys(), default=0) + 1)
+def _make_rescue_task(rescue_point: object, state: SimulationState) -> Task:
+    assert isinstance(rescue_point, RescuePoint)
+    new_task_id = TaskId(max(state.tasks.keys(), default=0) + 1)
     return Task(
-        id=new_id,
+        id=new_task_id,
         type=TaskType.RESCUE,
         priority=10,
-        required_work_time=Time(rp.required_work_time),
-        spatial_constraint=SpatialConstraint(target=rp.position, max_distance=0),
-        min_robots_needed=rp.min_robots_needed,
+        required_work_time=Time(rescue_point.required_work_time),
+        spatial_constraint=SpatialConstraint(target=rescue_point.position, max_distance=0),
+        min_robots_needed=rescue_point.min_robots_needed,
     )

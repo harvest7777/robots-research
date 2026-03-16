@@ -257,7 +257,7 @@ def test_no_path_is_ignored():
 # ---------------------------------------------------------------------------
 
 def test_search_robot_discovers_rescue_point_when_at_position():
-    rp = RescuePoint(
+    rescue_point = RescuePoint(
         id=RescuePointId(1),
         position=Position(5, 5),
         name="Alpha",
@@ -265,7 +265,7 @@ def test_search_robot_discovers_rescue_point_when_at_position():
         min_robots_needed=1,
     )
     env = _env()
-    env.add_rescue_point(rp)
+    env.add_rescue_point(rescue_point)
 
     search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=3)
     search_state = SearchTaskState(
@@ -286,7 +286,7 @@ def test_search_robot_discovers_rescue_point_when_at_position():
 
 
 def test_already_found_rescue_point_not_re_discovered():
-    rp = RescuePoint(
+    rescue_point = RescuePoint(
         id=RescuePointId(1),
         position=Position(5, 5),
         name="Alpha",
@@ -294,7 +294,7 @@ def test_already_found_rescue_point_not_re_discovered():
         min_robots_needed=1,
     )
     env = _env()
-    env.add_rescue_point(rp)
+    env.add_rescue_point(rescue_point)
 
     search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=3)
     search_state = SearchTaskState(
@@ -314,7 +314,7 @@ def test_already_found_rescue_point_not_re_discovered():
 
 
 def test_spawned_rescue_task_has_correct_location_and_work_time():
-    rp = RescuePoint(
+    rescue_point = RescuePoint(
         id=RescuePointId(1),
         position=Position(3, 3),
         name="Bravo",
@@ -322,7 +322,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
         min_robots_needed=2,
     )
     env = _env()
-    env.add_rescue_point(rp)
+    env.add_rescue_point(rescue_point)
 
     search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=0)
     search_state = SearchTaskState(
