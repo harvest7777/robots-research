@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from simulation.primitives.position import Position
 from simulation.domain.task import WorkTask, SpatialConstraint
 
 
@@ -43,3 +44,12 @@ class RescuePoint(WorkTask):
     """
 
     name: str = ""
+
+    @property
+    def position(self) -> Position:
+        """Exact grid cell where this rescue must happen."""
+        if self.spatial_constraint is None:
+            raise TypeError(f"RescuePoint {self.id} has no spatial_constraint")
+        if not isinstance(self.spatial_constraint.target, Position):
+            raise TypeError(f"RescuePoint {self.id} target is not a Position")
+        return self.spatial_constraint.target
