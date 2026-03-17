@@ -5,13 +5,13 @@ Wires the registry, assignment service, and engine step together.
 Contains no business logic — only orchestration.
 
 Each call to step():
-  1. Rebuilds state.tasks from the registry so externally added and
-     previously spawned tasks are visible to the observer this tick.
-  2. Reads current assignments from the assignment service.
-  3. Runs one engine tick (classify_step + apply_outcome).
-  4. Writes tasks_spawned back to the registry so they are available
+  1. Rebuilds state.tasks from the registry and stamps current assignments
+     from the service into state, so the snapshot is complete before the
+     engine sees it.
+  2. Runs one engine tick (classify_step + apply_outcome).
+  3. Writes tasks_spawned back to the registry so they are available
      for assignment next tick.
-  5. Returns (SimulationState, StepOutcome) — state is the full snapshot
+  4. Returns (SimulationState, StepOutcome) — state is the full snapshot
      for rendering; outcome is the event delta for reactive consumers.
 """
 

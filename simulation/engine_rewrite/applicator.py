@@ -17,6 +17,7 @@ import dataclasses
 
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.robot_state import RobotId, RobotState
+from simulation.primitives.position import Position
 from simulation.domain.search_task import SearchTaskState
 from simulation.domain.task_state import TaskState
 from simulation.primitives.time import Time
@@ -34,7 +35,7 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
 
     moved_robots: set[RobotId] = {robot_id for robot_id, _ in outcome.moved}
     worked_robots: set[RobotId] = {robot_id for robot_id, _ in outcome.worked}
-    moved_positions: dict[RobotId, object] = dict(outcome.moved)
+    moved_positions: dict[RobotId, Position] = dict(outcome.moved)
 
     # --- Robot states ---------------------------------------------------------
     new_robot_states: dict[RobotId, RobotState] = {}
