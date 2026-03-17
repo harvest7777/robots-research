@@ -40,7 +40,7 @@ class StepOutcome:
     tasks_completed:     list[TaskId]                            = field(default_factory=list)
     tasks_spawned:       list[BaseTask]                          = field(default_factory=list)
     assignments_ignored: list[tuple[Assignment, IgnoreReason]]   = field(default_factory=list)
-    rescue_points_found: list[tuple[TaskId, TaskId]]             = field(default_factory=list)
+    rescue_points_found: list[TaskId]                            = field(default_factory=list)
     # rescue_points_found: needed so apply_outcome can update SearchTaskState.rescue_found
     # without re-deriving it (which would be business logic leaking into apply_outcome).
     waypoints:           dict[RobotId, Position]                 = field(default_factory=dict)

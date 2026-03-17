@@ -80,16 +80,16 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
         new_task_states[task_id] = new_task_state
 
     # Apply rescue point discoveries to SearchTaskState
-    for search_task_id, rescue_point_id in outcome.rescue_points_found:
-        task_state = new_task_states[search_task_id]
-        assert isinstance(task_state, SearchTaskState)
-        new_task_state = SearchTaskState(
-            task_id=task_state.task_id,
-            status=task_state.status,
-            completed_at=task_state.completed_at,
-            rescue_found={**task_state.rescue_found, rescue_point_id: True},
-        )
-        new_task_states[search_task_id] = new_task_state
+    for rp_id in outcome.rescue_points_found:
+        for search_task_id, task_state in new_task_states.items():
+            if isinstance(task_state, SearchTaskState) and rp_id in task_state.rescue_found:
+                new_task_states[search_task_id] = SearchTaskState(
+                    task_id=task_state.task_id,
+                    status=task_state.status,
+                    completed_at=task_state.completed_at,
+                    rescue_found={**task_state.rescue_found, rp_id: True},
+                )
+                break
 
     # Mark completed tasks
     for task_id in outcome.tasks_completed:

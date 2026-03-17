@@ -192,7 +192,7 @@ def test_rescue_point_marked_found_in_search_state():
         task_states={TaskId(1): search_state},
         t_now=Time(0),
     )
-    outcome = StepOutcome(rescue_points_found=[(TaskId(1), TaskId(1))])
+    outcome = StepOutcome(rescue_points_found=[TaskId(1)])
     new_state = apply_outcome(state, outcome)
     updated_task_state = new_state.task_states[TaskId(1)]
     assert isinstance(updated_task_state, SearchTaskState)

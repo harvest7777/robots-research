@@ -170,7 +170,7 @@ def classify_step(
                 continue
             assert rescue_point.spatial_constraint is not None
             if effective_position == rescue_point.spatial_constraint.target:
-                outcome.rescue_points_found.append((task_id, rescue_point.id))
+                outcome.rescue_points_found.append(rescue_point.id)
                 seen_rescue_ids.add(rescue_point.id)
                 # The rescue point IS the task — no transformation needed.
                 outcome.tasks_spawned.append(rescue_point)
@@ -187,13 +187,12 @@ def classify_step(
         assert isinstance(task_state, SearchTaskState)
 
         newly_found = {
-            rescue_point_id
-            for found_task_id, rescue_point_id in outcome.rescue_points_found
-            if found_task_id == task_id
+            rp_id for rp_id in outcome.rescue_points_found
+            if rp_id in task_state.rescue_found
         }
         all_found = all(
-            task_state.rescue_found.get(rescue_point_id, False) or rescue_point_id in newly_found
-            for rescue_point_id in state.environment.rescue_points
+            task_state.rescue_found.get(rp_id, False) or rp_id in newly_found
+            for rp_id in state.environment.rescue_points
         )
         if all_found:
             outcome.tasks_completed.append(task_id)

@@ -281,7 +281,7 @@ def test_search_robot_discovers_rescue_point_when_at_position():
         task_states={TaskId(1): search_state},
     )
     outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
-    assert (TaskId(1), TaskId(1)) in outcome.rescue_points_found
+    assert TaskId(1) in outcome.rescue_points_found
     assert len(outcome.tasks_spawned) == 1
     assert TaskId(1) in outcome.tasks_completed
 
