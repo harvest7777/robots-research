@@ -195,6 +195,26 @@ def test_rescue_point_marked_found_in_search_state():
     assert TaskId(1) in updated_task_state.rescue_found
 
 
+def test_search_task_marked_done_when_in_tasks_completed():
+    search_task = SearchTask(id=TaskId(2), priority=5)
+    search_state = SearchTaskState(task_id=TaskId(2), rescue_found=frozenset({TaskId(99)}))
+    task = _base_state().tasks[TaskId(1)]
+    state = SimulationState(
+        environment=_env(),
+        robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
+        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
+        tasks={TaskId(1): task, TaskId(2): search_task},
+        task_states={TaskId(1): TaskState(task_id=TaskId(1)), TaskId(2): search_state},
+        t_now=Time(0),
+    )
+    outcome = StepOutcome(tasks_completed=[TaskId(2)])
+    new_state = apply_outcome(state, outcome)
+    updated = new_state.task_states[TaskId(2)]
+    assert isinstance(updated, SearchTaskState)
+    assert updated.status == TaskStatus.DONE
+    assert updated.rescue_found == frozenset({TaskId(99)})  # preserved
+
+
 # ---------------------------------------------------------------------------
 # Time and immutability
 # ---------------------------------------------------------------------------

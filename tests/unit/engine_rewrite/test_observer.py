@@ -445,3 +445,76 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     assert spawned.min_robots_needed == 2
     assert spawned.spatial_constraint is not None
     assert spawned.spatial_constraint.target == Position(3, 3)
+
+
+def test_search_task_not_complete_when_rescue_point_remaining():
+    rp_found = RescuePoint(
+        id=TaskId(2),
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        required_work_time=Time(10),
+        name="Alpha",
+    )
+    rp_unfound = RescuePoint(
+        id=TaskId(3),
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
+        required_work_time=Time(10),
+        name="Bravo",
+    )
+    env = _env()
+    env.add_rescue_point(rp_found)
+    env.add_rescue_point(rp_unfound)
+
+    search_task = SearchTask(id=TaskId(1), priority=5)
+    search_state = SearchTaskState(task_id=TaskId(1), rescue_found=frozenset())
+    state = SimulationState(
+        environment=env,
+        robots={RobotId(1): _robot(1)},
+        robot_states={RobotId(1): _robot_state(1, x=5, y=5)},
+        tasks={TaskId(1): search_task},
+        task_states={TaskId(1): search_state},
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    # Finds rp_found this tick but rp_unfound is still missing
+    assert TaskId(2) in outcome.rescue_points_found
+    assert TaskId(1) not in outcome.tasks_completed
+
+
+def test_search_task_completes_when_last_rescue_point_found():
+    # Simulates a multi-tick scenario: one rescue point was already found in a
+    # previous tick (reflected in rescue_found), robot discovers the last one
+    # this tick — search task should complete.
+    rp_previous = RescuePoint(
+        id=TaskId(2),
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(1, 1), max_distance=0),
+        required_work_time=Time(10),
+        name="Alpha",
+    )
+    rp_last = RescuePoint(
+        id=TaskId(3),
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        required_work_time=Time(10),
+        name="Bravo",
+    )
+    env = _env()
+    env.add_rescue_point(rp_previous)
+    env.add_rescue_point(rp_last)
+
+    search_task = SearchTask(id=TaskId(1), priority=5)
+    search_state = SearchTaskState(
+        task_id=TaskId(1),
+        rescue_found=frozenset({TaskId(2)}),  # rp_previous already found last tick
+    )
+    state = SimulationState(
+        environment=env,
+        robots={RobotId(1): _robot(1)},
+        robot_states={RobotId(1): _robot_state(1, x=5, y=5)},  # at rp_last
+        tasks={TaskId(1): search_task},
+        task_states={TaskId(1): search_state},
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert TaskId(3) in outcome.rescue_points_found
+    assert TaskId(1) in outcome.tasks_completed
