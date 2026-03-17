@@ -21,6 +21,7 @@ import dataclasses
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
 
+from .analysis import SimulationAnalysis
 from .services.base_assignment_service import BaseAssignmentService
 from .services.base_task_registry import BaseTaskRegistry
 from .simulation_state import SimulationState
@@ -41,6 +42,7 @@ class SimulationRunner:
         self._registry = registry
         self._assignment_service = assignment_service
         self._pathfinding = pathfinding
+        self._history: list[tuple[SimulationState, StepOutcome]] = []
 
     def step(self) -> tuple[SimulationState, StepOutcome]:
         # Rebuild state.tasks from the registry each tick.
@@ -57,4 +59,8 @@ class SimulationRunner:
             self._registry.add(task)
 
         self._state = new_state
+        self._history.append((new_state, outcome))
         return new_state, outcome
+
+    def report(self) -> SimulationAnalysis:
+        return SimulationAnalysis.from_history(self._history)
