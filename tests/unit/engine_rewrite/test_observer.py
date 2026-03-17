@@ -131,6 +131,32 @@ def test_collision_resolution_only_one_robot_moves_to_contested_cell():
     assert len(destinations) == len(set(destinations)), "two robots ended on same cell"
 
 
+def test_head_on_swap_robots_pass_through_each_other():
+    # Robot 1 at (2, 0) heading right toward task at (9, 0).
+    # Robot 2 at (3, 0) heading left toward task at (0, 0).
+    # Both want to step into each other's current cell — resolve_collisions
+    # sees no shared *destination* so both moves succeed: they swap positions
+    # in one tick, effectively teleporting through each other.
+    task1 = _work_task(1, x=9, y=0)
+    task2 = _work_task(2, x=0, y=0)
+    state = _state(
+        robots=[_robot(1), _robot(2)],
+        robot_states=[_robot_state(1, x=2, y=0), _robot_state(2, x=3, y=0)],
+        tasks=[task1, task2],
+        task_states=[_task_state(1), _task_state(2)],
+        assignments=[_assign(1, 1), _assign(2, 2)],
+    )
+    outcome = classify_step(state, astar_pathfind)
+
+    moved = dict(outcome.moved)
+    # Both robots move — the swap is not blocked
+    assert RobotId(1) in moved
+    assert RobotId(2) in moved
+    # They land on each other's former positions
+    assert moved[RobotId(1)] == Position(3, 0)
+    assert moved[RobotId(2)] == Position(2, 0)
+
+
 # ---------------------------------------------------------------------------
 # Work
 # ---------------------------------------------------------------------------
