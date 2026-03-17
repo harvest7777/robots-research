@@ -132,9 +132,9 @@ class IgnoreReason(Enum):
 ### Phase 3 — Build new runner and verify end-to-end 🔲 TODO
 
 - `main_v2.py` — new entry point using `SimulationRunner`, `InMemoryTaskRegistry`, `InMemoryAssignmentService`
-- Run both `main.py` and `main_v2.py` against the same scenarios and compare outcomes tick-by-tick
-- `tests/integration/engine_rewrite/` — end-to-end integration tests (search-and-rescue, multi-robot, battery drain)
-- New scenario loader that builds `SimulationState` and populates the new services (no rescue task pre-seeding)
+- `scenarios_v2/` — Python scenario files that construct `SimulationState` and populate services directly; no JSON, no loader, no schema to maintain
+- No new JSON loader — the old JSON loader and `scenarios/` directory are left untouched and deleted in Phase 6 along with the old engine
+- `tests/integration/engine_rewrite/` — end-to-end integration tests using Python scenarios (search-and-rescue, multi-robot, battery drain)
 
 ---
 
@@ -167,4 +167,5 @@ Only after all dependents are on the new path and all tests pass:
 - Delete `TaskType.RESCUE`, `task.deadline`, `task.dependencies` fields from domain models
 - Rename `simulation/engine_rewrite/` → `simulation/engine/`
 - Delete `main.py`, rename `main_v2.py` → `main.py`
+- Delete old JSON scenario files in `scenarios/` and the JSON scenario loader in `scenario_loaders/`
 - Delete skipped integration tests in `tests/integration/algorithms/test_search_rescue.py`
