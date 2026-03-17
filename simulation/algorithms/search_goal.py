@@ -24,7 +24,6 @@ def compute_search_goal(
     state: RobotState,
     rescue_points: dict[RescuePointId, RescuePoint],
     rescue_found: dict[RescuePointId, bool],
-    proximity_threshold: int,
     pathfinding: PathfindingAlgorithm,
     environment: Environment,
 ) -> Position | None:
@@ -32,7 +31,7 @@ def compute_search_goal(
 
     Priority order:
     1. Proximity lock: if any unfound rescue point is within Manhattan distance
-       <= proximity_threshold, lock the robot onto that rescue point.
+       <= its spatial_constraint.max_distance, lock the robot onto that rescue point.
     2. Keep current waypoint: if one is set, not yet reached, and still
        reachable via pathfinding.
     3. Random walkable cell: pick a new random non-obstacle position.
@@ -48,7 +47,7 @@ def compute_search_goal(
             continue
         assert rp.spatial_constraint is not None
         rp_position = rp.spatial_constraint.target
-        if state.position.manhattan(rp_position) <= proximity_threshold:
+        if state.position.manhattan(rp_position) <= rp.spatial_constraint.max_distance:
             return rp_position
 
     # Step 2: Keep existing waypoint if reachable and not yet reached

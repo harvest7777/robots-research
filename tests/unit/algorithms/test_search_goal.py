@@ -27,11 +27,11 @@ def _unreachable(env, start, goal):
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _rp(rp_id: int, x: int, y: int) -> RescuePoint:
+def _rp(rp_id: int, x: int, y: int, max_distance: int = 0) -> RescuePoint:
     return RescuePoint(
         id=RescuePointId(rp_id),
         priority=5,
-        spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
+        spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=max_distance),
         name=f"rp{rp_id}",
     )
 
@@ -45,15 +45,14 @@ def _state(x: int, y: int, waypoint: Position | None = None) -> RobotState:
 # ---------------------------------------------------------------------------
 
 def test_proximity_lock_returns_rescue_point_when_within_threshold():
-    rp = _rp(1, 3, 0)
-    state = _state(0, 0)  # Manhattan distance to rp = 3
+    rp = _rp(1, 3, 0, max_distance=5)
+    state = _state(0, 0)  # Manhattan distance to rp = 3, within max_distance=5
     env = Environment(width=10, height=10)
 
     goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
         rescue_found={},
-        proximity_threshold=5,
         pathfinding=_reachable,
         environment=env,
     )
@@ -62,15 +61,14 @@ def test_proximity_lock_returns_rescue_point_when_within_threshold():
 
 
 def test_proximity_lock_not_triggered_when_outside_threshold():
-    rp = _rp(1, 9, 9)
-    state = _state(0, 0)  # Manhattan distance = 18, well outside threshold=5
+    rp = _rp(1, 9, 9, max_distance=5)
+    state = _state(0, 0)  # Manhattan distance = 18, well outside max_distance=5
     env = Environment(width=10, height=10)
 
     goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
         rescue_found={},
-        proximity_threshold=5,
         pathfinding=_reachable,
         environment=env,
     )
@@ -80,15 +78,14 @@ def test_proximity_lock_not_triggered_when_outside_threshold():
 
 
 def test_proximity_lock_skips_already_found_rescue_points():
-    rp = _rp(1, 1, 0)
-    state = _state(0, 0)  # within any reasonable threshold
+    rp = _rp(1, 1, 0, max_distance=10)
+    state = _state(0, 0)  # within max_distance
     env = Environment(width=10, height=10)
 
     goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
         rescue_found={rp.id: True},
-        proximity_threshold=10,
         pathfinding=_reachable,
         environment=env,
     )
@@ -111,7 +108,6 @@ def test_keeps_existing_reachable_waypoint():
         state=state,
         rescue_points={},
         rescue_found={},
-        proximity_threshold=5,
         pathfinding=_reachable,
         environment=env,
     )
@@ -128,7 +124,6 @@ def test_clears_unreachable_waypoint_and_picks_new_random():
         state=state,
         rescue_points={},
         rescue_found={},
-        proximity_threshold=0,
         pathfinding=_unreachable,
         environment=env,
     )
@@ -147,7 +142,6 @@ def test_robot_at_waypoint_falls_through_to_new_random():
         state=state,
         rescue_points={},
         rescue_found={},
-        proximity_threshold=0,
         pathfinding=_reachable,
         environment=env,
     )
@@ -168,7 +162,6 @@ def test_picks_random_walkable_cell_when_no_waypoint():
         state=state,
         rescue_points={},
         rescue_found={},
-        proximity_threshold=0,
         pathfinding=_reachable,
         environment=env,
     )
@@ -189,7 +182,6 @@ def test_returns_none_when_no_walkable_cell_exists():
         state=state,
         rescue_points={},
         rescue_found={},
-        proximity_threshold=0,
         pathfinding=_unreachable,
         environment=env,
     )
@@ -211,7 +203,6 @@ def test_does_not_mutate_input_state():
         state=state,
         rescue_points={},
         rescue_found={},
-        proximity_threshold=0,
         pathfinding=_reachable,
         environment=env,
     )

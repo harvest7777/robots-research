@@ -235,7 +235,6 @@ def _goal_for(
             robot_state,
             state.environment.rescue_points,
             task_state.rescue_found,
-            task.proximity_threshold,
             pathfinding,
             state.environment,
         )
