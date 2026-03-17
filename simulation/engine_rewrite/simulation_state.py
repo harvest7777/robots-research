@@ -16,6 +16,8 @@ from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.primitives.time import Time
 
+from .assignment import Assignment
+
 
 @dataclass(frozen=True)
 class SimulationState:
@@ -25,3 +27,4 @@ class SimulationState:
     tasks: dict[TaskId, BaseTask]
     task_states: dict[TaskId, BaseTaskState]
     t_now: Time = field(default_factory=lambda: Time(0))
+    assignments: tuple[Assignment, ...] = ()

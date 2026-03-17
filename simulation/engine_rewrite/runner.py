@@ -58,6 +58,7 @@ class SimulationRunner:
         for task in outcome.tasks_spawned:
             self._registry.add(task)
 
+        new_state = dataclasses.replace(new_state, assignments=tuple(assignments))
         self._state = new_state
         self._history.append((new_state, outcome))
         return new_state, outcome
