@@ -140,7 +140,44 @@ def run(max_ticks: int = 150) -> tuple[SimulationState, list[StepOutcome], Simul
 
 
 if __name__ == "__main__":
-    state, outcomes, runner = run()
+    import os
+    import time
+
+    from simulation_view.terminal_renderer import TerminalRenderer
+    from simulation_view.v2.view import SimulationViewV2
+
+    runner, assignment_service = build()
+    view = SimulationViewV2()
+    renderer = TerminalRenderer()
+    outcomes: list[StepOutcome] = []
+
+    try:
+        for _ in range(150):
+            terminal = os.get_terminal_size()
+            state = runner.state
+            frame = view.render(state, width=terminal.columns, height=terminal.lines)
+            renderer.draw(frame)
+            time.sleep(0.1)
+
+            state, outcome = runner.step()
+            outcomes.append(outcome)
+
+            for task in outcome.tasks_spawned:
+                if isinstance(task, RescuePoint):
+                    assignment_service.update([
+                        Assignment(task_id=task.id, robot_id=robot_id)
+                        for robot_id in ROBOT_IDS
+                    ])
+
+            if RESCUE_POINT_ID in outcome.tasks_completed:
+                # Draw the final state before exiting
+                terminal = os.get_terminal_size()
+                frame = view.render(state, width=terminal.columns, height=terminal.lines)
+                renderer.draw(frame)
+                time.sleep(0.5)
+                break
+    finally:
+        renderer.cleanup()
 
     discovery_tick = next(
         (i + 1 for i, o in enumerate(outcomes) if o.tasks_spawned),

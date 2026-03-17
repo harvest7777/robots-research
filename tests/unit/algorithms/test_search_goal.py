@@ -66,16 +66,19 @@ def test_proximity_lock_not_triggered_when_outside_threshold():
     state = _state(0, 0)  # Manhattan distance = 18, well outside max_distance=5
     env = Environment(width=10, height=10)
 
-    goal = compute_search_goal(
-        state=state,
-        rescue_points={rp.id: rp},
-        rescue_found=frozenset(),
-        pathfinding=_reachable,
-        environment=env,
-    )
+    # Mock random fallback to return a fixed position that isn't (9, 9).
+    with patch("simulation.algorithms.search_goal.random.randint", side_effect=[3, 3]):
+        goal = compute_search_goal(
+            state=state,
+            rescue_points={rp.id: rp},
+            rescue_found=frozenset(),
+            pathfinding=_reachable,
+            environment=env,
+        )
 
-    # No proximity lock — should fall through (no waypoint → picks new one)
+    # No proximity lock — random fallback was chosen, not the rescue point
     assert goal != Position(9, 9)
+    assert goal == Position(3, 3)
 
 
 def test_proximity_lock_skips_already_found_rescue_points():
