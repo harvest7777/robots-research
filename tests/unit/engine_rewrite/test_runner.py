@@ -125,6 +125,38 @@ def test_step_syncs_externally_added_tasks_from_registry():
     assert TaskId(2) in new_state.tasks
 
 
+def test_unassigned_task_has_no_task_state():
+    # A task in the registry that is never assigned should produce no
+    # task_states entry — there is nothing to track until work begins.
+    task = _base_task()
+    unassigned_task = Task(
+        id=TaskId(2),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=3,
+        required_work_time=Time(5),
+        spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
+    )
+    state = SimulationState(
+        environment=Environment(width=10, height=10),
+        robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
+        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
+        tasks={task.id: task},
+        task_states={task.id: TaskState(task_id=task.id)},
+        t_now=Time(0),
+    )
+    registry = InMemoryTaskRegistry(tasks=[task, unassigned_task])
+    assignment_service = InMemoryAssignmentService()
+    runner = SimulationRunner(
+        state=state,
+        registry=registry,
+        assignment_service=assignment_service,
+        pathfinding=astar_pathfind,
+    )
+
+    new_state, _ = runner.step()
+    assert TaskId(2) not in new_state.task_states
+
+
 def test_step_adds_spawned_tasks_to_registry():
     # Build a search task scenario where a rescue point gets discovered,
     # producing a tasks_spawned entry that should land in the registry.
