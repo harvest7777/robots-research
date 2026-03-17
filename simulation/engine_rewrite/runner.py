@@ -11,7 +11,8 @@ Each call to step():
   3. Runs one engine tick (classify_step + apply_outcome).
   4. Writes tasks_spawned back to the registry so they are available
      for assignment next tick.
-  5. Returns the StepOutcome for the caller to inspect or log.
+  5. Returns (SimulationState, StepOutcome) — state is the full snapshot
+     for rendering; outcome is the event delta for reactive consumers.
 """
 
 from __future__ import annotations
@@ -45,7 +46,7 @@ class SimulationRunner:
     def state(self) -> SimulationState:
         return self._state
 
-    def step(self) -> StepOutcome:
+    def step(self) -> tuple[SimulationState, StepOutcome]:
         # Rebuild state.tasks from the registry each tick.
         tasks = {t.id: t for t in self._registry.all()}
         current_state = dataclasses.replace(self._state, tasks=tasks)
@@ -58,4 +59,4 @@ class SimulationRunner:
             self._registry.add(task)
 
         self._state = new_state
-        return outcome
+        return new_state, outcome
