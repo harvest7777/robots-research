@@ -41,14 +41,7 @@ def simple_assign(tasks: list[BaseTask], robots: list[Robot]) -> list[Assignment
     robot_ids_by_task: dict[TaskId, set[RobotId]] = {}
     assigned_robots: set[RobotId] = set()
 
-    # TODO: this is a bit noisy and not clear, why are these eligible
-    # RESCUE and IDLE tasks not eligible? Although it is true, it is a
-    # nuance to remember
-    eligible = [
-        t for t in tasks
-        if isinstance(t, (Task, SearchTask))
-        and not (isinstance(t, Task) and t.type in (TaskType.RESCUE, TaskType.IDLE))
-    ]
+    eligible = _filter_assignable_tasks(tasks)
 
     # Pass 1: assign one robot per task (first-fit)
     for task in eligible:
@@ -76,3 +69,15 @@ def simple_assign(tasks: list[BaseTask], robots: list[Robot]) -> list[Assignment
         Assignment(task_id=task_id, robot_ids=frozenset(rids), assign_at=Time(0))
         for task_id, rids in robot_ids_by_task.items()
     ]
+
+
+def _filter_assignable_tasks(tasks: list[BaseTask]) -> list[BaseTask | SearchTask | Task]:
+    # Non-work tasks are not the assignment's algorithm's job.
+    # TODO: In the future, a more elegant solution would be having one TaskAssigner
+    # class that is responsible for all assignments. Right now this logic is split
+    eligible = [
+        t for t in tasks
+        if isinstance(t, (Task, SearchTask))
+           and not (isinstance(t, Task) and t.type in (TaskType.RESCUE, TaskType.IDLE))
+    ]
+    return eligible
