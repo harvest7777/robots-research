@@ -2,7 +2,7 @@ import pytest
 
 from simulation.domain.environment import Environment, Obstacle
 from simulation.domain.rescue_point import RescuePoint, RescuePointId
-from simulation.domain.task import TaskId
+from simulation.domain.task import TaskId, SpatialConstraint
 from simulation.primitives.position import Position
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
 
@@ -22,9 +22,9 @@ def _zone(zone_id: int, *positions: Position) -> Zone:
 def _rescue_point(pos: Position) -> RescuePoint:
     return RescuePoint(
         id=RescuePointId(1),
-        position=pos,
+        priority=5,
+        spatial_constraint=SpatialConstraint(target=pos, max_distance=0),
         name="rp1",
-        rescue_task_id=TaskId(99),
     )
 
 

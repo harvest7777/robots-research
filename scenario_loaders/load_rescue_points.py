@@ -4,7 +4,8 @@ from typing import Any
 
 from simulation.primitives.position import Position
 from simulation.domain.rescue_point import RescuePoint, RescuePointId
-from simulation.domain.task import TaskId
+from simulation.domain.task import TaskId, SpatialConstraint
+from simulation.primitives.time import Time
 
 
 def load_rescue_points(raw: list[dict[str, Any]]) -> list[RescuePoint]:
@@ -12,10 +13,17 @@ def load_rescue_points(raw: list[dict[str, Any]]) -> list[RescuePoint]:
 
     Args:
         raw: List of rescue_point dictionaries, each with required keys:
-            id: Non-negative integer identifier.
-            name: Human-readable string label.
-            position: [x, y] integer coordinates.
-            rescue_task_id: Integer ID of the RESCUE task to trigger.
+            id:                 Non-negative integer identifier. Also serves as the
+                                task ID when the rescue point becomes an active task.
+            name:               Human-readable string label.
+            position:           [x, y] integer coordinates.
+            required_work_time: Ticks of work to complete the rescue (default: 40).
+            min_robots_needed:  Minimum robots to assign (default: 1).
+            priority:           Scheduling priority (default: 10).
+
+        Note: rescue_task_id is no longer a separate field. The rescue point's
+        own id is used as the task id when it becomes active on discovery.
+        If rescue_task_id is present in the raw data it is silently ignored.
 
     Returns:
         List of configured RescuePoint instances.
@@ -28,7 +36,7 @@ def load_rescue_points(raw: list[dict[str, Any]]) -> list[RescuePoint]:
     seen_ids: set[int] = set()
 
     for i, rp_raw in enumerate(raw):
-        for key in ("id", "name", "position", "rescue_task_id"):
+        for key in ("id", "name", "position"):
             if key not in rp_raw:
                 raise KeyError(f"rescue_point at index {i} missing required key: '{key}'")
 
@@ -57,18 +65,17 @@ def load_rescue_points(raw: list[dict[str, Any]]) -> list[RescuePoint]:
                 f"got: {position_raw!r}"
             )
 
-        rescue_task_id = rp_raw["rescue_task_id"]
-        if not isinstance(rescue_task_id, int) or rescue_task_id < 0:
-            raise ValueError(
-                f"rescue_point {rp_id}: rescue_task_id must be a non-negative integer, "
-                f"got: {rescue_task_id!r}"
-            )
+        required_work_time = rp_raw.get("required_work_time", 40)
+        min_robots_needed = rp_raw.get("min_robots_needed", 1)
+        priority = rp_raw.get("priority", 10)
 
         rescue_points.append(RescuePoint(
             id=RescuePointId(rp_id),
-            position=Position(x, y),
+            priority=priority,
+            spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
+            required_work_time=Time(required_work_time),
+            min_robots_needed=min_robots_needed,
             name=name,
-            rescue_task_id=TaskId(rescue_task_id),
         ))
 
     return rescue_points

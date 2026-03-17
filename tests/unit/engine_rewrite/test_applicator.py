@@ -170,7 +170,13 @@ def test_spawned_task_added_to_state():
 
 def test_rescue_point_marked_found_in_search_state():
     env = _env()
-    rescue_point = RescuePoint(id=RescuePointId(1), position=Position(5, 5), name="A", required_work_time=10)
+    rescue_point = RescuePoint(
+        id=RescuePointId(1),
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        required_work_time=Time(10),
+        name="A",
+    )
     env.add_rescue_point(rescue_point)
 
     search_task = SearchTask(id=TaskId(1), priority=5)

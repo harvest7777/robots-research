@@ -19,7 +19,7 @@ Business rules enforced here:
 - Search robots roam and lock onto nearby rescue points
 - Rescue points are discovered when a robot reaches the rescue point's position
 - Search tasks complete when all rescue points in the environment are found
-- Rescue tasks are spawned dynamically on discovery (not pre-seeded)
+- Rescue points become active tasks on discovery (not pre-seeded)
 """
 
 from __future__ import annotations
@@ -31,10 +31,9 @@ from simulation.domain.rescue_point import RescuePoint, RescuePointId
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
-from simulation.primitives.time import Time
 
 from .assignment import Assignment
 from .simulation_state import SimulationState
@@ -128,7 +127,7 @@ def classify_step(
         if isinstance(task, SearchTask):
             continue
 
-        assert isinstance(task, Task)
+        assert isinstance(task, WorkTask)
         if _robot_can_work(task, effective_position, state):
             outcome.worked.append((assignment.robot_id, assignment.task_id))
             worked_by_task.setdefault(assignment.task_id, []).append(assignment.robot_id)
@@ -139,13 +138,13 @@ def classify_step(
     for task_id, workers in worked_by_task.items():
         task = state.tasks[task_id]
         task_state = state.task_states[task_id]
-        assert isinstance(task, Task) and isinstance(task_state, TaskState)
+        assert isinstance(task, WorkTask) and isinstance(task_state, TaskState)
         new_work_ticks = task_state.work_done.tick + len(workers)
         if new_work_ticks >= task.required_work_time.tick:
             outcome.tasks_completed.append(task_id)
 
     # -------------------------------------------------------------------------
-    # Pass 5: search discoveries and rescue task spawning
+    # Pass 5: search discoveries — rescue points become active tasks on discovery
     # -------------------------------------------------------------------------
     search_assignments = [
         assignment for assignment in valid
@@ -172,7 +171,8 @@ def classify_step(
             if effective_position == rescue_point.position:
                 outcome.rescue_points_found.append((task_id, rescue_point.id))
                 seen_rescue_ids.add(rescue_point.id)
-                outcome.tasks_spawned.append(_make_rescue_task(rescue_point, state))
+                # The rescue point IS the task — no transformation needed.
+                outcome.tasks_spawned.append(rescue_point)
                 break
 
     # -------------------------------------------------------------------------
@@ -238,7 +238,7 @@ def _goal_for(
             pathfinding,
             state.environment,
         )
-    assert isinstance(task, Task)
+    assert isinstance(task, WorkTask)
     return _resolve_spatial_target(task.spatial_constraint, robot_state.position, state)
 
 
@@ -257,7 +257,7 @@ def _resolve_spatial_target(
     return min(zone.cells, key=lambda cell: robot_position.manhattan(cell))
 
 
-def _robot_can_work(task: Task, position: Position, state: SimulationState) -> bool:
+def _robot_can_work(task: WorkTask, position: Position, state: SimulationState) -> bool:
     spatial_constraint = task.spatial_constraint
     if spatial_constraint is None:
         return True
@@ -272,16 +272,3 @@ def _robot_can_work(task: Task, position: Position, state: SimulationState) -> b
     if spatial_constraint.max_distance > 0:
         return min(position.manhattan(cell) for cell in zone.cells) <= spatial_constraint.max_distance
     return False
-
-
-def _make_rescue_task(rescue_point: object, state: SimulationState) -> Task:
-    assert isinstance(rescue_point, RescuePoint)
-    new_task_id = TaskId(rescue_point.rescue_task_id)
-    return Task(
-        id=new_task_id,
-        type=TaskType.RESCUE,
-        priority=10,
-        required_work_time=Time(rescue_point.required_work_time),
-        spatial_constraint=SpatialConstraint(target=rescue_point.position, max_distance=0),
-        min_robots_needed=rescue_point.min_robots_needed,
-    )

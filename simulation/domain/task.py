@@ -57,27 +57,36 @@ class SpatialConstraint:
 
 
 # -----------------------------------------------------------------------------
-# Task Definition
+# Task Definitions
 # -----------------------------------------------------------------------------
 
 @dataclass(frozen=True)
-class Task(BaseTask):
+class WorkTask(BaseTask):
     """
-    Immutable description of a work-accumulation task.
+    Immutable description of any task that completes by accumulating
+    robot-ticks of work at a spatial location.
 
-    Extends BaseTask with fields specific to tasks that complete by
-    accumulating robot-ticks of work:
-    - type: what kind of work (RESCUE, PICKUP, INSPECTION, etc.)
-    - required_work_time: ticks of work needed for completion
-    - spatial_constraint: where the work must happen
-    - deadline: latest tick at which work is accepted
-    - min_robots_needed: minimum robots to assign when triggered by a rescue
+    This is the clean base for work-accumulation tasks. It intentionally has
+    no `type` field — task type is identified by isinstance checks, not enums.
 
-    Does NOT contain execution state (progress, timestamps, assigned robots).
+    Phase 6 note: once the old engine is deleted, `Task` will be removed and
+    `WorkTask` renamed to `Task`.
     """
 
-    type: TaskType = TaskType.ROUTINE_INSPECTION
     required_work_time: Time = Time(0)
     spatial_constraint: SpatialConstraint | None = None
     deadline: Time | None = None
     min_robots_needed: int = 1
+
+
+@dataclass(frozen=True)
+class Task(WorkTask):
+    """
+    Immutable description of a work-accumulation task.
+
+    Extends WorkTask with a `type` enum for the old engine. The `type` field
+    is legacy — the new engine identifies task kind via isinstance checks.
+    Scheduled for removal in Phase 6 when the old engine is deleted.
+    """
+
+    type: TaskType = TaskType.ROUTINE_INSPECTION

@@ -259,10 +259,11 @@ def test_no_path_is_ignored():
 def test_search_robot_discovers_rescue_point_when_at_position():
     rescue_point = RescuePoint(
         id=RescuePointId(1),
-        position=Position(5, 5),
-        name="Alpha",
-        required_work_time=20,
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        required_work_time=Time(20),
         min_robots_needed=1,
+        name="Alpha",
     )
     env = _env()
     env.add_rescue_point(rescue_point)
@@ -288,10 +289,11 @@ def test_search_robot_discovers_rescue_point_when_at_position():
 def test_already_found_rescue_point_not_re_discovered():
     rescue_point = RescuePoint(
         id=RescuePointId(1),
-        position=Position(5, 5),
-        name="Alpha",
-        required_work_time=20,
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        required_work_time=Time(20),
         min_robots_needed=1,
+        name="Alpha",
     )
     env = _env()
     env.add_rescue_point(rescue_point)
@@ -316,10 +318,11 @@ def test_already_found_rescue_point_not_re_discovered():
 def test_spawned_rescue_task_has_correct_location_and_work_time():
     rescue_point = RescuePoint(
         id=RescuePointId(1),
-        position=Position(3, 3),
-        name="Bravo",
-        required_work_time=30,
+        priority=10,
+        spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+        required_work_time=Time(30),
         min_robots_needed=2,
+        name="Bravo",
     )
     env = _env()
     env.add_rescue_point(rescue_point)
@@ -339,8 +342,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
     assert len(outcome.tasks_spawned) == 1
     spawned = outcome.tasks_spawned[0]
-    assert isinstance(spawned, Task)
+    assert isinstance(spawned, RescuePoint)
     assert spawned.required_work_time == Time(30)
     assert spawned.min_robots_needed == 2
-    assert spawned.spatial_constraint is not None
-    assert spawned.spatial_constraint.target == Position(3, 3)
+    assert spawned.position == Position(3, 3)
