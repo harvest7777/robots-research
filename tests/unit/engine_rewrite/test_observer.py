@@ -21,6 +21,7 @@ from simulation.domain.task_state import TaskState
 from simulation.primitives.capability import Capability
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
+from simulation.primitives.zone import Zone, ZoneId, ZoneType
 
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.observer import classify_step
@@ -250,6 +251,103 @@ def test_no_path_is_ignored():
     outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
     reasons = [r for _, r in outcome.assignments_ignored]
     assert IgnoreReason.NO_PATH in reasons
+
+
+# ---------------------------------------------------------------------------
+# Waypoints
+# ---------------------------------------------------------------------------
+
+def test_waypoint_set_to_position_target():
+    # Task has an exact Position target — waypoint should be that position.
+    task = _work_task(1, x=7, y=3)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.waypoints[RobotId(1)] == Position(7, 3)
+
+
+def test_waypoint_set_to_nearest_zone_cell():
+    # Task targets a zone — waypoint should be the zone cell nearest the robot.
+    env = _env()
+    zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(8, 0), Position(8, 5)])
+    env.add_zone(zone)
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=5,
+        required_work_time=Time(10),
+        spatial_constraint=SpatialConstraint(target=ZoneId(1)),
+    )
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],  # closer to (8,0) than (8,5)
+        tasks=[task],
+        task_states=[_task_state(1)],
+        env=env,
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.waypoints[RobotId(1)] == Position(8, 0)
+
+
+def test_waypoint_nearest_zone_cell_tracks_robot_position():
+    # Same zone, robot on the opposite side — nearest cell should flip.
+    env = _env()
+    zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(8, 0), Position(8, 5)])
+    env.add_zone(zone)
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=5,
+        required_work_time=Time(10),
+        spatial_constraint=SpatialConstraint(target=ZoneId(1)),
+    )
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=5)],  # closer to (8,5) than (8,0)
+        tasks=[task],
+        task_states=[_task_state(1)],
+        env=env,
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.waypoints[RobotId(1)] == Position(8, 5)
+
+
+def test_waypoint_not_set_when_task_has_no_spatial_constraint():
+    # A task with no spatial_constraint has no meaningful goal — no waypoint.
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=5,
+        required_work_time=Time(10),
+        spatial_constraint=None,
+    )
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=0, y=0)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert RobotId(1) not in outcome.waypoints
+
+
+def test_waypoint_set_even_when_robot_already_at_goal():
+    # Robot is already at the task position — it works in place but the waypoint
+    # is still recorded (it's the goal, not the intended move).
+    task = _work_task(1, x=4, y=4)
+    state = _state(
+        robots=[_robot(1)],
+        robot_states=[_robot_state(1, x=4, y=4)],
+        tasks=[task],
+        task_states=[_task_state(1)],
+    )
+    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    assert outcome.waypoints[RobotId(1)] == Position(4, 4)
+    assert outcome.moved == []
 
 
 # ---------------------------------------------------------------------------
