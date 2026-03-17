@@ -153,12 +153,6 @@ if __name__ == "__main__":
 
     try:
         for _ in range(150):
-            terminal = os.get_terminal_size()
-            state = runner.state
-            frame = view.render(state, width=terminal.columns, height=terminal.lines)
-            renderer.draw(frame)
-            time.sleep(0.1)
-
             state, outcome = runner.step()
             outcomes.append(outcome)
 
@@ -169,13 +163,15 @@ if __name__ == "__main__":
                         for robot_id in ROBOT_IDS
                     ])
 
+            terminal = os.get_terminal_size()
+            frame = view.render(state, width=terminal.columns, height=terminal.lines)
+            renderer.draw(frame)
+
             if RESCUE_POINT_ID in outcome.tasks_completed:
-                # Draw the final state before exiting
-                terminal = os.get_terminal_size()
-                frame = view.render(state, width=terminal.columns, height=terminal.lines)
-                renderer.draw(frame)
                 time.sleep(0.5)
                 break
+
+            time.sleep(0.1)
     finally:
         renderer.cleanup()
 
