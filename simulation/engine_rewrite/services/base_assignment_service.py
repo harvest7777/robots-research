@@ -1,8 +1,9 @@
 """
 BaseAssignmentService
 
-Abstract base class for the assignment service. Holds the current set of
-robot-to-task assignments. The assigner writes to it; the runner reads from it.
+Abstract base class for the assignment service. Holds one assignment per robot,
+keyed by robot ID. The assigner calls update() to upsert assignments; the runner
+calls get_current() each tick to read them.
 """
 
 from __future__ import annotations
@@ -16,8 +17,8 @@ class BaseAssignmentService(ABC):
 
     @abstractmethod
     def get_current(self) -> list[Assignment]:
-        """Return the current set of assignments."""
+        """Return all current assignments (one per robot)."""
 
     @abstractmethod
-    def set(self, assignments: list[Assignment]) -> None:
-        """Replace the current set of assignments."""
+    def update(self, assignments: list[Assignment]) -> None:
+        """Upsert assignments by robot ID. Existing robots not in the list are unchanged."""

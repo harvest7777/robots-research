@@ -12,25 +12,24 @@ def test_empty_by_default():
     assert InMemoryAssignmentService().get_current() == []
 
 
-def test_set_replaces_assignments():
-    service = InMemoryAssignmentService()
-    service.set([_assign(1, 10), _assign(2, 20)])
+def test_constructor_accepts_initial_assignments():
+    service = InMemoryAssignmentService(assignments=[_assign(1, 10), _assign(2, 20)])
     assert set(service.get_current()) == {_assign(1, 10), _assign(2, 20)}
 
 
-def test_set_overwrites_previous():
+def test_update_adds_new_assignments():
     service = InMemoryAssignmentService()
-    service.set([_assign(1, 10)])
-    service.set([_assign(2, 20)])
-    assert service.get_current() == [_assign(2, 20)]
+    service.update([_assign(1, 10), _assign(2, 20)])
+    assert set(service.get_current()) == {_assign(1, 10), _assign(2, 20)}
 
 
-def test_set_empty_clears_assignments():
+def test_update_upserts_existing_robot():
     service = InMemoryAssignmentService(assignments=[_assign(1, 10)])
-    service.set([])
-    assert service.get_current() == []
+    service.update([_assign(1, 99)])
+    assert service.get_current() == [_assign(1, 99)]
 
 
-def test_constructor_accepts_initial_assignments():
-    service = InMemoryAssignmentService(assignments=[_assign(1, 10)])
-    assert service.get_current() == [_assign(1, 10)]
+def test_update_leaves_unmentioned_robots_unchanged():
+    service = InMemoryAssignmentService(assignments=[_assign(1, 10), _assign(2, 20)])
+    service.update([_assign(1, 99)])
+    assert set(service.get_current()) == {_assign(1, 99), _assign(2, 20)}
