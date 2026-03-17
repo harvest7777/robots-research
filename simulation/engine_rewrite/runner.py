@@ -42,12 +42,10 @@ class SimulationRunner:
         self._assignment_service = assignment_service
         self._pathfinding = pathfinding
 
-    @property
-    def state(self) -> SimulationState:
-        return self._state
-
     def step(self) -> tuple[SimulationState, StepOutcome]:
         # Rebuild state.tasks from the registry each tick.
+        # Pretty hacky solution tbh, but this is the one place outside
+        # the applicator which state is "mutated"
         tasks = {t.id: t for t in self._registry.all()}
         current_state = dataclasses.replace(self._state, tasks=tasks)
 

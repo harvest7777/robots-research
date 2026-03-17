@@ -61,11 +61,6 @@ def _runner(state: SimulationState | None = None, task: Task | None = None) -> S
     )
 
 
-def test_step_state_property_matches_returned_state():
-    runner = _runner()
-    new_state, _ = runner.step()
-    assert runner.state is new_state
-
 
 def test_step_reads_assignments_from_service():
     task = _base_task()
