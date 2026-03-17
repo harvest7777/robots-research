@@ -75,7 +75,7 @@ def build() -> SimulationRunner:
     )
 
 
-def run(max_ticks: int = 30) -> tuple[SimulationState, list[StepOutcome]]:
+def run(max_ticks: int = 30) -> tuple[SimulationState, list[StepOutcome], SimulationRunner]:
     runner = build()
     outcomes: list[StepOutcome] = []
 
@@ -83,23 +83,9 @@ def run(max_ticks: int = 30) -> tuple[SimulationState, list[StepOutcome]]:
         state, outcome = runner.step()
         outcomes.append(outcome)
 
-    return state, outcomes
+    return state, outcomes, runner
 
 
 if __name__ == "__main__":
-    state, outcomes = run()
-
-    task_completed = any(TASK_ID in o.tasks_completed for o in outcomes)
-    no_battery_tick = next(
-        (
-            i + 1
-            for i, o in enumerate(outcomes)
-            if any(reason == IgnoreReason.NO_BATTERY for _, reason in o.assignments_ignored)
-        ),
-        None,
-    )
-
-    print(f"Task completed: {task_completed}")
-    print(f"NO_BATTERY first fired at tick: {no_battery_tick}")
-    final_battery = state.robot_states[ROBOT_ID].battery_level
-    print(f"Final battery level: {final_battery:.4f}")
+    state, outcomes, runner = run()
+    print(runner.report())

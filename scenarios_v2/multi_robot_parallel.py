@@ -76,7 +76,7 @@ def build() -> SimulationRunner:
     )
 
 
-def run(max_ticks: int = 200) -> tuple[SimulationState, list[StepOutcome]]:
+def run(max_ticks: int = 200) -> tuple[SimulationState, list[StepOutcome], SimulationRunner]:
     runner = build()
     outcomes: list[StepOutcome] = []
     completed: set[TaskId] = set()
@@ -88,10 +88,9 @@ def run(max_ticks: int = 200) -> tuple[SimulationState, list[StepOutcome]]:
         if completed >= set(TASK_IDS):
             break
 
-    return state, outcomes
+    return state, outcomes, runner
 
 
 if __name__ == "__main__":
-    state, outcomes = run()
-    completed = {tid for o in outcomes for tid in o.tasks_completed}
-    print(f"Finished in {len(outcomes)} ticks — completed tasks: {sorted(completed)}")
+    state, outcomes, runner = run()
+    print(runner.report())
