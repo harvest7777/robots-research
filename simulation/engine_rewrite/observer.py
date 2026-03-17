@@ -276,7 +276,7 @@ def _robot_can_work(task: Task, position: Position, state: SimulationState) -> b
 
 def _make_rescue_task(rescue_point: object, state: SimulationState) -> Task:
     assert isinstance(rescue_point, RescuePoint)
-    new_task_id = TaskId(max(state.tasks.keys(), default=0) + 1)
+    new_task_id = TaskId(rescue_point.rescue_task_id)
     return Task(
         id=new_task_id,
         type=TaskType.RESCUE,

@@ -44,13 +44,13 @@ def _robot_state(rid: int, x: int, y: int, battery: float = 1.0) -> RobotState:
     return RobotState(robot_id=RobotId(rid), position=Position(x, y), battery_level=battery)
 
 
-def _work_task(tid: int, x: int, y: int, work: int = 10, caps: frozenset = frozenset()) -> Task:
+def _work_task(tid: int, x: int, y: int, work: int = 10, caps: frozenset = frozenset(), max_distance=0) -> Task:
     return Task(
         id=TaskId(tid),
         type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(work),
-        spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
+        spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=max_distance),
         required_capabilities=caps,
     )
 
@@ -129,7 +129,7 @@ def test_collision_resolution_only_one_robot_moves_to_contested_cell():
 # Work
 # ---------------------------------------------------------------------------
 
-def test_robot_works_when_at_task_location():
+def test_robot_satisfying_work_conditions_works():
     task = _work_task(1, x=2, y=2)
     state = _state(
         robots=[_robot(1)],
@@ -141,7 +141,7 @@ def test_robot_works_when_at_task_location():
     assert (RobotId(1), TaskId(1)) in outcome.worked
 
 
-def test_robot_not_at_task_location_does_not_work():
+def test_robot_not_satisfying_task_spatial_constraint_does_not_work():
     task = _work_task(1, x=10, y=10)
     state = _state(
         robots=[_robot(1)],
@@ -178,10 +178,10 @@ def test_task_not_complete_when_work_below_required():
 
 
 def test_multiple_robots_contribute_work_this_tick():
-    task = _work_task(1, x=0, y=0, work=10)
+    task = _work_task(1, x=0, y=0, work=10, max_distance=1)
     state = _state(
         robots=[_robot(1), _robot(2)],
-        robot_states=[_robot_state(1, x=0, y=0), _robot_state(2, x=0, y=0)],
+        robot_states=[_robot_state(1, x=0, y=1), _robot_state(2, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1, work_done=8)],  # needs 2 more; 2 robots = done
     )
