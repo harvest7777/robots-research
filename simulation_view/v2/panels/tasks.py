@@ -7,7 +7,7 @@ from __future__ import annotations
 from simulation.domain.base_task import TaskId
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task
+from simulation.domain.task import Task, WorkTask
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.primitives.position import Position
@@ -34,7 +34,7 @@ def render_tasks(state: SimulationState) -> list[str]:
             progress = f"  found={found}/{total}"
             spatial = ""
         else:
-            assert isinstance(task, Task) and isinstance(ts, TaskState)
+            assert isinstance(task, WorkTask) and isinstance(ts, TaskState)
             progress = f"  progress={ts.work_done.tick}/{task.required_work_time.tick}"
             spatial = _spatial_info(task)
 
@@ -47,7 +47,7 @@ def render_tasks(state: SimulationState) -> list[str]:
     return lines
 
 
-def _spatial_info(task: Task) -> str:
+def _spatial_info(task: WorkTask) -> str:
     sc = task.spatial_constraint
     if sc is None:
         return ""

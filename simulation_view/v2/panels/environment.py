@@ -11,7 +11,7 @@ from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.environment import Environment
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.search_task import SearchTask
-from simulation.domain.task import Task, SpatialConstraint
+from simulation.domain.task import Task, WorkTask, SpatialConstraint
 from simulation.primitives.position import Position
 from simulation.primitives.zone import Zone, ZoneType
 from simulation.engine_rewrite.simulation_state import SimulationState
@@ -86,7 +86,8 @@ def _compute_task_work_areas(
     for task in state.tasks.values():
         if isinstance(task, SearchTask):
             continue  # search tasks roam freely; no fixed spatial target
-        assert isinstance(task, Task)
+        if not isinstance(task, WorkTask):
+            continue
         ts = state.task_states.get(task.id)
         if ts is not None and ts.status in (TaskStatus.DONE, TaskStatus.FAILED):
             continue

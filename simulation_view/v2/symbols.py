@@ -8,6 +8,7 @@ task/state data to display strings.
 from __future__ import annotations
 
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.task import Task, TaskType
 from simulation.domain.search_task import SearchTask
 from simulation.domain.task_state import TaskState
@@ -61,9 +62,11 @@ TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
 
 
 def task_label(task: BaseTask) -> str:
-    """Return a short 2-char label for a task (e.g. "SR", "RI")."""
+    """Return a short 2-char label for a task (e.g. "SR", "RI", "RS")."""
     if isinstance(task, SearchTask):
         return "SR"
+    if isinstance(task, RescuePoint):
+        return "RS"
     assert isinstance(task, Task)
     return TASK_TYPE_LABELS.get(task.type, "??")
 
@@ -72,6 +75,8 @@ def task_full_name(task: BaseTask) -> str:
     """Return a human-readable name for a task."""
     if isinstance(task, SearchTask):
         return "Search"
+    if isinstance(task, RescuePoint):
+        return "Rescue"
     assert isinstance(task, Task)
     return TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
 
