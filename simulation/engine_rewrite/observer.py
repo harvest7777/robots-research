@@ -75,7 +75,7 @@ def classify_step(
         robot = state.robots.get(assignment.robot_id)
         robot_state = state.robot_states.get(assignment.robot_id)
 
-        if None in (task, task_state, robot, robot_state):
+        if task is None or task_state is None or robot is None or robot_state is None:
             continue
 
         reason = _ignore_reason(task, task_state, robot, robot_state)
@@ -205,26 +205,24 @@ def classify_step(
 # -----------------------------------------------------------------------------
 
 def _ignore_reason(
-    task: object,
-    task_state: object,
+    task: BaseTask,
+    task_state: BaseTaskState,
     robot: Robot,
     robot_state: RobotState,
 ) -> IgnoreReason | None:
-    assert isinstance(task_state, BaseTaskState)
     if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
         return IgnoreReason.TASK_TERMINAL
     if robot_state.battery_level <= 0.0:
         return IgnoreReason.NO_BATTERY
-    assert isinstance(task, BaseTask)
     if not task.required_capabilities.issubset(robot.capabilities):
         return IgnoreReason.WRONG_CAPABILITY
     return None
 
 
 def _goal_for(
-    task: object,
+    task: BaseTask,
     robot_state: RobotState,
-    task_state: object,
+    task_state: BaseTaskState,
     state: SimulationState,
     pathfinding: PathfindingAlgorithm,
 ) -> Position | None:
