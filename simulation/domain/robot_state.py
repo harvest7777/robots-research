@@ -20,14 +20,14 @@ RobotId = NewType("RobotId", int)
 """Opaque identifier for robots. Hashable and comparable."""
 
 
-@dataclass
+@dataclass(frozen=True)
 class RobotState:
     """
-    Mutable runtime state for a robot within a single simulation run.
+    Immutable runtime state for a robot within a single simulation run.
 
     Notes:
     - This object contains no decision logic.
-    - It is mutated by the Simulation (directly) and by `Robot` execution methods.
+    - Replaced entirely each tick by the applicator; never mutated in place.
     """
 
     robot_id: RobotId

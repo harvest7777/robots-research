@@ -61,10 +61,10 @@ class BaseTask:
     dependencies: frozenset[TaskId] = frozenset()
 
 
-@dataclass
+@dataclass(frozen=True)
 class BaseTaskState:
     """
-    Shared mutable runtime state for all task types.
+    Immutable runtime state for all task types.
 
     Tracks terminal status and completion timestamp. Type-specific progress
     fields (work_done, rescue_found, etc.) live on concrete subclasses.
@@ -84,11 +84,11 @@ class BaseTaskState:
 
 def mark_done(state: BaseTaskState, t_now: Time) -> None:
     """Mark the task terminal-successful."""
-    state.status = TaskStatus.DONE
-    state.completed_at = t_now
+    object.__setattr__(state, "status", TaskStatus.DONE)
+    object.__setattr__(state, "completed_at", t_now)
 
 
 def mark_failed(state: BaseTaskState, t_now: Time) -> None:
     """Mark the task terminal-failed."""
-    state.status = TaskStatus.FAILED
-    state.completed_at = t_now
+    object.__setattr__(state, "status", TaskStatus.FAILED)
+    object.__setattr__(state, "completed_at", t_now)

@@ -24,7 +24,7 @@ from simulation.domain.robot_state import RobotState
 def compute_search_goal(
     state: RobotState,
     rescue_points: dict[TaskId, RescuePoint],
-    rescue_found: dict[TaskId, bool],
+    rescue_found: frozenset[TaskId],
     pathfinding: PathfindingAlgorithm,
     environment: Environment,
 ) -> Position | None:
@@ -44,7 +44,7 @@ def compute_search_goal(
     """
     # Step 1: Proximity lock onto any nearby unfound rescue point
     for rp in rescue_points.values():
-        if rescue_found.get(rp.id):
+        if rp.id in rescue_found:
             continue
         assert rp.spatial_constraint is not None
         rp_position = rp.spatial_constraint.target

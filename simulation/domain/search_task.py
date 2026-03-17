@@ -12,7 +12,7 @@ explicit: the engine calls mark_done when all rescue_found values are True.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
 
@@ -32,16 +32,16 @@ class SearchTask(BaseTask):
     """
 
 
-@dataclass
+@dataclass(frozen=True)
 class SearchTaskState(BaseTaskState):
     """
-    Mutable runtime state for a SearchTask.
+    Immutable runtime state for a SearchTask.
 
     Extends BaseTaskState (task_id, status, completed_at) with:
-    - rescue_found: tracks discovery status for each rescue point in scope
+    - rescue_found: set of rescue point IDs discovered so far
 
-    The engine marks this task DONE explicitly when all rescue_found values
-    are True. State does not self-transition.
+    The engine marks this task DONE explicitly when all rescue points in the
+    environment have been found. State does not self-transition.
     """
 
-    rescue_found: dict[TaskId, bool] = field(default_factory=dict)
+    rescue_found: frozenset[TaskId] = frozenset()

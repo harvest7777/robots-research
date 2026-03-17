@@ -60,8 +60,8 @@ def move_robot(state: RobotState, target: Position) -> None:
     The caller is responsible for ensuring `target` is exactly one
     cardinal step away and is not blocked.
     """
-    state.position = target
-    state.battery_level -= _DRAIN_MOVE_PER_TICK
+    object.__setattr__(state, "position", target)
+    object.__setattr__(state, "battery_level", state.battery_level - _DRAIN_MOVE_PER_TICK)
 
 
 def work_robot(state: RobotState) -> None:
@@ -69,9 +69,9 @@ def work_robot(state: RobotState) -> None:
 
     The robot does not know what task is being worked on.
     """
-    state.battery_level -= _DRAIN_WORK_PER_TICK
+    object.__setattr__(state, "battery_level", state.battery_level - _DRAIN_WORK_PER_TICK)
 
 
 def idle_robot(state: RobotState) -> None:
     """Apply one tick of idle drain."""
-    state.battery_level -= _DRAIN_IDLE_PER_TICK
+    object.__setattr__(state, "battery_level", state.battery_level - _DRAIN_IDLE_PER_TICK)

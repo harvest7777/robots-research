@@ -25,10 +25,10 @@ from simulation.domain.base_task import (  # noqa: F401 (re-export)
 from simulation.primitives.time import Time
 
 
-@dataclass
+@dataclass(frozen=True)
 class TaskState(BaseTaskState):
     """
-    Mutable runtime state for a work-accumulation Task.
+    Immutable runtime state for a work-accumulation Task.
 
     Extends BaseTaskState (task_id, status, completed_at) with:
     - work_done: accumulated robot-ticks of work
@@ -57,9 +57,9 @@ def apply_work(state: TaskState, required_work_time: Time, dt: Time, t_now: Time
         return
 
     if state.started_at is None:
-        state.started_at = t_now
+        object.__setattr__(state, "started_at", t_now)
 
-    state.work_done = state.work_done.advance(dt)
+    object.__setattr__(state, "work_done", state.work_done.advance(dt))
 
     if state.work_done.tick >= required_work_time.tick:
         mark_done(state, t_now)
