@@ -87,5 +87,30 @@ def run(max_ticks: int = 30) -> tuple[SimulationState, list[StepOutcome], Simula
 
 
 if __name__ == "__main__":
-    state, outcomes, runner = run()
+    import os
+    import time
+
+    from simulation_view.terminal_renderer import TerminalRenderer
+    from simulation_view.v2.view import SimulationViewV2
+
+    runner = build()
+    view = SimulationViewV2()
+    renderer = TerminalRenderer()
+    outcomes: list[StepOutcome] = []
+
+    try:
+        for _ in range(30):
+            state, outcome = runner.step()
+            outcomes.append(outcome)
+
+            terminal = os.get_terminal_size()
+            frame = view.render(state, width=terminal.columns, height=terminal.lines)
+            renderer.draw(frame)
+
+            time.sleep(0.2)
+
+        time.sleep(0.5)
+    finally:
+        renderer.cleanup()
+
     print(runner.report())

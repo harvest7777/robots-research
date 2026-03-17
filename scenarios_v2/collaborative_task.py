@@ -92,11 +92,43 @@ def run(
 
 
 if __name__ == "__main__":
-    _, _, solo_runner = run(num_robots=1)
-    _, _, duo_runner = run(num_robots=2)
+    import os
+    import time
+
+    from simulation_view.terminal_renderer import TerminalRenderer
+    from simulation_view.v2.view import SimulationViewV2
+
+    view = SimulationViewV2()
+    renderer = TerminalRenderer()
+
+    def _animate(num_robots: int) -> SimulationRunner:
+        runner = build(num_robots)
+        try:
+            for _ in range(50):
+                state, outcome = runner.step()
+
+                terminal = os.get_terminal_size()
+                frame = view.render(state, width=terminal.columns, height=terminal.lines)
+                renderer.draw(frame)
+
+                if TASK_ID in outcome.tasks_completed:
+                    time.sleep(0.5)
+                    break
+
+                time.sleep(0.1)
+        except Exception:
+            renderer.cleanup()
+            raise
+        return runner
+
+    try:
+        solo_runner = _animate(num_robots=1)
+        duo_runner  = _animate(num_robots=2)
+    finally:
+        renderer.cleanup()
 
     solo = solo_runner.report()
-    duo = duo_runner.report()
+    duo  = duo_runner.report()
 
     print(f"solo (1 robot):  {solo}")
     print(f"duo  (2 robots): {duo}")
