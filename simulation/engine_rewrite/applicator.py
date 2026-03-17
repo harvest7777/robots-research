@@ -16,7 +16,6 @@ from __future__ import annotations
 import copy
 
 from simulation.domain.base_task import TaskId, TaskStatus
-from simulation.domain.rescue_point import RescuePointId
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTaskState
 from simulation.domain.task import Task, TaskType

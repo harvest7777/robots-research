@@ -19,7 +19,8 @@ from types import MappingProxyType
 from typing import Mapping
 
 from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
+from simulation.domain.base_task import TaskId
 from simulation.primitives.zone import Zone, ZoneId
 
 class Obstacle:
@@ -45,7 +46,7 @@ class Environment:
                       for _ in range(height)]
         self._zones: dict[ZoneId, Zone] = {}
         self._obstacles: set[Position] = set()
-        self._rescue_points: dict[RescuePointId, RescuePoint] = {}
+        self._rescue_points: dict[TaskId, RescuePoint] = {}
 
     @property
     def width(self) -> int:
@@ -205,8 +206,8 @@ class Environment:
         self._rescue_points[rp.id] = rp
 
     @property
-    def rescue_points(self) -> Mapping[RescuePointId, RescuePoint]:
-        """Return a read-only view of the rescue points dict (RescuePointId → RescuePoint)."""
+    def rescue_points(self) -> Mapping[TaskId, RescuePoint]:
+        """Return a read-only view of the rescue points dict (TaskId → RescuePoint)."""
         return MappingProxyType(self._rescue_points)
 
     def in_bounds(self, pos: Position) -> bool:

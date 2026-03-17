@@ -16,14 +16,15 @@ _MAX_RANDOM_GOAL_ATTEMPTS = 1000
 from simulation.domain.environment import Environment
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
 from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.base_task import TaskId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot_state import RobotState
 
 
 def compute_search_goal(
     state: RobotState,
-    rescue_points: dict[RescuePointId, RescuePoint],
-    rescue_found: dict[RescuePointId, bool],
+    rescue_points: dict[TaskId, RescuePoint],
+    rescue_found: dict[TaskId, bool],
     pathfinding: PathfindingAlgorithm,
     environment: Environment,
 ) -> Position | None:

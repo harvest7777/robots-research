@@ -24,12 +24,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation.domain.base_task import TaskId
 from simulation.domain.task import WorkTask, SpatialConstraint
-
-# RescuePointId is now an alias for TaskId — rescue points and their tasks
-# share the same ID space. Kept as an alias so existing code compiles unchanged.
-RescuePointId = TaskId
 
 
 @dataclass(frozen=True)

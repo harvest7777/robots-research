@@ -15,7 +15,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
-from simulation.domain.rescue_point import RescuePointId
 
 
 @dataclass(frozen=True)
@@ -45,4 +44,4 @@ class SearchTaskState(BaseTaskState):
     are True. State does not self-transition.
     """
 
-    rescue_found: dict[RescuePointId, bool] = field(default_factory=dict)
+    rescue_found: dict[TaskId, bool] = field(default_factory=dict)

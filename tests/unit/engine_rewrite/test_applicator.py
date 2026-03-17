@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.environment import Environment
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
@@ -171,7 +171,7 @@ def test_spawned_task_added_to_state():
 def test_rescue_point_marked_found_in_search_state():
     env = _env()
     rescue_point = RescuePoint(
-        id=RescuePointId(1),
+        id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(10),
@@ -182,7 +182,7 @@ def test_rescue_point_marked_found_in_search_state():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={RescuePointId(1): False},
+        rescue_found={TaskId(1): False},
     )
     state = SimulationState(
         environment=env,
@@ -192,11 +192,11 @@ def test_rescue_point_marked_found_in_search_state():
         task_states={TaskId(1): search_state},
         t_now=Time(0),
     )
-    outcome = StepOutcome(rescue_points_found=[(TaskId(1), RescuePointId(1))])
+    outcome = StepOutcome(rescue_points_found=[(TaskId(1), TaskId(1))])
     new_state = apply_outcome(state, outcome)
     updated_task_state = new_state.task_states[TaskId(1)]
     assert isinstance(updated_task_state, SearchTaskState)
-    assert updated_task_state.rescue_found[RescuePointId(1)] is True
+    assert updated_task_state.rescue_found[TaskId(1)] is True
 
 
 # ---------------------------------------------------------------------------

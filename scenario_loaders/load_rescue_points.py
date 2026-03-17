@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.task import TaskId, SpatialConstraint
 from simulation.primitives.time import Time
 
@@ -70,7 +70,7 @@ def load_rescue_points(raw: list[dict[str, Any]]) -> list[RescuePoint]:
         priority = rp_raw.get("priority", 10)
 
         rescue_points.append(RescuePoint(
-            id=RescuePointId(rp_id),
+            id=TaskId(rp_id),
             priority=priority,
             spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
             required_work_time=Time(required_work_time),

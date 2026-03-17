@@ -3,7 +3,7 @@ import dataclasses
 from simulation.domain.robot_state import RobotId
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot_state import RobotState
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.domain.task import TaskId, SpatialConstraint
@@ -29,7 +29,7 @@ def _unreachable(env, start, goal):
 
 def _rp(rp_id: int, x: int, y: int, max_distance: int = 0) -> RescuePoint:
     return RescuePoint(
-        id=RescuePointId(rp_id),
+        id=TaskId(rp_id),
         priority=5,
         spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=max_distance),
         name=f"rp{rp_id}",

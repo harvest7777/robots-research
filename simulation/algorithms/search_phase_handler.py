@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 
 from simulation.domain.assignment import Assignment
 from simulation.domain.base_task import BaseTask, TaskId, mark_done
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot_state import RobotId
 from simulation.domain.search_task import SearchTask, SearchTaskState
 from simulation.primitives.time import Time
@@ -28,14 +28,14 @@ class SearchEffect:
     Attributes:
         rescue_found_updates:       Per-search-task updates to rescue_found.
                                     Keyed by search_task_id, value is a dict
-                                    of RescuePointId → True.
+                                    of TaskId → True.
         new_assignments:            Rescue task assignments to register.
         waypoints_to_clear:         Robot IDs whose current_waypoint → None.
         search_task_ids_to_mark_done: Search task IDs to mark DONE (all their
                                     rescue points are now found).
     """
 
-    rescue_found_updates: dict[TaskId, dict[RescuePointId, bool]] = field(default_factory=dict)
+    rescue_found_updates: dict[TaskId, dict[TaskId, bool]] = field(default_factory=dict)
     new_assignments: list[Assignment] = field(default_factory=list)
     waypoints_to_clear: list[RobotId] = field(default_factory=list)
     search_task_ids_to_mark_done: list[TaskId] = field(default_factory=list)
@@ -46,7 +46,7 @@ def compute_search_phase_effect(
     all_assignments: list[Assignment],
     search_task_states: dict[TaskId, SearchTaskState],
     task_by_id: dict[TaskId, BaseTask],
-    all_rescue_points: dict[RescuePointId, RescuePoint],
+    all_rescue_points: dict[TaskId, RescuePoint],
     t_now: Time,
 ) -> SearchEffect:
     """Compute the full effect of a batch of rescue point discoveries.

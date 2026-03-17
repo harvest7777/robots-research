@@ -27,7 +27,7 @@ from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotState
 from simulation.algorithms.search_goal import compute_search_goal
@@ -80,13 +80,13 @@ def _make_search_sim(
 
     if rescue_pos is not None:
         rp = RescuePoint(
-            id=RescuePointId(1),
+            id=TaskId(1),
             position=rescue_pos,
             name="Test Point",
             rescue_task_id=rescue_task_id,
         )
         env.add_rescue_point(rp)
-        search_task_state.rescue_found[RescuePointId(1)] = False
+        search_task_state.rescue_found[TaskId(1)] = False
 
     assignment_service = InMemoryAssignmentService([
         Assignment(task_id=search_task_id, robot_ids=frozenset([robot_id]), assign_at=Time(0))
@@ -202,7 +202,7 @@ def test_search_robot_locks_immediately_if_starts_within_threshold():
 def test_rescue_found_set_when_robot_arrives():
     rescue_pos = Position(1, 0)
     sim = _make_search_sim(robot_pos=rescue_pos, rescue_pos=rescue_pos)
-    rp_id = RescuePointId(1)
+    rp_id = TaskId(1)
 
     assert _search_state(sim).rescue_found[rp_id] is False
 
@@ -264,7 +264,7 @@ def test_no_rescue_points_simulation_runs_to_budget():
 def test_multiple_robots_at_rescue_point_deterministic():
     rescue_pos = Position(5, 5)
     env = Environment(10, 10)
-    rp = RescuePoint(id=RescuePointId(1), position=rescue_pos, name="Alpha", rescue_task_id=TaskId(20))
+    rp = RescuePoint(id=TaskId(1), position=rescue_pos, name="Alpha", rescue_task_id=TaskId(20))
     env.add_rescue_point(rp)
 
     r1_id = RobotId(1)
@@ -275,7 +275,7 @@ def test_multiple_robots_at_rescue_point_deterministic():
     search_task = SearchTask(id=search_task_id, priority=5, proximity_threshold=10)
     search_task_state = SearchTaskState(
         task_id=search_task_id,
-        rescue_found={RescuePointId(1): False},
+        rescue_found={TaskId(1): False},
     )
     rescue_task = Task(
         id=rescue_task_id,
@@ -311,7 +311,7 @@ def test_multiple_robots_at_rescue_point_deterministic():
 
     sim._step()
 
-    assert _search_state(sim).rescue_found[RescuePointId(1)] is True
+    assert _search_state(sim).rescue_found[TaskId(1)] is True
     assert sim.task_states[search_task_id].status == TaskStatus.DONE
 
 
@@ -324,7 +324,7 @@ def test_add_rescue_point_on_obstacle_raises():
     obstacle_pos = Position(2, 2)
     env.add_obstacle(obstacle_pos)
 
-    rp = RescuePoint(id=RescuePointId(1), position=obstacle_pos, name="Bad", rescue_task_id=TaskId(1))
+    rp = RescuePoint(id=TaskId(1), position=obstacle_pos, name="Bad", rescue_task_id=TaskId(1))
 
     with pytest.raises(ValueError, match="obstacle"):
         env.add_rescue_point(rp)
@@ -337,7 +337,7 @@ def test_add_rescue_point_on_obstacle_raises():
 def test_snapshot_search_task_state_carries_rescue_found():
     rescue_pos = Position(1, 0)
     sim = _make_search_sim(robot_pos=rescue_pos, rescue_pos=rescue_pos)
-    rp_id = RescuePointId(1)
+    rp_id = TaskId(1)
 
     snap_before = sim.snapshot()
     search_snap_before = snap_before.task_states[TaskId(10)]
@@ -359,7 +359,7 @@ def test_snapshot_search_task_state_carries_rescue_found():
 def test_min_robots_needed_limits_allocation_from_search_pool():
     rescue_pos = Position(0, 0)
     env = Environment(10, 10)
-    rp = RescuePoint(id=RescuePointId(1), position=rescue_pos, name="Alpha", rescue_task_id=TaskId(20))
+    rp = RescuePoint(id=TaskId(1), position=rescue_pos, name="Alpha", rescue_task_id=TaskId(20))
     env.add_rescue_point(rp)
 
     search_task_id = TaskId(10)
@@ -369,7 +369,7 @@ def test_min_robots_needed_limits_allocation_from_search_pool():
     search_task = SearchTask(id=search_task_id, priority=5, proximity_threshold=10)
     search_task_state = SearchTaskState(
         task_id=search_task_id,
-        rescue_found={RescuePointId(1): False},
+        rescue_found={TaskId(1): False},
     )
     rescue_task = Task(
         id=rescue_task_id,
@@ -416,7 +416,7 @@ def test_load_search_rescue_scenario():
     assert len(rescue_points) == 1
 
     rp = list(rescue_points.values())[0]
-    assert rp.id == RescuePointId(1)
+    assert rp.id == TaskId(1)
     assert rp.name == "Survivor Alpha"
     assert rp.position == Position(33, 33)
     assert rp.rescue_task_id == TaskId(20)
@@ -428,4 +428,4 @@ def test_load_search_rescue_scenario():
 
     search_state = sim.task_states[TaskId(10)]
     assert isinstance(search_state, SearchTaskState)
-    assert RescuePointId(1) in search_state.rescue_found
+    assert TaskId(1) in search_state.rescue_found

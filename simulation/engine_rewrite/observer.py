@@ -27,7 +27,7 @@ from __future__ import annotations
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, resolve_collisions
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
@@ -150,7 +150,7 @@ def classify_step(
         assignment for assignment in valid
         if isinstance(state.tasks.get(assignment.task_id), SearchTask)
     ]
-    seen_rescue_ids: set[RescuePointId] = set()
+    seen_rescue_ids: set[TaskId] = set()
 
     for assignment in sorted(search_assignments, key=lambda assignment: assignment.robot_id):  # deterministic order
         task_id = assignment.task_id

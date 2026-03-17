@@ -22,7 +22,7 @@ from simulation.domain.assignment import Assignment
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, mark_done
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePointId, RescuePoint
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot, move_robot, work_robot, idle_robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
@@ -204,7 +204,7 @@ class Simulation:
         lowest robot_id for determinism). Already-found rescue points are skipped.
         """
         discovered: list[tuple[RobotId, RescuePoint, TaskId]] = []
-        seen_rescue_ids: set[RescuePointId] = set()
+        seen_rescue_ids: set[TaskId] = set()
 
         search_assignments = [
             (a, a.task_id)

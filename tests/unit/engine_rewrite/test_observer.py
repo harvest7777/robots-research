@@ -12,7 +12,7 @@ import pytest
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.base_task import TaskId
 from simulation.domain.environment import Environment
-from simulation.domain.rescue_point import RescuePoint, RescuePointId
+from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
@@ -258,7 +258,7 @@ def test_no_path_is_ignored():
 
 def test_search_robot_discovers_rescue_point_when_at_position():
     rescue_point = RescuePoint(
-        id=RescuePointId(1),
+        id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(20),
@@ -271,7 +271,7 @@ def test_search_robot_discovers_rescue_point_when_at_position():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={RescuePointId(1): False},
+        rescue_found={TaskId(1): False},
     )
     state = SimulationState(
         environment=env,
@@ -281,14 +281,14 @@ def test_search_robot_discovers_rescue_point_when_at_position():
         task_states={TaskId(1): search_state},
     )
     outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
-    assert (TaskId(1), RescuePointId(1)) in outcome.rescue_points_found
+    assert (TaskId(1), TaskId(1)) in outcome.rescue_points_found
     assert len(outcome.tasks_spawned) == 1
     assert TaskId(1) in outcome.tasks_completed
 
 
 def test_already_found_rescue_point_not_re_discovered():
     rescue_point = RescuePoint(
-        id=RescuePointId(1),
+        id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(20),
@@ -301,7 +301,7 @@ def test_already_found_rescue_point_not_re_discovered():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={RescuePointId(1): True},  # already found
+        rescue_found={TaskId(1): True},  # already found
     )
     state = SimulationState(
         environment=env,
@@ -317,7 +317,7 @@ def test_already_found_rescue_point_not_re_discovered():
 
 def test_spawned_rescue_task_has_correct_location_and_work_time():
     rescue_point = RescuePoint(
-        id=RescuePointId(1),
+        id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
         required_work_time=Time(30),
@@ -330,7 +330,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={RescuePointId(1): False},
+        rescue_found={TaskId(1): False},
     )
     state = SimulationState(
         environment=env,
