@@ -150,7 +150,9 @@ def test_completed_task_has_completed_at_set():
 # Spawned tasks
 # ---------------------------------------------------------------------------
 
-def test_spawned_task_added_to_state():
+def test_spawned_task_initial_state_created():
+    # The applicator creates the initial TaskState for spawned tasks so progress
+    # tracking is ready. Task definitions are the registry's responsibility.
     state = _base_state()
     new_task = Task(
         id=TaskId(99),
@@ -160,7 +162,7 @@ def test_spawned_task_added_to_state():
     )
     outcome = StepOutcome(tasks_spawned=[new_task])
     new_state = apply_outcome(state, outcome)
-    assert TaskId(99) in new_state.tasks
+    assert TaskId(99) not in new_state.tasks
     assert TaskId(99) in new_state.task_states
 
 

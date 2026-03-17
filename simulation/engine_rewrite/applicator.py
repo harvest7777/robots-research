@@ -99,19 +99,17 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
         new_task_state.completed_at = new_time
         new_task_states[task_id] = new_task_state
 
-    # --- Add spawned tasks ----------------------------------------------------
-    new_tasks = dict(state.tasks)
-    new_task_states_for_spawned: dict[TaskId, TaskState] = {}
+    # --- Initial task states for spawned tasks --------------------------------
+    # Task definitions are written to the registry by the runner; only the
+    # initial TaskState is created here so progress tracking is ready.
     for task in outcome.tasks_spawned:
-        new_tasks[task.id] = task
-        new_task_states_for_spawned[task.id] = TaskState(task_id=task.id)
-    new_task_states.update(new_task_states_for_spawned)
+        new_task_states[task.id] = TaskState(task_id=task.id)
 
     return SimulationState(
         environment=state.environment,
         robots=state.robots,
         robot_states=new_robot_states,
-        tasks=new_tasks,
+        tasks=state.tasks,
         task_states=new_task_states,
         t_now=new_time,
     )
