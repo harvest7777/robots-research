@@ -59,12 +59,6 @@ def load_tasks(raw: list[dict[str, Any]]) -> list[BaseTask]:
 
         # SearchTask is a distinct type — handle before required_work_time check
         if task_type_str == "search":
-            proximity_threshold_raw = task_raw.get("proximity_threshold", 10)
-            if not isinstance(proximity_threshold_raw, int) or proximity_threshold_raw < 0:
-                raise ValueError(
-                    f"task {task_id}: proximity_threshold must be a non-negative integer, "
-                    f"got: {proximity_threshold_raw!r}"
-                )
             required_capabilities: frozenset[Capability] = frozenset()
             if "required_capabilities" in task_raw:
                 caps_raw = task_raw["required_capabilities"]
@@ -98,7 +92,6 @@ def load_tasks(raw: list[dict[str, Any]]) -> list[BaseTask]:
             tasks.append(SearchTask(
                 id=TaskId(task_id),
                 priority=priority,
-                proximity_threshold=proximity_threshold_raw,
                 required_capabilities=required_capabilities,
                 dependencies=dependencies,
             ))

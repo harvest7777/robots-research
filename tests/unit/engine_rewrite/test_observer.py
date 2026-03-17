@@ -268,7 +268,7 @@ def test_search_robot_discovers_rescue_point_when_at_position():
     env = _env()
     env.add_rescue_point(rescue_point)
 
-    search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=3)
+    search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
         rescue_found={RescuePointId(1): False},
@@ -298,7 +298,7 @@ def test_already_found_rescue_point_not_re_discovered():
     env = _env()
     env.add_rescue_point(rescue_point)
 
-    search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=3)
+    search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
         rescue_found={RescuePointId(1): True},  # already found
@@ -327,7 +327,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     env = _env()
     env.add_rescue_point(rescue_point)
 
-    search_task = SearchTask(id=TaskId(1), priority=5, proximity_threshold=0)
+    search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
         rescue_found={RescuePointId(1): False},

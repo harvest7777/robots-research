@@ -23,17 +23,14 @@ class SearchTask(BaseTask):
     """
     Immutable description of a search-phase task.
 
-    Extends BaseTask with the proximity threshold at which a searching robot
-    locks onto a nearby rescue point and navigates directly to it.
-
     Fields inherited from BaseTask:
         id, priority, required_capabilities, dependencies
 
     SearchTask has no required_work_time (completion is event-driven) and
     no spatial_constraint (robots roam freely until a rescue point is found).
+    Proximity-lock radius is controlled per rescue point via
+    RescuePoint.spatial_constraint.max_distance.
     """
-
-    proximity_threshold: int = 10
 
 
 @dataclass

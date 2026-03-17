@@ -99,7 +99,7 @@ def test_idle_task_does_not_consume_robots():
 
 def test_search_task_is_assigned_like_any_task():
     from simulation.domain.search_task import SearchTask
-    search = SearchTask(id=TaskId(1), priority=5, proximity_threshold=10)
+    search = SearchTask(id=TaskId(1), priority=5)
     r1 = _robot(1, Capability.VISION)
     r2 = _robot(2, Capability.VISION)
 
