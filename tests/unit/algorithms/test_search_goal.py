@@ -52,7 +52,7 @@ def test_proximity_lock_returns_rescue_point_when_within_threshold():
     goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_reachable,
         environment=env,
     )
@@ -68,7 +68,7 @@ def test_proximity_lock_not_triggered_when_outside_threshold():
     goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_reachable,
         environment=env,
     )
@@ -85,7 +85,7 @@ def test_proximity_lock_skips_already_found_rescue_points():
     goal = compute_search_goal(
         state=state,
         rescue_points={rp.id: rp},
-        rescue_found={rp.id: True},
+        rescue_found=frozenset({rp.id}),
         pathfinding=_reachable,
         environment=env,
     )
@@ -107,7 +107,7 @@ def test_keeps_existing_reachable_waypoint():
     goal = compute_search_goal(
         state=state,
         rescue_points={},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_reachable,
         environment=env,
     )
@@ -123,7 +123,7 @@ def test_clears_unreachable_waypoint_and_picks_new_random():
     goal = compute_search_goal(
         state=state,
         rescue_points={},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_unreachable,
         environment=env,
     )
@@ -141,7 +141,7 @@ def test_robot_at_waypoint_falls_through_to_new_random():
     goal = compute_search_goal(
         state=state,
         rescue_points={},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_reachable,
         environment=env,
     )
@@ -161,7 +161,7 @@ def test_picks_random_walkable_cell_when_no_waypoint():
     goal = compute_search_goal(
         state=state,
         rescue_points={},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_reachable,
         environment=env,
     )
@@ -181,7 +181,7 @@ def test_returns_none_when_no_walkable_cell_exists():
     goal = compute_search_goal(
         state=state,
         rescue_points={},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_unreachable,
         environment=env,
     )
@@ -202,7 +202,7 @@ def test_does_not_mutate_input_state():
     compute_search_goal(
         state=state,
         rescue_points={},
-        rescue_found={},
+        rescue_found=frozenset(),
         pathfinding=_reachable,
         environment=env,
     )

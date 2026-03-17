@@ -75,7 +75,7 @@ def classify_step(
         robot = state.robots.get(assignment.robot_id)
         robot_state = state.robot_states.get(assignment.robot_id)
 
-        if task is None or task_state is None or robot is None or robot_state is None:
+        if task is None or robot is None or robot_state is None:
             continue
 
         reason = _ignore_reason(task, task_state, robot, robot_state)
@@ -137,9 +137,10 @@ def classify_step(
     # -------------------------------------------------------------------------
     for task_id, workers in worked_by_task.items():
         task = state.tasks[task_id]
-        task_state = state.task_states[task_id]
-        assert isinstance(task, WorkTask) and isinstance(task_state, TaskState)
-        new_work_ticks = task_state.work_done.tick + len(workers)
+        task_state = state.task_states.get(task_id)
+        assert isinstance(task, WorkTask)
+        existing_work = task_state.work_done.tick if isinstance(task_state, TaskState) else 0
+        new_work_ticks = existing_work + len(workers)
         if new_work_ticks >= task.required_work_time.tick:
             outcome.tasks_completed.append(task_id)
 
@@ -164,7 +165,7 @@ def classify_step(
         )
 
         for rescue_point in state.environment.rescue_points.values():
-            if task_state.rescue_found.get(rescue_point.id):
+            if rescue_point.id in task_state.rescue_found:
                 continue
             if rescue_point.id in seen_rescue_ids:
                 continue
@@ -185,12 +186,9 @@ def classify_step(
         task_state = state.task_states[task_id]
         assert isinstance(task_state, SearchTaskState)
 
-        newly_found = {
-            rp_id for rp_id in outcome.rescue_points_found
-            if rp_id in task_state.rescue_found
-        }
+        newly_found = set(outcome.rescue_points_found)
         all_found = all(
-            task_state.rescue_found.get(rp_id, False) or rp_id in newly_found
+            rp_id in task_state.rescue_found or rp_id in newly_found
             for rp_id in state.environment.rescue_points
         )
         if all_found:
@@ -205,11 +203,11 @@ def classify_step(
 
 def _ignore_reason(
     task: BaseTask,
-    task_state: BaseTaskState,
+    task_state: BaseTaskState | None,
     robot: Robot,
     robot_state: RobotState,
 ) -> IgnoreReason | None:
-    if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
+    if task_state is not None and task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
         return IgnoreReason.TASK_TERMINAL
     if robot_state.battery_level <= 0.0:
         return IgnoreReason.NO_BATTERY

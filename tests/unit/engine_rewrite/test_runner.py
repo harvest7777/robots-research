@@ -168,7 +168,7 @@ def test_step_adds_spawned_tasks_to_registry():
         task_states={
             TaskId(1): SearchTaskState(
                 task_id=TaskId(1),
-                rescue_found={TaskId(2): False},
+                rescue_found=frozenset(),
             )
         },
         t_now=Time(0),

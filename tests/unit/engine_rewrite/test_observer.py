@@ -369,7 +369,7 @@ def test_search_robot_discovers_rescue_point_when_at_position():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={TaskId(1): False},
+        rescue_found=frozenset(),
     )
     state = SimulationState(
         environment=env,
@@ -399,7 +399,7 @@ def test_already_found_rescue_point_not_re_discovered():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={TaskId(1): True},  # already found
+        rescue_found=frozenset({TaskId(1)}),  # already found
     )
     state = SimulationState(
         environment=env,
@@ -428,7 +428,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     search_task = SearchTask(id=TaskId(1), priority=5)
     search_state = SearchTaskState(
         task_id=TaskId(1),
-        rescue_found={TaskId(1): False},
+        rescue_found=frozenset(),
     )
     state = SimulationState(
         environment=env,

@@ -88,8 +88,21 @@ def test_idle_robot_drains_idle_battery():
 
 
 def test_battery_does_not_go_below_zero():
-    state = _base_state()
-    state.robot_states[RobotId(1)].battery_level = 0.0
+    task = Task(
+        id=TaskId(1),
+        type=TaskType.ROUTINE_INSPECTION,
+        priority=5,
+        required_work_time=Time(10),
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+    )
+    state = SimulationState(
+        environment=_env(),
+        robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
+        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0), battery_level=0.0)},
+        tasks={TaskId(1): task},
+        task_states={TaskId(1): TaskState(task_id=TaskId(1))},
+        t_now=Time(0),
+    )
     outcome = StepOutcome(moved=[(RobotId(1), Position(1, 0))])
     new_state = apply_outcome(state, outcome)
     assert new_state.robot_states[RobotId(1)].battery_level == 0.0
@@ -150,22 +163,6 @@ def test_completed_task_has_completed_at_set():
 # Spawned tasks
 # ---------------------------------------------------------------------------
 
-def test_spawned_task_initial_state_created():
-    # The applicator creates the initial TaskState for spawned tasks so progress
-    # tracking is ready. Task definitions are the registry's responsibility.
-    state = _base_state()
-    new_task = Task(
-        id=TaskId(99),
-        type=TaskType.RESCUE,
-        priority=10,
-        required_work_time=Time(20),
-    )
-    outcome = StepOutcome(tasks_spawned=[new_task])
-    new_state = apply_outcome(state, outcome)
-    assert TaskId(99) not in new_state.tasks
-    assert TaskId(99) in new_state.task_states
-
-
 # ---------------------------------------------------------------------------
 # Search task state
 # ---------------------------------------------------------------------------
@@ -182,10 +179,7 @@ def test_rescue_point_marked_found_in_search_state():
     env.add_rescue_point(rescue_point)
 
     search_task = SearchTask(id=TaskId(1), priority=5)
-    search_state = SearchTaskState(
-        task_id=TaskId(1),
-        rescue_found={TaskId(1): False},
-    )
+    search_state = SearchTaskState(task_id=TaskId(1), rescue_found=frozenset())
     state = SimulationState(
         environment=env,
         robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
@@ -198,7 +192,7 @@ def test_rescue_point_marked_found_in_search_state():
     new_state = apply_outcome(state, outcome)
     updated_task_state = new_state.task_states[TaskId(1)]
     assert isinstance(updated_task_state, SearchTaskState)
-    assert updated_task_state.rescue_found[TaskId(1)] is True
+    assert TaskId(1) in updated_task_state.rescue_found
 
 
 # ---------------------------------------------------------------------------
