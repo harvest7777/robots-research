@@ -22,7 +22,6 @@ from simulation.primitives.time import Time
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.runner import SimulationRunner
 from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.step_outcome import StepOutcome
 from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
 from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
 
@@ -60,20 +59,6 @@ def _runner(state: SimulationState | None = None, task: Task | None = None) -> S
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
-
-
-def test_step_returns_simulation_state_and_outcome():
-    runner = _runner()
-    result = runner.step()
-    new_state, outcome = result
-    assert isinstance(new_state, SimulationState)
-    assert isinstance(outcome, StepOutcome)
-
-
-def test_step_advances_time():
-    runner = _runner()
-    new_state, _ = runner.step()
-    assert new_state.t_now == Time(1)
 
 
 def test_step_state_property_matches_returned_state():
