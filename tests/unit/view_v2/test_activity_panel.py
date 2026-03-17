@@ -1,0 +1,78 @@
+"""Unit tests for simulation_view/v2/panels/activity.py."""
+
+from __future__ import annotations
+
+from simulation.domain.base_task import TaskId, TaskStatus
+from simulation.domain.environment import Environment
+from simulation.domain.robot import Robot
+from simulation.domain.robot_state import RobotId, RobotState
+from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task_state import TaskState
+from simulation.engine_rewrite.assignment import Assignment
+from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.primitives.position import Position
+from simulation.primitives.time import Time
+
+from simulation_view.v2.panels.activity import render_activity
+
+
+def _state(
+    robot_pos: Position = Position(1, 2),
+    assignments: tuple[Assignment, ...] = (),
+    task_done: bool = False,
+) -> SimulationState:
+    task = Task(
+        id=TaskId(1),
+        priority=1,
+        type=TaskType.ROUTINE_INSPECTION,
+        required_work_time=Time(5),
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+    )
+    ts = TaskState(
+        task_id=TaskId(1),
+        status=TaskStatus.DONE if task_done else None,
+        completed_at=Time(3) if task_done else None,
+    )
+    return SimulationState(
+        environment=Environment(width=10, height=10),
+        robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
+        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=robot_pos)},
+        tasks={TaskId(1): task},
+        task_states={TaskId(1): ts},
+        t_now=Time(0),
+        assignments=assignments,
+    )
+
+
+def test_shows_activity_header():
+    lines = render_activity(_state())
+    assert lines[0] == "Activity:"
+
+
+def test_idle_robot_when_no_assignment():
+    lines = render_activity(_state())
+    assert any("is idle" in l for l in lines)
+
+
+def test_working_robot_shows_task():
+    a = Assignment(task_id=TaskId(1), robot_id=RobotId(1))
+    lines = render_activity(_state(assignments=(a,)))
+    assert any("is working on" in l and "Task 1" in l for l in lines)
+
+
+def test_working_robot_shows_task_name():
+    a = Assignment(task_id=TaskId(1), robot_id=RobotId(1))
+    lines = render_activity(_state(assignments=(a,)))
+    assert any("Routine Inspection" in l for l in lines)
+
+
+def test_done_task_assignment_shows_idle():
+    a = Assignment(task_id=TaskId(1), robot_id=RobotId(1))
+    lines = render_activity(_state(assignments=(a,), task_done=True))
+    assert any("is idle" in l for l in lines)
+    assert not any("is working on" in l for l in lines)
+
+
+def test_shows_robot_position():
+    lines = render_activity(_state(robot_pos=Position(3, 7)))
+    assert any("3.00" in l and "7.00" in l for l in lines)
