@@ -94,7 +94,8 @@ def test_proximity_lock_skips_already_found_rescue_points():
     )
 
     # Found point is skipped — should not lock onto it
-    assert goal != rp.position
+    assert rp.spatial_constraint is not None
+    assert goal != rp.spatial_constraint.target
 
 
 # ---------------------------------------------------------------------------

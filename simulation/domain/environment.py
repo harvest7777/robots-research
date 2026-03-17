@@ -192,13 +192,15 @@ class Environment:
             IndexError: If the position is out of bounds.
             ValueError: If the position is on an obstacle.
         """
-        if not self._position_in_bounds(rp.position):
+        assert rp.spatial_constraint is not None
+        rp_position = rp.spatial_constraint.target
+        if not self._position_in_bounds(rp_position):
             raise IndexError(
-                f"Rescue point '{rp.name}' position {rp.position} is out of bounds"
+                f"Rescue point '{rp.name}' position {rp_position} is out of bounds"
             )
-        if rp.position in self._obstacles:
+        if rp_position in self._obstacles:
             raise ValueError(
-                f"Rescue point '{rp.name}' position {rp.position} is on an obstacle"
+                f"Rescue point '{rp.name}' position {rp_position} is on an obstacle"
             )
         self._rescue_points[rp.id] = rp
 

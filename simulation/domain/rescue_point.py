@@ -24,7 +24,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from simulation.primitives.position import Position
 from simulation.domain.base_task import TaskId
 from simulation.domain.task import WorkTask, SpatialConstraint
 
@@ -49,24 +48,3 @@ class RescuePoint(WorkTask):
     """
 
     name: str = ""
-
-    @property
-    def position(self) -> Position:
-        """The grid cell where this rescue point is located."""
-        assert self.spatial_constraint is not None, "RescuePoint must have a spatial_constraint"
-        assert isinstance(self.spatial_constraint.target, Position), (
-            "RescuePoint spatial_constraint.target must be a Position"
-        )
-        return self.spatial_constraint.target
-
-    @property
-    def rescue_task_id(self) -> TaskId:
-        """
-        The task ID for this rescue point.
-
-        Rescue points are tasks — their task ID is their own id.
-        This property exists for backwards compatibility with the old engine,
-        which stored rescue_task_id as a separate field. Scheduled for removal
-        in Phase 6 when the old engine is deleted.
-        """
-        return self.id

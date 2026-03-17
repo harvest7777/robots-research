@@ -345,4 +345,5 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     assert isinstance(spawned, RescuePoint)
     assert spawned.required_work_time == Time(30)
     assert spawned.min_robots_needed == 2
-    assert spawned.position == Position(3, 3)
+    assert spawned.spatial_constraint is not None
+    assert spawned.spatial_constraint.target == Position(3, 3)

@@ -46,8 +46,10 @@ def compute_search_goal(
     for rp in rescue_points.values():
         if rescue_found.get(rp.id):
             continue
-        if state.position.manhattan(rp.position) <= proximity_threshold:
-            return rp.position
+        assert rp.spatial_constraint is not None
+        rp_position = rp.spatial_constraint.target
+        if state.position.manhattan(rp_position) <= proximity_threshold:
+            return rp_position
 
     # Step 2: Keep existing waypoint if reachable and not yet reached
     if state.current_waypoint is not None and state.current_waypoint != state.position:
