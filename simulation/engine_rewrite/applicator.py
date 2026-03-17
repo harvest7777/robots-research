@@ -32,6 +32,8 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
 
     Pure function — does not mutate the input state.
     """
+    new_time = state.t_now + Time(1)
+
     moved_robots: set[RobotId] = {robot_id for robot_id, _ in outcome.moved}
     worked_robots: set[RobotId] = {robot_id for robot_id, _ in outcome.worked}
 
@@ -91,7 +93,6 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
         new_task_states[search_task_id] = new_task_state
 
     # Mark completed tasks
-    new_time = state.t_now + Time(1)
     for task_id in outcome.tasks_completed:
         task_state = new_task_states[task_id]
         new_task_state = copy.copy(task_state)
