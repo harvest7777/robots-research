@@ -1,0 +1,38 @@
+"""
+Rescue points panel: one line per rescue point showing name, position, and
+found/unfound status.
+
+Only rendered when rescue points exist in the environment.
+"""
+
+from __future__ import annotations
+
+from simulation.domain.base_task import TaskId
+from simulation.domain.search_task import SearchTaskState
+from simulation.engine_rewrite.simulation_state import SimulationState
+
+from simulation_view.v2.symbols import RESCUE_POINT_SYMBOL
+
+
+def render_rescue_points(state: SimulationState) -> list[str]:
+    """Return one line per rescue point with found/unfound status.
+
+    Returns an empty list if the environment has no rescue points.
+    """
+    if not state.environment.rescue_points:
+        return []
+
+    rescue_found: set[TaskId] = set()
+    for ts in state.task_states.values():
+        if isinstance(ts, SearchTaskState):
+            rescue_found.update(ts.rescue_found)
+
+    lines: list[str] = ["Rescue Points:"]
+    for rp in sorted(state.environment.rescue_points.values(), key=lambda r: r.id):
+        found = rp.id in rescue_found
+        status = "FOUND!" if found else "      "
+        lines.append(
+            f"  {RESCUE_POINT_SYMBOL} [{status}] {rp.name}"
+            f" at ({rp.position.x},{rp.position.y})"
+        )
+    return lines

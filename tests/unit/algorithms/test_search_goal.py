@@ -1,4 +1,5 @@
 import dataclasses
+from unittest.mock import patch
 
 from simulation.domain.robot_state import RobotId
 from simulation.domain.environment import Environment
@@ -82,17 +83,20 @@ def test_proximity_lock_skips_already_found_rescue_points():
     state = _state(0, 0)  # within max_distance
     env = Environment(width=10, height=10)
 
-    goal = compute_search_goal(
-        state=state,
-        rescue_points={rp.id: rp},
-        rescue_found=frozenset({rp.id}),
-        pathfinding=_reachable,
-        environment=env,
-    )
+    # Mock the random fallback to avoid flakily picking the rescue point position.
+    with patch("simulation.algorithms.search_goal.random.randint", side_effect=[9, 9]):
+        goal = compute_search_goal(
+            state=state,
+            rescue_points={rp.id: rp},
+            rescue_found=frozenset({rp.id}),
+            pathfinding=_reachable,
+            environment=env,
+        )
 
-    # Found point is skipped — should not lock onto it
+    # Found point is skipped — random fallback returned (9, 9) instead
     assert rp.spatial_constraint is not None
     assert goal != rp.spatial_constraint.target
+    assert goal == Position(9, 9)
 
 
 # ---------------------------------------------------------------------------
