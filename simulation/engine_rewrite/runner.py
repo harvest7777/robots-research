@@ -49,16 +49,18 @@ class SimulationRunner:
         # Pretty hacky solution tbh, but this is the one place outside
         # the applicator which state is "mutated"
         tasks = {t.id: t for t in self._registry.all()}
-        current_state = dataclasses.replace(self._state, tasks=tasks)
-
         assignments = self._assignment_service.get_current()
+        current_state = dataclasses.replace(
+            self._state,
+            tasks=tasks,
+            assignments=tuple(assignments),
+        )
 
-        new_state, outcome = engine_step(current_state, assignments, self._pathfinding)
+        new_state, outcome = engine_step(current_state, self._pathfinding)
 
         for task in outcome.tasks_spawned:
             self._registry.add(task)
 
-        new_state = dataclasses.replace(new_state, assignments=tuple(assignments))
         self._state = new_state
         self._history.append((new_state, outcome))
         return new_state, outcome

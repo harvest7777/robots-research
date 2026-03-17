@@ -100,4 +100,5 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
         tasks=state.tasks,
         task_states=new_task_states,
         t_now=new_time,
+        assignments=state.assignments,
     )

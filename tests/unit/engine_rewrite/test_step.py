@@ -7,6 +7,8 @@ the right types with the expected relationship between inputs and outputs.
 
 from __future__ import annotations
 
+import dataclasses
+
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.base_task import TaskId
 from simulation.domain.environment import Environment
@@ -43,30 +45,31 @@ def _base_state() -> SimulationState:
 
 def test_step_returns_new_state_and_outcome():
     state = _base_state()
-    new_state, outcome = step(state, [], astar_pathfind)
+    new_state, outcome = step(state, astar_pathfind)
     assert new_state is not state
     assert isinstance(outcome, StepOutcome)
 
 
 def test_step_advances_time():
     state = _base_state()
-    new_state, _ = step(state, [], astar_pathfind)
+    new_state, _ = step(state, astar_pathfind)
     assert new_state.t_now == Time(1)
 
 
 def test_step_does_not_mutate_input_state():
     state = _base_state()
     original_t = state.t_now
-    step(state, [], astar_pathfind)
+    step(state, astar_pathfind)
     assert state.t_now == original_t
 
 
 def test_step_threads_classify_into_apply():
     # Robot is at the task location — classify_step should produce worked,
     # apply_outcome should record work progress on the task state.
-    state = _base_state()
     assignment = Assignment(task_id=TaskId(1), robot_id=RobotId(1))
-    new_state, outcome = step(state, [assignment], astar_pathfind)
+    state = _base_state()
+    state = dataclasses.replace(state, assignments=(assignment,))
+    new_state, outcome = step(state, astar_pathfind)
     assert (RobotId(1), TaskId(1)) in outcome.worked
     ts = new_state.task_states[TaskId(1)]
     assert isinstance(ts, TaskState)

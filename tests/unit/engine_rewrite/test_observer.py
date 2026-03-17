@@ -66,6 +66,7 @@ def _state(
     tasks: list,
     task_states: list,
     env: Environment | None = None,
+    assignments: list[Assignment] | None = None,
 ) -> SimulationState:
     return SimulationState(
         environment=env or _env(),
@@ -73,6 +74,7 @@ def _state(
         robot_states={rs.robot_id: rs for rs in robot_states},
         tasks={t.id: t for t in tasks},
         task_states={ts.task_id: ts for ts in task_states},
+        assignments=tuple(assignments or []),
     )
 
 
@@ -91,8 +93,9 @@ def test_robot_moves_toward_task():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert len(outcome.moved) == 1
     rid, pos = outcome.moved[0]
     assert rid == RobotId(1)
@@ -106,8 +109,9 @@ def test_robot_at_goal_does_not_move():
         robot_states=[_robot_state(1, x=3, y=3)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.moved == []
     assert (RobotId(1), TaskId(1)) in outcome.worked
 
@@ -120,8 +124,9 @@ def test_collision_resolution_only_one_robot_moves_to_contested_cell():
         robot_states=[_robot_state(1, x=4, y=0), _robot_state(2, x=6, y=0)],
         tasks=[task1, task2],
         task_states=[_task_state(1), _task_state(2)],
+        assignments=[_assign(1, 1), _assign(2, 2)],
     )
-    outcome = classify_step(state, [_assign(1, 1), _assign(2, 2)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     destinations = [pos for _, pos in outcome.moved]
     assert len(destinations) == len(set(destinations)), "two robots ended on same cell"
 
@@ -137,8 +142,9 @@ def test_robot_satisfying_work_conditions_works():
         robot_states=[_robot_state(1, x=2, y=2)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert (RobotId(1), TaskId(1)) in outcome.worked
 
 
@@ -149,8 +155,9 @@ def test_robot_not_satisfying_task_spatial_constraint_does_not_work():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.worked == []
 
 
@@ -161,8 +168,9 @@ def test_task_completes_when_work_reaches_required():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1, work_done=2)],  # 1 tick away from done
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert TaskId(1) in outcome.tasks_completed
 
 
@@ -173,8 +181,9 @@ def test_task_not_complete_when_work_below_required():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1, work_done=2)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert TaskId(1) not in outcome.tasks_completed
 
 
@@ -185,8 +194,9 @@ def test_multiple_robots_contribute_work_this_tick():
         robot_states=[_robot_state(1, x=0, y=1), _robot_state(2, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1, work_done=8)],  # needs 2 more; 2 robots = done
+        assignments=[_assign(1, 1), _assign(2, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1), _assign(2, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert TaskId(1) in outcome.tasks_completed
 
 
@@ -201,8 +211,9 @@ def test_dead_battery_is_ignored():
         robot_states=[_robot_state(1, x=0, y=0, battery=0.0)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     reasons = [r for _, r in outcome.assignments_ignored]
     assert IgnoreReason.NO_BATTERY in reasons
 
@@ -215,8 +226,9 @@ def test_wrong_capability_is_ignored():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     reasons = [r for _, r in outcome.assignments_ignored]
     assert IgnoreReason.WRONG_CAPABILITY in reasons
 
@@ -230,8 +242,9 @@ def test_terminal_task_is_ignored():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[ts],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     reasons = [r for _, r in outcome.assignments_ignored]
     assert IgnoreReason.TASK_TERMINAL in reasons
 
@@ -247,8 +260,9 @@ def test_no_path_is_ignored():
         tasks=[task],
         task_states=[_task_state(1)],
         env=env,
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     reasons = [r for _, r in outcome.assignments_ignored]
     assert IgnoreReason.NO_PATH in reasons
 
@@ -265,8 +279,9 @@ def test_waypoint_set_to_position_target():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.waypoints[RobotId(1)] == Position(7, 3)
 
 
@@ -288,8 +303,9 @@ def test_waypoint_set_to_nearest_zone_cell():
         tasks=[task],
         task_states=[_task_state(1)],
         env=env,
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.waypoints[RobotId(1)] == Position(8, 0)
 
 
@@ -311,8 +327,9 @@ def test_waypoint_nearest_zone_cell_tracks_robot_position():
         tasks=[task],
         task_states=[_task_state(1)],
         env=env,
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.waypoints[RobotId(1)] == Position(8, 5)
 
 
@@ -330,8 +347,9 @@ def test_waypoint_not_set_when_task_has_no_spatial_constraint():
         robot_states=[_robot_state(1, x=0, y=0)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert RobotId(1) not in outcome.waypoints
 
 
@@ -344,8 +362,9 @@ def test_waypoint_set_even_when_robot_already_at_goal():
         robot_states=[_robot_state(1, x=4, y=4)],
         tasks=[task],
         task_states=[_task_state(1)],
+        assignments=[_assign(1, 1)],
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.waypoints[RobotId(1)] == Position(4, 4)
     assert outcome.moved == []
 
@@ -377,8 +396,9 @@ def test_search_robot_discovers_rescue_point_when_at_position():
         robot_states={RobotId(1): _robot_state(1, x=5, y=5)},
         tasks={TaskId(1): search_task},
         task_states={TaskId(1): search_state},
+        assignments=(_assign(1, 1),),
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert TaskId(1) in outcome.rescue_points_found
     assert len(outcome.tasks_spawned) == 1
     assert TaskId(1) in outcome.tasks_completed
@@ -407,8 +427,9 @@ def test_already_found_rescue_point_not_re_discovered():
         robot_states={RobotId(1): _robot_state(1, x=5, y=5)},
         tasks={TaskId(1): search_task},
         task_states={TaskId(1): search_state},
+        assignments=(_assign(1, 1),),
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert outcome.rescue_points_found == []
     assert outcome.tasks_spawned == []
 
@@ -436,8 +457,9 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
         robot_states={RobotId(1): _robot_state(1, x=3, y=3)},
         tasks={TaskId(1): search_task},
         task_states={TaskId(1): search_state},
+        assignments=(_assign(1, 1),),
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert len(outcome.tasks_spawned) == 1
     spawned = outcome.tasks_spawned[0]
     assert isinstance(spawned, RescuePoint)
@@ -474,8 +496,9 @@ def test_search_task_not_complete_when_rescue_point_remaining():
         robot_states={RobotId(1): _robot_state(1, x=5, y=5)},
         tasks={TaskId(1): search_task},
         task_states={TaskId(1): search_state},
+        assignments=(_assign(1, 1),),
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     # Finds rp_found this tick but rp_unfound is still missing
     assert TaskId(2) in outcome.rescue_points_found
     assert TaskId(1) not in outcome.tasks_completed
@@ -514,7 +537,8 @@ def test_search_task_completes_when_last_rescue_point_found():
         robot_states={RobotId(1): _robot_state(1, x=5, y=5)},  # at rp_last
         tasks={TaskId(1): search_task},
         task_states={TaskId(1): search_state},
+        assignments=(_assign(1, 1),),
     )
-    outcome = classify_step(state, [_assign(1, 1)], astar_pathfind)
+    outcome = classify_step(state, astar_pathfind)
     assert TaskId(3) in outcome.rescue_points_found
     assert TaskId(1) in outcome.tasks_completed

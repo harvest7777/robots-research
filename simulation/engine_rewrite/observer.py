@@ -35,14 +35,12 @@ from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 
-from .assignment import Assignment
 from .simulation_state import SimulationState
 from .step_outcome import IgnoreReason, StepOutcome
 
 
 def classify_step(
     state: SimulationState,
-    assignments: list[Assignment],
     pathfinding: PathfindingAlgorithm,
 ) -> StepOutcome:
     """Classify one simulation tick into a StepOutcome.
@@ -50,6 +48,8 @@ def classify_step(
     All business rules live here. Pure function — no mutations, no side effects.
     """
     outcome = StepOutcome()
+
+    assignments = state.assignments
 
     # Last assignment wins if a robot appears multiple times.
     robot_to_task: dict[RobotId, TaskId] = {
