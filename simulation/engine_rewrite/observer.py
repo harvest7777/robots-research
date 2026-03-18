@@ -297,6 +297,8 @@ def _goal_for(
         )
     if isinstance(task, MoveTask):
         assert isinstance(task_state, MoveTaskState)
+        if robot_state.position.manhattan(task_state.current_position) <= task.min_distance:
+            return None  # already within formation range — stop here
         return task_state.current_position
     assert isinstance(task, WorkTask)
     return _resolve_spatial_target(task.spatial_constraint, robot_state.position, state)
