@@ -43,6 +43,7 @@ from simulation.primitives.time import Time
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.runner import SimulationRunner
 from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.engine_rewrite.services.base_assignment_service import BaseAssignmentService
 from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
 from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
 from simulation.engine_rewrite.step_outcome import StepOutcome
@@ -83,7 +84,9 @@ _OBSTACLES = [
 ]
 
 
-def build() -> tuple[SimulationRunner, InMemoryAssignmentService]:
+def build(
+    assignment_service: BaseAssignmentService | None = None,
+) -> tuple[SimulationRunner, BaseAssignmentService]:
     env = Environment(width=_WIDTH, height=_HEIGHT)
     for pos in _OBSTACLES:
         env.add_obstacle(pos)
@@ -114,7 +117,7 @@ def build() -> tuple[SimulationRunner, InMemoryAssignmentService]:
         id=MOVE_TASK_ID,
         priority=8,
         destination=_EXTRACTION_POS,
-        min_robots_required=2,
+        min_robots_required=3,
         min_distance=1,
     )
 
@@ -145,9 +148,11 @@ def build() -> tuple[SimulationRunner, InMemoryAssignmentService]:
 
     registry = InMemoryTaskRegistry(tasks=[search, move])
     # Only Robot 1 searches initially; carriers 2 & 3 are idle until discovery.
-    assignment_service = InMemoryAssignmentService(
-        assignments=[Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1))]
-    )
+    initial = [Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1))]
+    if assignment_service is None:
+        assignment_service = InMemoryAssignmentService(assignments=initial)
+    else:
+        assignment_service.update(initial)
     runner = SimulationRunner(
         state=state,
         registry=registry,
