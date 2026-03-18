@@ -45,7 +45,9 @@ def _state(x: int, y: int, waypoint: Position | None = None) -> RobotState:
 # Proximity lock
 # ---------------------------------------------------------------------------
 
-def test_proximity_lock_returns_rescue_point_when_within_threshold():
+def test_proximity_lock_returns_none_when_within_threshold():
+    # Within detection range: robot stops so discovery fires this tick
+    # rather than continuing to walk onto the exact rescue point cell.
     rp = _rp(1, 3, 0, max_distance=5)
     state = _state(0, 0)  # Manhattan distance to rp = 3, within max_distance=5
     env = Environment(width=10, height=10)
@@ -58,7 +60,7 @@ def test_proximity_lock_returns_rescue_point_when_within_threshold():
         environment=env,
     )
 
-    assert goal == Position(3, 0)
+    assert goal is None
 
 
 def test_proximity_lock_not_triggered_when_outside_threshold():

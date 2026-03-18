@@ -13,8 +13,10 @@ Phases:
 2. Discovery — The rescue point spawns. The scenario loop reassigns all
              robots to the pre-staged MoveTask.
 3. Extraction — Robot 1 is already in position; Robots 2 & 3 travel from
-             (0, 0) and (19, 18) to join the formation. Once two robots
-             are adjacent the formation moves the casualty to (2, 3).
+             (19, 18) and (19, 0) (right edge) to join the formation.
+             Approaching from the east keeps them from blocking the
+             westward carry. Once two robots are adjacent the formation
+             moves the casualty to (2, 3).
 
 Obstacle layout:
 - Collapsed building: upper-center cluster (x=7..10, y=4..6)
@@ -59,12 +61,14 @@ _CASUALTY_POS   = Position(16, 14)  # where the victim is hidden
 _EXTRACTION_POS = Position(2, 3)    # safe zone, top-left
 
 # Robot 1: searcher — starts one step west of casualty; proximity lock fires
-#          immediately and discovery happens on tick 2.
-# Robots 2 & 3: carriers — idle at opposite corners until the casualty is found.
+#          immediately and discovery happens on tick 1.
+# Robots 2 & 3: carriers — start on the right edge so they approach the
+#          casualty from the east, keeping them behind the formation as it
+#          travels west toward the extraction zone.
 _ROBOT_STARTS = {
     RobotId(1): Position(15, 14),
-    RobotId(2): Position(0, 0),
-    RobotId(3): Position(19, 18),
+    RobotId(2): Position(19, 18),
+    RobotId(3): Position(19, 0),
 }
 
 # Obstacle layout — two rubble clusters.
