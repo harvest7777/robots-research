@@ -23,6 +23,7 @@ ROBOT_SYMBOL = "R"
 OBSTACLE_SYMBOL = "#"
 TASK_AREA_SYMBOL = "+"
 RESCUE_POINT_SYMBOL = "^"
+MOVE_TASK_SYMBOL = "□"
 EMPTY_SYMBOL = "."
 
 # ---------------------------------------------------------------------------

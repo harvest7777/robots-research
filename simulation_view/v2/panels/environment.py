@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.environment import Environment
+from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.search_task import SearchTask
 from simulation.domain.task import Task, WorkTask, SpatialConstraint
@@ -21,6 +22,7 @@ from simulation_view.v2.symbols import (
     OBSTACLE_SYMBOL,
     TASK_AREA_SYMBOL,
     RESCUE_POINT_SYMBOL,
+    MOVE_TASK_SYMBOL,
     EMPTY_SYMBOL,
     ZONE_SYMBOLS,
     task_id_symbol,
@@ -40,6 +42,14 @@ def render_environment(state: SimulationState) -> list[str]:
     rescue_point_positions: set[Position] = {
         rp.position for rp in env.rescue_points.values()
     }
+    move_task_positions: set[Position] = {
+        ts.current_position
+        for task in state.tasks.values()
+        if isinstance(task, MoveTask)
+        for ts in [state.task_states.get(task.id)]
+        if isinstance(ts, MoveTaskState)
+        and ts.status not in (TaskStatus.DONE, TaskStatus.FAILED)
+    }
 
     rows: list[str] = []
     for y in range(env.height):
@@ -52,6 +62,8 @@ def render_environment(state: SimulationState) -> list[str]:
                 symbol = OBSTACLE_SYMBOL
             elif pos in rescue_point_positions:
                 symbol = RESCUE_POINT_SYMBOL
+            elif pos in move_task_positions:
+                symbol = MOVE_TASK_SYMBOL
             elif pos in targets:
                 symbol = task_id_symbol(targets[pos])
             elif pos in areas:
