@@ -51,8 +51,8 @@ def build() -> SimulationRunner:
 
     robots = {rid: Robot(id=rid, capabilities=frozenset()) for rid in ROBOT_IDS}
     robot_states = {
-        RobotId(1): RobotState(robot_id=RobotId(1), position=Position(_START.x, _START.y - 1)),
-        RobotId(2): RobotState(robot_id=RobotId(2), position=Position(_START.x, _START.y + 1)),
+        RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0)),
+        RobotId(2): RobotState(robot_id=RobotId(2), position=Position(0, _HEIGHT - 1)),
     }
 
     state = SimulationState(
