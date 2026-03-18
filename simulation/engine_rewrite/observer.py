@@ -24,9 +24,11 @@ Business rules enforced here:
 
 from __future__ import annotations
 
+from simulation.algorithms.formation_planner import plan_formation_move
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, resolve_collisions
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
+from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
@@ -112,6 +114,9 @@ def classify_step(
     # Pass 3: classify moves and work
     # -------------------------------------------------------------------------
     worked_by_task: dict[TaskId, list[RobotId]] = {}
+    # eligible_by_task: robots that are within min_distance of a MoveTask's
+    # current_position this tick and can therefore join the formation.
+    eligible_by_task: dict[TaskId, list[tuple[RobotId, Position]]] = {}
 
     for assignment in valid:
         robot_state = state.robot_states[assignment.robot_id]
@@ -127,10 +132,68 @@ def classify_step(
         if isinstance(task, SearchTask):
             continue
 
+        # MoveTask robots navigate toward current_position; eligible ones join the formation.
+        if isinstance(task, MoveTask):
+            task_state = state.task_states.get(assignment.task_id)
+            assert isinstance(task_state, MoveTaskState)
+            if effective_position.manhattan(task_state.current_position) <= task.min_distance:
+                eligible_by_task.setdefault(assignment.task_id, []).append(
+                    (assignment.robot_id, effective_position)
+                )
+            continue
+
         assert isinstance(task, WorkTask)
         if _robot_can_work(task, effective_position, state):
             outcome.worked.append((assignment.robot_id, assignment.task_id))
             worked_by_task.setdefault(assignment.task_id, []).append(assignment.robot_id)
+
+    # -------------------------------------------------------------------------
+    # Pass 3.5: advance move task formations
+    # -------------------------------------------------------------------------
+    # Collect all resolved robot positions for occupied computation.
+    all_resolved_positions: dict[RobotId, Position] = {
+        robot_id: (resolved.get(robot_id) or robot_state.position)
+        for robot_id, robot_state in state.robot_states.items()
+    }
+
+    for task_id, eligible in eligible_by_task.items():
+        task = state.tasks[task_id]
+        task_state = state.task_states.get(task_id)
+        assert isinstance(task, MoveTask)
+        assert isinstance(task_state, MoveTaskState)
+
+        if len(eligible) < task.min_robots_required:
+            continue
+
+        eligible_robot_ids = frozenset(robot_id for robot_id, _ in eligible)
+        formation = frozenset(
+            {task_state.current_position}
+            | {pos for _, pos in eligible}
+        )
+        occupied = frozenset(
+            pos for robot_id, pos in all_resolved_positions.items()
+            if robot_id not in eligible_robot_ids
+        )
+
+        direction = plan_formation_move(formation, task.destination, state.environment, occupied)
+        if direction is None:
+            continue
+
+        dx, dy = direction
+        new_task_position = Position(task_state.current_position.x + dx, task_state.current_position.y + dy)
+        outcome.tasks_moved.append((task_id, new_task_position))
+
+        # Override the eligible robots' moves with the formation shift.
+        # Remove any existing move entries for these robots first.
+        outcome.moved = [
+            (rid, pos) for rid, pos in outcome.moved
+            if rid not in eligible_robot_ids
+        ]
+        for robot_id, robot_pos in eligible:
+            outcome.moved.append((robot_id, Position(robot_pos.x + dx, robot_pos.y + dy)))
+
+        if new_task_position == task.destination:
+            outcome.tasks_completed.append(task_id)
 
     # -------------------------------------------------------------------------
     # Pass 4: work-accumulation task completions
@@ -232,6 +295,9 @@ def _goal_for(
             pathfinding,
             state.environment,
         )
+    if isinstance(task, MoveTask):
+        assert isinstance(task_state, MoveTaskState)
+        return task_state.current_position
     assert isinstance(task, WorkTask)
     return _resolve_spatial_target(task.spatial_constraint, robot_state.position, state)
 
