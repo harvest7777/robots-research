@@ -49,7 +49,7 @@ def compute_search_goal(
         assert rp.spatial_constraint is not None
         rp_position = rp.spatial_constraint.target
         if state.position.manhattan(rp_position) <= rp.spatial_constraint.max_distance:
-            return rp_position
+            return None  # already within detection range — stop here, discovery fires this tick
 
     # Step 2: Keep existing waypoint if reachable and not yet reached
     if state.current_waypoint is not None and state.current_waypoint != state.position:

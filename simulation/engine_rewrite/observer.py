@@ -235,7 +235,8 @@ def classify_step(
                 continue
             if rescue_point.id in seen_rescue_ids:
                 continue
-            if effective_position == rescue_point.position:
+            assert rescue_point.spatial_constraint is not None
+            if effective_position.manhattan(rescue_point.position) <= rescue_point.spatial_constraint.max_distance:
                 outcome.rescue_points_found.append(rescue_point.id)
                 seen_rescue_ids.add(rescue_point.id)
                 # The rescue point IS the task — no transformation needed.
