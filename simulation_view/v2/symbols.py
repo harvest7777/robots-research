@@ -8,6 +8,7 @@ task/state data to display strings.
 from __future__ import annotations
 
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
+from simulation.domain.move_task import MoveTask
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.task import Task, TaskType
 from simulation.domain.search_task import SearchTask
@@ -67,6 +68,8 @@ def task_label(task: BaseTask) -> str:
         return "SR"
     if isinstance(task, RescuePoint):
         return "RS"
+    if isinstance(task, MoveTask):
+        return "MV"
     assert isinstance(task, Task)
     return TASK_TYPE_LABELS.get(task.type, "??")
 
@@ -77,6 +80,8 @@ def task_full_name(task: BaseTask) -> str:
         return "Search"
     if isinstance(task, RescuePoint):
         return "Rescue"
+    if isinstance(task, MoveTask):
+        return "Move"
     assert isinstance(task, Task)
     return TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
 

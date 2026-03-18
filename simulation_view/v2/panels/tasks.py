@@ -5,6 +5,7 @@ Tasks panel: one line per task showing status, label, priority, and progress.
 from __future__ import annotations
 
 from simulation.domain.base_task import TaskId
+from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.search_task import SearchTask, SearchTaskState
 from simulation.domain.task import Task, WorkTask
@@ -32,6 +33,10 @@ def render_tasks(state: SimulationState) -> list[str]:
             total = len(state.environment.rescue_points)
             found = len(ts.rescue_found)
             progress = f"  found={found}/{total}"
+            spatial = ""
+        elif isinstance(task, MoveTask):
+            assert isinstance(ts, MoveTaskState)
+            progress = f"  pos=({ts.current_position.x},{ts.current_position.y}) dest=({task.destination.x},{task.destination.y})"
             spatial = ""
         else:
             assert isinstance(task, WorkTask) and isinstance(ts, TaskState)
