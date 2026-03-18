@@ -24,7 +24,7 @@ Business rules enforced here:
 
 from __future__ import annotations
 
-from simulation.algorithms.formation_planner import plan_formation_move
+from simulation.algorithms.formation_planner import plan_formation_move, plan_soft_formation_move
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, resolve_collisions
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
@@ -179,6 +179,22 @@ def classify_step(
             formation, task.destination, state.environment, occupied,
             task_position=task_state.current_position,
         )
+
+        # Rigid formation failed — try flexible fallback where each robot
+        # independently reaches any valid adjacent cell of the new task pos.
+        soft_moves: dict[Position, Position] | None = None
+        if direction is None:
+            soft_result = plan_soft_formation_move(
+                task_state.current_position,
+                task.destination,
+                [pos for _, pos in eligible],
+                task.min_robots_required,
+                state.environment,
+                occupied,
+            )
+            if soft_result is not None:
+                direction, soft_moves = soft_result
+
         if direction is None:
             continue
 
@@ -192,8 +208,16 @@ def classify_step(
             (rid, pos) for rid, pos in outcome.moved
             if rid not in eligible_robot_ids
         ]
-        for robot_id, robot_pos in eligible:
-            outcome.moved.append((robot_id, Position(robot_pos.x + dx, robot_pos.y + dy)))
+        if soft_moves is not None:
+            # Soft move: each participating robot goes to its assigned cell;
+            # non-participating eligible robots stay put and re-approach next tick.
+            for robot_id, robot_pos in eligible:
+                if robot_pos in soft_moves:
+                    outcome.moved.append((robot_id, soft_moves[robot_pos]))
+        else:
+            # Rigid move: all eligible robots shift by the same (dx, dy).
+            for robot_id, robot_pos in eligible:
+                outcome.moved.append((robot_id, Position(robot_pos.x + dx, robot_pos.y + dy)))
 
         if new_task_position == task.destination:
             outcome.tasks_completed.append(task_id)
