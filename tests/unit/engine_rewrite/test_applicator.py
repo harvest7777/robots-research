@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.environment import Environment
+from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
@@ -235,3 +236,57 @@ def test_apply_outcome_does_not_mutate_input_state():
 
 
 import pytest
+
+
+# ---------------------------------------------------------------------------
+# MoveTask position advances
+# ---------------------------------------------------------------------------
+
+def _move_task_state(tid: int, cur_x: int, cur_y: int) -> MoveTaskState:
+    return MoveTaskState(task_id=TaskId(tid), current_position=Position(cur_x, cur_y))
+
+
+def _move_task_state_in(tid: int, cur_x: int, cur_y: int, dest_x: int, dest_y: int) -> tuple:
+    task = MoveTask(
+        id=TaskId(tid),
+        priority=5,
+        destination=Position(dest_x, dest_y),
+        min_robots_required=1,
+        min_distance=1,
+    )
+    ts = MoveTaskState(task_id=TaskId(tid), current_position=Position(cur_x, cur_y))
+    return task, ts
+
+
+def _state_with_move_task(tid: int, cur_x: int, cur_y: int, dest_x: int, dest_y: int) -> SimulationState:
+    task, ts = _move_task_state_in(tid, cur_x, cur_y, dest_x, dest_y)
+    return SimulationState(
+        environment=_env(),
+        robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
+        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
+        tasks={TaskId(tid): task},
+        task_states={TaskId(tid): ts},
+        t_now=Time(0),
+    )
+
+
+def test_tasks_moved_advances_current_position():
+    state = _state_with_move_task(1, cur_x=3, cur_y=3, dest_x=8, dest_y=3)
+    outcome = StepOutcome(tasks_moved=[(TaskId(1), Position(4, 3))])
+    new_state = apply_outcome(state, outcome)
+    ts = new_state.task_states[TaskId(1)]
+    assert isinstance(ts, MoveTaskState)
+    assert ts.current_position == Position(4, 3)
+
+
+def test_tasks_moved_and_completed_stamps_position_and_done():
+    state = _state_with_move_task(1, cur_x=3, cur_y=3, dest_x=4, dest_y=3)
+    outcome = StepOutcome(
+        tasks_moved=[(TaskId(1), Position(4, 3))],
+        tasks_completed=[TaskId(1)],
+    )
+    new_state = apply_outcome(state, outcome)
+    ts = new_state.task_states[TaskId(1)]
+    assert isinstance(ts, MoveTaskState)
+    assert ts.current_position == Position(4, 3)
+    assert ts.status == TaskStatus.DONE
