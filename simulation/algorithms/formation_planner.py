@@ -44,29 +44,47 @@ def plan_formation_move(
     destination: Position,
     environment: Environment,
     occupied: frozenset[Position],
+    task_position: Position | None = None,
 ) -> tuple[int, int] | None:
     """Return a (dx, dy) that moves the formation one step toward destination.
 
-    Tries cardinal directions that reduce the Manhattan distance from any
-    formation position to the destination. Directions are sorted by how much
-    they reduce the minimum distance across the formation (most reduction
-    first). Returns the first direction whose shifted formation passes
-    is_formation_clear, or None if all directions are blocked or the
-    formation is already at the destination.
+    Tries cardinal directions that reduce the Manhattan distance from the
+    task toward the destination. Directions are sorted by how much they
+    reduce that distance (most reduction first). Returns the first direction
+    whose shifted formation passes is_formation_clear, or None if all
+    directions are blocked or the task is already at the destination.
+
+    Args:
+        task_position: The position of the task object within the formation.
+            When provided, progress is measured from the task to the
+            destination rather than from the nearest formation member.
+            This prevents robots that drift onto the destination cell from
+            prematurely halting the formation. Falls back to formation-wide
+            minimum when None.
     """
     if not formation:
         return None
 
-    current_min = min(pos.manhattan(destination) for pos in formation)
+    # Track progress from the task position when known; fall back to the
+    # formation-wide minimum for backward compatibility.
+    _ref = task_position if task_position is not None else None
+    current_min = (
+        _ref.manhattan(destination)
+        if _ref is not None
+        else min(pos.manhattan(destination) for pos in formation)
+    )
     if current_min == 0:
         return None
 
     def _progress(direction: tuple[int, int]) -> int:
         dx, dy = direction
-        new_min = min(
-            Position(pos.x + dx, pos.y + dy).manhattan(destination)
-            for pos in formation
-        )
+        if _ref is not None:
+            new_min = Position(_ref.x + dx, _ref.y + dy).manhattan(destination)
+        else:
+            new_min = min(
+                Position(pos.x + dx, pos.y + dy).manhattan(destination)
+                for pos in formation
+            )
         return current_min - new_min  # positive = makes progress
 
     candidates = sorted(

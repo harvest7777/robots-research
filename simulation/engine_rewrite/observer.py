@@ -175,7 +175,10 @@ def classify_step(
             if robot_id not in eligible_robot_ids
         )
 
-        direction = plan_formation_move(formation, task.destination, state.environment, occupied)
+        direction = plan_formation_move(
+            formation, task.destination, state.environment, occupied,
+            task_position=task_state.current_position,
+        )
         if direction is None:
             continue
 
