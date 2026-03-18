@@ -46,6 +46,3 @@ class StepOutcome:
     waypoints:           dict[RobotId, Position]                 = field(default_factory=dict)
     # waypoints: proposed next waypoint per robot this tick, written by Observer and
     # applied to RobotState.current_waypoint by apply_outcome. Keeps classify_step pure.
-    tasks_moved:         list[tuple[TaskId, Position]]           = field(default_factory=list)
-    # tasks_moved: new position for each MoveTask that advanced this tick.
-    # Written by Observer; applied to MoveTaskState.current_position by apply_outcome.

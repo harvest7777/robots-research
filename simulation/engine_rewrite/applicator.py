@@ -16,7 +16,6 @@ from __future__ import annotations
 import dataclasses
 
 from simulation.domain.base_task import TaskId, TaskStatus
-from simulation.domain.move_task import MoveTaskState
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.primitives.position import Position
 from simulation.domain.search_task import SearchTaskState
@@ -85,12 +84,6 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
                     rescue_found=task_state.rescue_found | frozenset({rp_id}),
                 )
                 break
-
-    # Apply move task position advances
-    for task_id, new_position in outcome.tasks_moved:
-        existing = new_task_states.get(task_id)
-        assert isinstance(existing, MoveTaskState)
-        new_task_states[task_id] = dataclasses.replace(existing, current_position=new_position)
 
     # Mark completed tasks
     for task_id in outcome.tasks_completed:

@@ -27,7 +27,6 @@ from __future__ import annotations
 from simulation.algorithms.movement_planner import PathfindingAlgorithm, resolve_collisions
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
-from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
@@ -113,8 +112,6 @@ def classify_step(
     # Pass 3: classify moves and work
     # -------------------------------------------------------------------------
     worked_by_task: dict[TaskId, list[RobotId]] = {}
-    # Track which robots ended up at each MoveTask's current position this tick.
-    robots_at_move_task: dict[TaskId, list[RobotId]] = {}
 
     for assignment in valid:
         robot_state = state.robot_states[assignment.robot_id]
@@ -130,36 +127,10 @@ def classify_step(
         if isinstance(task, SearchTask):
             continue
 
-        # MoveTask robots move toward the task's current position — no work accumulation.
-        if isinstance(task, MoveTask):
-            task_state = state.task_states.get(assignment.task_id)
-            assert isinstance(task_state, MoveTaskState)
-            if effective_position == task_state.current_position:
-                robots_at_move_task.setdefault(assignment.task_id, []).append(assignment.robot_id)
-            continue
-
         assert isinstance(task, WorkTask)
         if _robot_can_work(task, effective_position, state):
             outcome.worked.append((assignment.robot_id, assignment.task_id))
             worked_by_task.setdefault(assignment.task_id, []).append(assignment.robot_id)
-
-    # -------------------------------------------------------------------------
-    # Pass 3.5: advance move tasks
-    # -------------------------------------------------------------------------
-    for task_id, robots in robots_at_move_task.items():
-        task = state.tasks[task_id]
-        task_state = state.task_states.get(task_id)
-        assert isinstance(task, MoveTask)
-        assert isinstance(task_state, MoveTaskState)
-
-        if len(robots) < task.min_robots_required:
-            continue
-
-        next_pos = _next_move_position(task_state.current_position, task.destination)
-        outcome.tasks_moved.append((task_id, next_pos))
-
-        if next_pos == task.destination:
-            outcome.tasks_completed.append(task_id)
 
     # -------------------------------------------------------------------------
     # Pass 4: work-accumulation task completions
@@ -261,9 +232,6 @@ def _goal_for(
             pathfinding,
             state.environment,
         )
-    if isinstance(task, MoveTask):
-        assert isinstance(task_state, MoveTaskState)
-        return task_state.current_position
     assert isinstance(task, WorkTask)
     return _resolve_spatial_target(task.spatial_constraint, robot_state.position, state)
 
@@ -281,21 +249,6 @@ def _resolve_spatial_target(
     if zone is None:
         return None
     return min(zone.cells, key=lambda cell: robot_position.manhattan(cell))
-
-
-def _next_move_position(current: Position, destination: Position) -> Position:
-    """Advance one Manhattan step from current toward destination.
-
-    Prefers moving along x first, then y.
-    Returns current unchanged if already at destination.
-    """
-    dx = destination.x - current.x
-    dy = destination.y - current.y
-    if dx != 0:
-        return Position(current.x + (1 if dx > 0 else -1), current.y)
-    if dy != 0:
-        return Position(current.x, current.y + (1 if dy > 0 else -1))
-    return current
 
 
 def _robot_can_work(task: WorkTask, position: Position, state: SimulationState) -> bool:
