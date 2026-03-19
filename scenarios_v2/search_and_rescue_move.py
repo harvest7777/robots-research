@@ -30,12 +30,13 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     Environment, MoveTask, MoveTaskState, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, SearchTaskState, TaskId, SpatialConstraint,
+    SearchTask, TaskId, SpatialConstraint,
 )
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
-    BaseAssignmentService, InMemoryAssignmentService, InMemoryTaskRegistry,
+    BaseAssignmentService, InMemoryAssignmentService,
+    InMemorySimulationRegistry, InMemorySimulationStateService,
 )
 
 
@@ -102,7 +103,7 @@ def build(
         required_capabilities=frozenset({Capability.VISION}),
     )
 
-    # MoveTask is pre-staged at the casualty location.  Unassigned until discovery.
+    # MoveTask is pre-staged at the casualty location. Unassigned until discovery.
     move = MoveTask(
         id=MOVE_TASK_ID,
         priority=8,
@@ -111,32 +112,8 @@ def build(
         min_distance=1,
     )
 
-    robots = {
-        robot_id: Robot(id=robot_id, capabilities=frozenset({Capability.VISION}))
-        for robot_id in ROBOT_IDS
-    }
-    robot_states = {
-        robot_id: RobotState(robot_id=robot_id, position=pos)
-        for robot_id, pos in _ROBOT_STARTS.items()
-    }
-
-    state = SimulationState(
-        environment=env,
-        robots=robots,
-        robot_states=robot_states,
-        tasks={SEARCH_TASK_ID: search, MOVE_TASK_ID: move},
-        task_states={
-            SEARCH_TASK_ID: SearchTaskState(
-                task_id=SEARCH_TASK_ID, rescue_found=frozenset()
-            ),
-            MOVE_TASK_ID: MoveTaskState(
-                task_id=MOVE_TASK_ID, current_position=_CASUALTY_POS
-            ),
-        },
-        t_now=Time(0),
-    )
-
-    registry = InMemoryTaskRegistry(tasks=[search, move])
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     # Only Robot 1 searches initially; carriers 2 & 3 are idle until discovery.
     initial = [Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1))]
     if assignment_service is None:
@@ -144,11 +121,19 @@ def build(
     else:
         assignment_service.update(initial)
     runner = SimulationRunner(
-        state=state,
+        environment=env,
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    for robot_id in ROBOT_IDS:
+        runner.add_robot(
+            Robot(id=robot_id, capabilities=frozenset({Capability.VISION})),
+            RobotState(robot_id=robot_id, position=_ROBOT_STARTS[robot_id]),
+        )
+    runner.add_task(search)
+    runner.add_task(move, initial_state=MoveTaskState(task_id=MOVE_TASK_ID, current_position=_CASUALTY_POS))
     return runner, assignment_service
 
 

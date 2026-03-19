@@ -45,12 +45,13 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     Environment, MoveTask, MoveTaskState, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, SearchTaskState, TaskId, SpatialConstraint,
+    SearchTask, TaskId, SpatialConstraint,
 )
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
-    BaseAssignmentService, InMemoryAssignmentService, InMemoryTaskRegistry,
+    BaseAssignmentService, InMemoryAssignmentService,
+    InMemorySimulationRegistry, InMemorySimulationStateService,
 )
 
 
@@ -131,7 +132,7 @@ def build(
         required_capabilities=frozenset({Capability.VISION}),
     )
 
-    # Both MoveTasks pre-staged at their casualty positions.  Unassigned
+    # Both MoveTasks pre-staged at their casualty positions. Unassigned
     # until the corresponding rescue point is discovered.
     move_a = MoveTask(
         id=MOVE_TASK_A_ID,
@@ -148,39 +149,8 @@ def build(
         min_distance=1,
     )
 
-    robots = {
-        robot_id: Robot(id=robot_id, capabilities=frozenset({Capability.VISION}))
-        for robot_id in ROBOT_IDS
-    }
-    robot_states = {
-        robot_id: RobotState(robot_id=robot_id, position=pos)
-        for robot_id, pos in _ROBOT_STARTS.items()
-    }
-
-    state = SimulationState(
-        environment=env,
-        robots=robots,
-        robot_states=robot_states,
-        tasks={
-            SEARCH_TASK_ID: search,
-            MOVE_TASK_A_ID: move_a,
-            MOVE_TASK_B_ID: move_b,
-        },
-        task_states={
-            SEARCH_TASK_ID: SearchTaskState(
-                task_id=SEARCH_TASK_ID, rescue_found=frozenset()
-            ),
-            MOVE_TASK_A_ID: MoveTaskState(
-                task_id=MOVE_TASK_A_ID, current_position=_CASUALTY_A_POS
-            ),
-            MOVE_TASK_B_ID: MoveTaskState(
-                task_id=MOVE_TASK_B_ID, current_position=_CASUALTY_B_POS
-            ),
-        },
-        t_now=Time(0),
-    )
-
-    registry = InMemoryTaskRegistry(tasks=[search, move_a, move_b])
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     # Both searchers start on the shared SearchTask; carriers are idle.
     initial = [
         Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1)),
@@ -191,11 +161,20 @@ def build(
     else:
         assignment_service.update(initial)
     runner = SimulationRunner(
-        state=state,
+        environment=env,
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    for robot_id in ROBOT_IDS:
+        runner.add_robot(
+            Robot(id=robot_id, capabilities=frozenset({Capability.VISION})),
+            RobotState(robot_id=robot_id, position=_ROBOT_STARTS[robot_id]),
+        )
+    runner.add_task(search)
+    runner.add_task(move_a, initial_state=MoveTaskState(task_id=MOVE_TASK_A_ID, current_position=_CASUALTY_A_POS))
+    runner.add_task(move_b, initial_state=MoveTaskState(task_id=MOVE_TASK_B_ID, current_position=_CASUALTY_B_POS))
     return runner, assignment_service
 
 

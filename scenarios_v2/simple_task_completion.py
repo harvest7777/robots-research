@@ -13,7 +13,9 @@ from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
-from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
+from simulation.engine_rewrite.services import (
+    InMemoryAssignmentService, InMemorySimulationRegistry, InMemorySimulationStateService,
+)
 
 
 ROBOT_ID = RobotId(1)
@@ -28,24 +30,22 @@ def build() -> SimulationRunner:
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
     )
     robot = Robot(id=ROBOT_ID, capabilities=frozenset())
-    state = SimulationState(
-        environment=Environment(width=10, height=10),
-        robots={ROBOT_ID: robot},
-        robot_states={ROBOT_ID: RobotState(robot_id=ROBOT_ID, position=Position(0, 0))},
-        tasks={TASK_ID: task},
-        task_states={},
-        t_now=Time(0),
-    )
-    registry = InMemoryTaskRegistry(tasks=[task])
+
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     assignment_service = InMemoryAssignmentService(
         assignments=[Assignment(task_id=TASK_ID, robot_id=ROBOT_ID)]
     )
-    return SimulationRunner(
-        state=state,
+    runner = SimulationRunner(
+        environment=Environment(width=10, height=10),
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    runner.add_robot(robot, RobotState(robot_id=ROBOT_ID, position=Position(0, 0)))
+    runner.add_task(task)
+    return runner
 
 
 def run(max_ticks: int = 100) -> tuple[SimulationState, list[StepOutcome], SimulationRunner]:

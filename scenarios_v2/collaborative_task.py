@@ -17,7 +17,9 @@ from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
-from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
+from simulation.engine_rewrite.services import (
+    InMemoryAssignmentService, InMemorySimulationRegistry, InMemorySimulationStateService,
+)
 
 
 TASK_ID = TaskId(1)
@@ -32,36 +34,31 @@ def build(num_robots: int = 2) -> SimulationRunner:
         required_work_time=Time(TASK_WORK_TIME),
         spatial_constraint=SpatialConstraint(target=_TASK_POSITION, max_distance=0),
     )
-    robots = {
-        RobotId(i): Robot(id=RobotId(i), capabilities=frozenset())
+    robots = [
+        Robot(id=RobotId(i), capabilities=frozenset())
         for i in range(1, num_robots + 1)
-    }
-    # All robots start directly on the task — no travel time, pure work.
-    robot_states = {
-        RobotId(i): RobotState(robot_id=RobotId(i), position=_TASK_POSITION)
-        for i in range(1, num_robots + 1)
-    }
-    state = SimulationState(
-        environment=Environment(width=10, height=10),
-        robots=robots,
-        robot_states=robot_states,
-        tasks={TASK_ID: task},
-        task_states={},
-        t_now=Time(0),
-    )
-    registry = InMemoryTaskRegistry(tasks=[task])
+    ]
+
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     assignment_service = InMemoryAssignmentService(
         assignments=[
             Assignment(task_id=TASK_ID, robot_id=RobotId(i))
             for i in range(1, num_robots + 1)
         ]
     )
-    return SimulationRunner(
-        state=state,
+    runner = SimulationRunner(
+        environment=Environment(width=10, height=10),
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    # All robots start directly on the task — no travel time, pure work.
+    for robot in robots:
+        runner.add_robot(robot, RobotState(robot_id=robot.id, position=_TASK_POSITION))
+    runner.add_task(task)
+    return runner
 
 
 def run(

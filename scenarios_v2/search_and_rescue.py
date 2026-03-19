@@ -28,11 +28,14 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     Environment, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, SearchTaskState, TaskId, SpatialConstraint,
+    SearchTask, TaskId, SpatialConstraint,
 )
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
-from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
+from simulation.engine_rewrite.services import (
+    BaseAssignmentService, InMemoryAssignmentService,
+    InMemorySimulationRegistry, InMemorySimulationStateService,
+)
 
 
 SEARCH_TASK_ID  = TaskId(1)
@@ -53,7 +56,7 @@ _ROBOT_STARTS = {
 }
 
 
-def build() -> tuple[SimulationRunner, InMemoryAssignmentService]:
+def build() -> tuple[SimulationRunner, BaseAssignmentService]:
     rescue = RescuePoint(
         id=RESCUE_POINT_ID,
         priority=10,
@@ -72,38 +75,27 @@ def build() -> tuple[SimulationRunner, InMemoryAssignmentService]:
         priority=5,
         required_capabilities=frozenset({Capability.VISION}),
     )
-    robots = {
-        robot_id: Robot(
-            id=robot_id,
-            capabilities=frozenset({Capability.VISION}),
-        )
+    robots = [
+        Robot(id=robot_id, capabilities=frozenset({Capability.VISION}))
         for robot_id in ROBOT_IDS
-    }
-    robot_states = {
-        robot_id: RobotState(robot_id=robot_id, position=pos)
-        for robot_id, pos in _ROBOT_STARTS.items()
-    }
-    state = SimulationState(
-        environment=env,
-        robots=robots,
-        robot_states=robot_states,
-        tasks={SEARCH_TASK_ID: search},
-        task_states={
-            SEARCH_TASK_ID: SearchTaskState(task_id=SEARCH_TASK_ID, rescue_found=frozenset())
-        },
-        t_now=Time(0),
-    )
-    registry = InMemoryTaskRegistry(tasks=[search])
+    ]
+
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     # Only robot 1 does the search — the others wait for a rescue assignment.
     assignment_service = InMemoryAssignmentService(
         assignments=[Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1))]
     )
     runner = SimulationRunner(
-        state=state,
+        environment=env,
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    for robot in robots:
+        runner.add_robot(robot, RobotState(robot_id=robot.id, position=_ROBOT_STARTS[robot.id]))
+    runner.add_task(search)
     return runner, assignment_service
 
 

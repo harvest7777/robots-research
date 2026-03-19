@@ -19,7 +19,9 @@ from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, IgnoreReason, StepOutcome
-from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
+from simulation.engine_rewrite.services import (
+    InMemoryAssignmentService, InMemorySimulationRegistry, InMemorySimulationStateService,
+)
 
 
 ROBOT_ID = RobotId(1)
@@ -27,6 +29,7 @@ TASK_ID  = TaskId(1)
 
 # 0.002 drain per work tick × 2 ticks = 0.004 total; battery runs out on tick 3.
 _STARTING_BATTERY = 0.004
+_TASK_POSITION = Position(3, 3)
 
 
 def build() -> SimulationRunner:
@@ -34,34 +37,29 @@ def build() -> SimulationRunner:
         id=TASK_ID,
         priority=5,
         required_work_time=Time(20),
-        spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+        spatial_constraint=SpatialConstraint(target=_TASK_POSITION, max_distance=0),
     )
     # Robot starts on the task cell — no movement needed, pure work drain.
     robot = Robot(id=ROBOT_ID, capabilities=frozenset())
-    state = SimulationState(
-        environment=Environment(width=10, height=10),
-        robots={ROBOT_ID: robot},
-        robot_states={
-            ROBOT_ID: RobotState(
-                robot_id=ROBOT_ID,
-                position=Position(3, 3),
-                battery_level=_STARTING_BATTERY,
-            )
-        },
-        tasks={TASK_ID: task},
-        task_states={},
-        t_now=Time(0),
-    )
-    registry = InMemoryTaskRegistry(tasks=[task])
+
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     assignment_service = InMemoryAssignmentService(
         assignments=[Assignment(task_id=TASK_ID, robot_id=ROBOT_ID)]
     )
-    return SimulationRunner(
-        state=state,
+    runner = SimulationRunner(
+        environment=Environment(width=10, height=10),
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    runner.add_robot(
+        robot,
+        RobotState(robot_id=ROBOT_ID, position=_TASK_POSITION, battery_level=_STARTING_BATTERY),
+    )
+    runner.add_task(task)
+    return runner
 
 
 def run(max_ticks: int = 30) -> tuple[SimulationState, list[StepOutcome], SimulationRunner]:

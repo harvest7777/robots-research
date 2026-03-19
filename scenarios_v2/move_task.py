@@ -17,7 +17,9 @@ from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, MoveTask, MoveTaskState, Robot, RobotId, RobotState, TaskId
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
-from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
+from simulation.engine_rewrite.services import (
+    InMemoryAssignmentService, InMemorySimulationRegistry, InMemorySimulationStateService,
+)
 
 
 MOVE_TASK_ID = TaskId(1)
@@ -37,35 +39,27 @@ def build() -> SimulationRunner:
         min_robots_required=2,
         min_distance=1,
     )
-    task_state = MoveTaskState(task_id=MOVE_TASK_ID, current_position=_START)
+    robots = [Robot(id=rid, capabilities=frozenset()) for rid in ROBOT_IDS]
 
-    robots = {rid: Robot(id=rid, capabilities=frozenset()) for rid in ROBOT_IDS}
-    robot_states = {
-        RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0)),
-        RobotId(2): RobotState(robot_id=RobotId(2), position=Position(_WIDTH - 1, _HEIGHT - 1)),
-    }
-
-    state = SimulationState(
-        environment=Environment(width=_WIDTH, height=_HEIGHT),
-        robots=robots,
-        robot_states=robot_states,
-        tasks={MOVE_TASK_ID: task},
-        task_states={MOVE_TASK_ID: task_state},
-        t_now=Time(0),
-    )
-    registry = InMemoryTaskRegistry(tasks=[task])
+    registry = InMemorySimulationRegistry()
+    state_service = InMemorySimulationStateService()
     assignment_service = InMemoryAssignmentService(
         assignments=[
             Assignment(task_id=MOVE_TASK_ID, robot_id=rid)
             for rid in ROBOT_IDS
         ]
     )
-    return SimulationRunner(
-        state=state,
+    runner = SimulationRunner(
+        environment=Environment(width=_WIDTH, height=_HEIGHT),
         registry=registry,
+        state_service=state_service,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
+    runner.add_robot(robots[0], RobotState(robot_id=RobotId(1), position=Position(0, 0)))
+    runner.add_robot(robots[1], RobotState(robot_id=RobotId(2), position=Position(_WIDTH - 1, _HEIGHT - 1)))
+    runner.add_task(task, initial_state=MoveTaskState(task_id=MOVE_TASK_ID, current_position=_START))
+    return runner
 
 
 def run(max_ticks: int = 200) -> tuple[SimulationState, list[StepOutcome], SimulationRunner]:
