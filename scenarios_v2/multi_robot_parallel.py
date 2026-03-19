@@ -15,7 +15,7 @@ from simulation.domain.task_state import TaskState
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
-    InMemoryAssignmentService, InMemorySimulationRegistry, InMemorySimulationStateService,
+    InMemoryAssignmentService, InMemorySimulationStore,
 )
 
 
@@ -39,8 +39,7 @@ def build() -> SimulationRunner:
     ]
     robots = [Robot(id=ROBOT_IDS[i], capabilities=frozenset()) for i in range(3)]
 
-    registry = InMemorySimulationRegistry()
-    state_service = InMemorySimulationStateService()
+    store = InMemorySimulationStore()
     assignment_service = InMemoryAssignmentService(
         assignments=[
             Assignment(task_id=TASK_IDS[i], robot_id=ROBOT_IDS[i])
@@ -49,14 +48,13 @@ def build() -> SimulationRunner:
     )
     runner = SimulationRunner(
         environment=Environment(width=10, height=10),
-        registry=registry,
-        state_service=state_service,
+        store=store,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
     for i in range(3):
-        runner.add_robot(robots[i], RobotState(robot_id=ROBOT_IDS[i], position=_ROBOT_STARTS[i]))
-        runner.add_task(tasks[i], TaskState(task_id=TASK_IDS[i]))
+        store.add_robot(robots[i], RobotState(robot_id=ROBOT_IDS[i], position=_ROBOT_STARTS[i]))
+        store.add_task(tasks[i], TaskState(task_id=TASK_IDS[i]))
     return runner
 
 

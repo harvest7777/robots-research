@@ -34,8 +34,7 @@ from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
-    BaseAssignmentService, InMemoryAssignmentService,
-    InMemorySimulationRegistry, InMemorySimulationStateService,
+    BaseAssignmentService, InMemoryAssignmentService, InMemorySimulationStore,
 )
 
 
@@ -91,22 +90,20 @@ def build() -> tuple[SimulationRunner, BaseAssignmentService]:
         for robot_id in ROBOT_IDS
     ]
 
-    registry = InMemorySimulationRegistry()
-    state_service = InMemorySimulationStateService()
+    store = InMemorySimulationStore()
     # Only robot 1 does the search — the others wait for a rescue assignment.
     assignment_service = InMemoryAssignmentService(
         assignments=[Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1))]
     )
     runner = SimulationRunner(
         environment=env,
-        registry=registry,
-        state_service=state_service,
+        store=store,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
     for robot in robots:
-        runner.add_robot(robot, RobotState(robot_id=robot.id, position=_ROBOT_STARTS[robot.id]))
-    runner.add_task(search, SearchTaskState(task_id=SEARCH_TASK_ID))
+        store.add_robot(robot, RobotState(robot_id=robot.id, position=_ROBOT_STARTS[robot.id]))
+    store.add_task(search, SearchTaskState(task_id=SEARCH_TASK_ID))
     return runner, assignment_service
 
 

@@ -19,7 +19,7 @@ from simulation.domain.task_state import TaskState
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
-    InMemoryAssignmentService, InMemorySimulationRegistry, InMemorySimulationStateService,
+    InMemoryAssignmentService, InMemorySimulationStore,
 )
 
 
@@ -40,8 +40,7 @@ def build(num_robots: int = 2) -> SimulationRunner:
         for i in range(1, num_robots + 1)
     ]
 
-    registry = InMemorySimulationRegistry()
-    state_service = InMemorySimulationStateService()
+    store = InMemorySimulationStore()
     assignment_service = InMemoryAssignmentService(
         assignments=[
             Assignment(task_id=TASK_ID, robot_id=RobotId(i))
@@ -50,15 +49,14 @@ def build(num_robots: int = 2) -> SimulationRunner:
     )
     runner = SimulationRunner(
         environment=Environment(width=10, height=10),
-        registry=registry,
-        state_service=state_service,
+        store=store,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
     # All robots start directly on the task — no travel time, pure work.
     for robot in robots:
-        runner.add_robot(robot, RobotState(robot_id=robot.id, position=_TASK_POSITION))
-    runner.add_task(task, TaskState(task_id=TASK_ID))
+        store.add_robot(robot, RobotState(robot_id=robot.id, position=_TASK_POSITION))
+    store.add_task(task, TaskState(task_id=TASK_ID))
     return runner
 
 

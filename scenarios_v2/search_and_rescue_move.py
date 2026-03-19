@@ -36,8 +36,7 @@ from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
-    BaseAssignmentService, InMemoryAssignmentService,
-    InMemorySimulationRegistry, InMemorySimulationStateService,
+    BaseAssignmentService, InMemoryAssignmentService, InMemorySimulationStore,
 )
 
 
@@ -123,8 +122,7 @@ def build(
         min_distance=1,
     )
 
-    registry = InMemorySimulationRegistry()
-    state_service = InMemorySimulationStateService()
+    store = InMemorySimulationStore()
     # Only Robot 1 searches initially; carriers 2 & 3 are idle until discovery.
     initial = [Assignment(task_id=SEARCH_TASK_ID, robot_id=RobotId(1))]
     if assignment_service is None:
@@ -133,18 +131,17 @@ def build(
         assignment_service.update(initial)
     runner = SimulationRunner(
         environment=env,
-        registry=registry,
-        state_service=state_service,
+        store=store,
         assignment_service=assignment_service,
         pathfinding=astar_pathfind,
     )
     for robot_id in ROBOT_IDS:
-        runner.add_robot(
+        store.add_robot(
             Robot(id=robot_id, capabilities=frozenset({Capability.VISION})),
             RobotState(robot_id=robot_id, position=_ROBOT_STARTS[robot_id]),
         )
-    runner.add_task(search, SearchTaskState(task_id=SEARCH_TASK_ID))
-    runner.add_task(move, MoveTaskState(task_id=MOVE_TASK_ID, current_position=_CASUALTY_POS))
+    store.add_task(search, SearchTaskState(task_id=SEARCH_TASK_ID))
+    store.add_task(move, MoveTaskState(task_id=MOVE_TASK_ID, current_position=_CASUALTY_POS))
     return runner, assignment_service
 
 
