@@ -162,51 +162,11 @@ def _build_obstacles() -> list[Position]:
     o += _rect(28, 20, 30, 20)
     o += _rect(32, 20, 38, 20)
 
-    # ── CENTRAL CORRIDOR MAZE (x 14-26, y 12-19) ─────────────────────
-    # Dense but navigable rubble inside the RESTRICTED center zone.
-    o += _rect(15, 12, 16, 13)   # NW clump
-    o += _rect(22, 12, 24, 13)   # NE clump
-    o += _rect(14, 15, 15, 16)   # W mid block
-    o += _rect(18, 13, 20, 14)   # center-north rubble
-    o += _rect(22, 15, 24, 16)   # E mid block
-    o += _rect(15, 17, 17, 18)   # SW footing
-    o += _rect(21, 17, 23, 18)   # SE footing
-    o += _rect(18, 16, 20, 17)   # center-south rubble
-    o += _rect(25, 14, 26, 15)   # east corridor pinch
-
-    # ── WEST DISTRICT INTERIOR ───────────────────────────────────────
-    o += _rect(1, 7, 3, 8)       # NW clutter
-    o += _rect(10, 7, 11, 9)     # NE clutter
-    o += _rect(5, 9, 8, 9)       # mid-north scatter
-    o += _rect(1, 14, 3, 15)     # mid-west block
-    o += _rect(8, 13, 10, 14)    # mid-east block
-    o += _rect(3, 17, 5, 18)     # lower-west clutter
-    o += _rect(9, 17, 11, 18)    # lower-east clutter
-    o += _rect(2, 21, 5, 22)     # near south wall
-
-    # ── EAST DISTRICT INTERIOR ───────────────────────────────────────
-    o += _rect(29, 7, 32, 8)     # NW clutter (east)
-    o += _rect(36, 7, 38, 9)     # NE clutter (east)
-    o += _rect(30, 9, 34, 9)     # mid-north scatter
-    o += _rect(28, 14, 30, 15)   # mid-west block (east)
-    o += _rect(35, 13, 37, 14)   # mid-east block (east)
-    o += _rect(29, 17, 31, 18)   # lower-west clutter (east)
-    o += _rect(36, 17, 38, 18)   # lower-east clutter (east)
-    o += _rect(34, 21, 38, 22)   # near south wall (east)
-
-    # ── SOUTHERN STAGING SCATTER ─────────────────────────────────────
-    o += _rect(8, 25, 10, 26)
-    o += _rect(14, 24, 16, 25)
-    o += _rect(17, 27, 19, 28)
-    o += _rect(22, 25, 24, 26)
-    o += _rect(27, 26, 29, 27)
-    o += _rect(31, 24, 32, 25)
-
-    # ── ADDITIONAL NORTH-TIER SCATTER ────────────────────────────────
-    o += _rect(1, 6, 2, 7)       # extreme NW scatter
-    o += _rect(11, 6, 12, 7)     # west north scatter
-    o += _rect(28, 6, 29, 7)     # east north scatter
-    o += _rect(37, 6, 38, 7)     # extreme NE scatter
+    # ── CENTRAL RUBBLE BLOCK (collapsed structure interior) ───────────
+    # A few solid chunks inside the restricted zone — enough to force
+    # detours without turning the center into an impenetrable maze.
+    o += _rect(17, 13, 19, 14)
+    o += _rect(21, 15, 23, 16)
 
     # ── PROTECT KEY TARGETS ──────────────────────────────────────────
     blocked = {p for p in o if 0 <= p.x < WIDTH and 0 <= p.y < HEIGHT}
