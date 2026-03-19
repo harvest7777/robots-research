@@ -8,9 +8,12 @@ import time
 
 from simulation_view.v2.view import SimulationViewV2
 
-assignments_path = Path("sim_assignments_v2.json")
-state_path = Path("sim_state_v2.json")
-registry_path = Path("registry_v2.json")
+_STORAGE = Path(__file__).parent / "storage"
+_STORAGE.mkdir(exist_ok=True)
+
+assignments_path = _STORAGE / "sim_assignments_v2.json"
+state_path = _STORAGE / "sim_state_v2.json"
+registry_path = _STORAGE / "registry_v2.json"
 
 assigner = JsonAssignmentService(assignments_path)
 store = JsonSimulationStore(
