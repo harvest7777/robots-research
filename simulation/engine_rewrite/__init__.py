@@ -6,11 +6,9 @@ from simulation.engine_rewrite.services import (
     BaseAssignmentService,
     BaseSimulationRegistry,
     BaseSimulationStateService,
-    BaseTaskRegistry,
     InMemoryAssignmentService,
     InMemorySimulationRegistry,
     InMemorySimulationStateService,
-    InMemoryTaskRegistry,
     JsonAssignmentService,
     JsonSimulationStateService,
 )
@@ -26,11 +24,9 @@ __all__ = [
     "BaseAssignmentService",
     "BaseSimulationRegistry",
     "BaseSimulationStateService",
-    "BaseTaskRegistry",
     "InMemoryAssignmentService",
     "InMemorySimulationRegistry",
     "InMemorySimulationStateService",
-    "InMemoryTaskRegistry",
     "JsonAssignmentService",
     "JsonSimulationStateService",
 ]

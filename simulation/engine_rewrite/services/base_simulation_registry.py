@@ -2,8 +2,8 @@
 BaseSimulationRegistry
 
 Holds robot and task definitions — the static, slowly-changing layer of the
-simulation. Supersedes BaseTaskRegistry by combining task and robot lookups
-into one interface so both are visible to the LLM and to the runner.
+simulation. Combines task and robot lookups into one interface so both
+are visible to the LLM and to the runner.
 
 The registry has no opinion on runtime state (positions, battery, work done)
 or on assignment (that's BaseAssignmentService). It is the source of truth
