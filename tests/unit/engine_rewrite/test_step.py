@@ -9,20 +9,11 @@ from __future__ import annotations
 
 import dataclasses
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.base_task import TaskId
-from simulation.domain.environment import Environment
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import WorkTask, SpatialConstraint
-from simulation.domain.task_state import TaskState
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.algorithms import astar_pathfind
+from simulation.domain import TaskId, Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskState
+from simulation.primitives import Position, Time
+from simulation.engine_rewrite import Assignment, SimulationState, StepOutcome
 from simulation.engine_rewrite._step import step
-from simulation.engine_rewrite.step_outcome import StepOutcome
 
 
 def _base_state() -> SimulationState:

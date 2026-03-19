@@ -1,6 +1,5 @@
-from simulation.domain.task import TaskId
-from simulation.domain.task_state import TaskState, TaskStatus, apply_work, mark_done, mark_failed
-from simulation.primitives.time import Time
+from simulation.domain import TaskId, TaskState, TaskStatus, apply_work, mark_done, mark_failed
+from simulation.primitives import Time
 
 
 def _state(task_id: int = 1) -> TaskState:

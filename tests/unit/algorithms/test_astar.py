@@ -16,9 +16,9 @@ Covers:
 
 from __future__ import annotations
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.environment import Environment
-from simulation.primitives.position import Position
+from simulation.algorithms import astar_pathfind
+from simulation.domain import Environment
+from simulation.primitives import Position
 
 
 def test_returns_goal_when_already_at_goal():

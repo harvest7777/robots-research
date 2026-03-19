@@ -7,13 +7,8 @@ task/state data to display strings.
 
 from __future__ import annotations
 
-from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
-from simulation.domain.move_task import MoveTask
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.task import WorkTask
-from simulation.domain.search_task import SearchTask
-from simulation.domain.task_state import TaskState
-from simulation.primitives.zone import ZoneType
+from simulation.domain import BaseTask, BaseTaskState, TaskId, TaskStatus, MoveTask, RescuePoint, WorkTask, SearchTask, TaskState
+from simulation.primitives import ZoneType
 
 # ---------------------------------------------------------------------------
 # Grid display constants

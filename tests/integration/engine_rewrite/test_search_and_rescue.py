@@ -1,4 +1,4 @@
-from simulation.domain.rescue_point import RescuePoint
+from simulation.domain import RescuePoint
 
 from scenarios_v2.search_and_rescue import (
     run,

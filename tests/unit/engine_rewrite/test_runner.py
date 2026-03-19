@@ -7,23 +7,14 @@ registry, and returns (SimulationState, StepOutcome).
 
 from __future__ import annotations
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.base_task import TaskId
-from simulation.domain.environment import Environment
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import WorkTask, SpatialConstraint
-from simulation.domain.task_state import TaskState
-from simulation.primitives.capability import Capability
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.runner import SimulationRunner
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
-from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
+from simulation.algorithms import astar_pathfind
+from simulation.domain import (
+    TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
+    WorkTask, SpatialConstraint, TaskState,
+)
+from simulation.primitives import Capability, Position, Time
+from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState
+from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
 
 
 def _base_task() -> WorkTask:
@@ -137,7 +128,7 @@ def test_unassigned_task_has_no_task_state():
 def test_step_adds_spawned_tasks_to_registry():
     # Build a search task scenario where a rescue point gets discovered,
     # producing a tasks_spawned entry that should land in the registry.
-    from simulation.domain.search_task import SearchTask, SearchTaskState
+    from simulation.domain import SearchTask, SearchTaskState
 
     rescue = RescuePoint(
         id=TaskId(2),

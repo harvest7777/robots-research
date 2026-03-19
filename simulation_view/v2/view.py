@@ -8,7 +8,7 @@ the section order and handles row overflow (terminal too small).
 
 from __future__ import annotations
 
-from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.engine_rewrite import SimulationState
 
 from simulation_view.frame import Frame, make_frame, stamp
 from simulation_view.v2.panels.activity import render_activity

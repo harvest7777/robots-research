@@ -9,8 +9,7 @@ Key behaviour under test:
   casualty to the extraction zone.
 """
 
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.robot_state import RobotId
+from simulation.domain import RescuePoint, RobotId
 
 from scenarios_v2.search_and_rescue_move import (
     build,
@@ -56,7 +55,7 @@ def test_move_task_completes():
 
 def test_casualty_reaches_extraction_zone():
     """The MoveTask's final position must equal the extraction destination."""
-    from simulation.domain.move_task import MoveTaskState
+    from simulation.domain import MoveTaskState
 
     state, _, _ = run()
     move_state = state.task_states[MOVE_TASK_ID]
@@ -67,7 +66,7 @@ def test_casualty_reaches_extraction_zone():
 def test_all_robots_reach_casualty_area():
     """All three robots must end within 1 step of the final casualty position
     (they form the extraction formation)."""
-    from simulation.domain.move_task import MoveTaskState
+    from simulation.domain import MoveTaskState
 
     state, _, _ = run()
     final_task_pos = state.task_states[MOVE_TASK_ID].current_position  # type: ignore[union-attr]

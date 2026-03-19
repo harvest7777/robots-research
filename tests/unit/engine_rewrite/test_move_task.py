@@ -4,19 +4,12 @@ Unit tests for MoveTask business rules in the Observer and Applicator.
 
 from __future__ import annotations
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.base_task import TaskId, TaskStatus
-from simulation.domain.environment import Environment
-from simulation.domain.move_task import MoveTask, MoveTaskState
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-
-from simulation.engine_rewrite.assignment import Assignment
+from simulation.algorithms import astar_pathfind
+from simulation.domain import TaskId, TaskStatus, Environment, MoveTask, MoveTaskState, Robot, RobotId, RobotState
+from simulation.primitives import Position, Time
+from simulation.engine_rewrite import Assignment, SimulationState
 from simulation.engine_rewrite._applicator import apply_outcome
 from simulation.engine_rewrite._observer import classify_step
-from simulation.engine_rewrite.simulation_state import SimulationState
 
 
 def _env(width: int = 10, height: int = 10) -> Environment:

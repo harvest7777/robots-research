@@ -1,13 +1,9 @@
 import dataclasses
 from unittest.mock import patch
 
-from simulation.domain.robot_state import RobotId
-from simulation.domain.environment import Environment
-from simulation.primitives.position import Position
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.robot_state import RobotState
-from simulation.algorithms.search_goal import compute_search_goal
-from simulation.domain.task import TaskId, SpatialConstraint
+from simulation.domain import RobotId, Environment, RescuePoint, RobotState, TaskId, SpatialConstraint
+from simulation.primitives import Position
+from simulation.algorithms import compute_search_goal
 
 
 # ---------------------------------------------------------------------------

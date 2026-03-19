@@ -23,11 +23,9 @@ import time
 from importlib import import_module
 from pathlib import Path
 
-from simulation.domain.move_task import MoveTask, MoveTaskState
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.engine_rewrite.services.json_assignment_service import JsonAssignmentService
-from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.domain import MoveTask, MoveTaskState, RescuePoint, SearchTask, SearchTaskState
+from simulation.engine_rewrite import SimulationState
+from simulation.engine_rewrite.services import JsonAssignmentService
 from simulation_view.terminal_renderer import TerminalRenderer
 from simulation_view.v2.view import SimulationViewV2
 

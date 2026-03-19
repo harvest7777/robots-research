@@ -4,9 +4,8 @@ Activity panel: per-robot description of current assignment or idle status.
 
 from __future__ import annotations
 
-from simulation.domain.base_task import TaskId, TaskStatus
-from simulation.domain.robot_state import RobotId
-from simulation.engine_rewrite.simulation_state import SimulationState
+from simulation.domain import TaskId, TaskStatus, RobotId
+from simulation.engine_rewrite import SimulationState
 
 from simulation_view.v2.symbols import task_full_name
 

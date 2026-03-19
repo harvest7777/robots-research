@@ -1,10 +1,8 @@
 """Unit tests for StepOutcome and IgnoreReason."""
 
-from simulation.domain.base_task import TaskId
-from simulation.domain.robot_state import RobotId
-from simulation.primitives.position import Position
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.step_outcome import IgnoreReason, StepOutcome
+from simulation.domain import TaskId, RobotId
+from simulation.primitives import Position
+from simulation.engine_rewrite import Assignment, IgnoreReason, StepOutcome
 
 
 def test_step_outcome_defaults_are_empty():

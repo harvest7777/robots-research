@@ -1,8 +1,6 @@
-from simulation.domain.base_task import TaskId
-from simulation.domain.task import WorkTask, SpatialConstraint
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
+from simulation.domain import TaskId, WorkTask, SpatialConstraint
+from simulation.primitives import Position, Time
+from simulation.engine_rewrite.services import InMemoryTaskRegistry
 
 
 def _task(tid: int, x: int = 0, y: int = 0) -> WorkTask:

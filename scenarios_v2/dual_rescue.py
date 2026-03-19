@@ -42,26 +42,16 @@ Expected outcome: both MOVE_TASK_A_ID and MOVE_TASK_B_ID completed.
 
 from __future__ import annotations
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.environment import Environment
-from simulation.domain.move_task import MoveTask, MoveTaskState
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.base_task import TaskId
-from simulation.domain.task import SpatialConstraint
-from simulation.primitives.capability import Capability
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.runner import SimulationRunner
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.services.base_assignment_service import BaseAssignmentService
-from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
-from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
-from simulation.engine_rewrite.step_outcome import StepOutcome
+from simulation.algorithms import astar_pathfind
+from simulation.domain import (
+    Environment, MoveTask, MoveTaskState, RescuePoint, Robot, RobotId, RobotState,
+    SearchTask, SearchTaskState, TaskId, SpatialConstraint,
+)
+from simulation.primitives import Capability, Position, Time
+from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
+from simulation.engine_rewrite.services import (
+    BaseAssignmentService, InMemoryAssignmentService, InMemoryTaskRegistry,
+)
 
 
 SEARCH_TASK_ID    = TaskId(1)   # shared — both searchers assigned here

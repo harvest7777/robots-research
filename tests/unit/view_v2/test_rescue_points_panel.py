@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from simulation.domain.base_task import TaskId
-from simulation.domain.environment import Environment
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import SpatialConstraint
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
+from simulation.domain import (
+    TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
+    SearchTask, SearchTaskState, SpatialConstraint,
+)
+from simulation.engine_rewrite import SimulationState
+from simulation.primitives import Position, Time
 
 from simulation_view.v2.panels.rescue_points import render_rescue_points
 

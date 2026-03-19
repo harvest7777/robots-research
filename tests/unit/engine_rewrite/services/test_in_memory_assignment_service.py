@@ -1,7 +1,6 @@
-from simulation.domain.base_task import TaskId
-from simulation.domain.robot_state import RobotId
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
+from simulation.domain import TaskId, RobotId
+from simulation.engine_rewrite import Assignment
+from simulation.engine_rewrite.services import InMemoryAssignmentService
 
 
 def _assign(robot_id: int, task_id: int) -> Assignment:

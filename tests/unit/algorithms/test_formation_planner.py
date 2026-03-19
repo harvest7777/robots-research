@@ -6,9 +6,9 @@ Each test exercises one behaviour of plan_formation_move in isolation.
 
 from __future__ import annotations
 
-from simulation.domain.environment import Environment
-from simulation.primitives.position import Position
-from simulation.algorithms.formation_planner import plan_formation_move
+from simulation.domain import Environment
+from simulation.primitives import Position
+from simulation.algorithms import plan_formation_move
 
 
 def _env(width: int = 10, height: int = 10) -> Environment:

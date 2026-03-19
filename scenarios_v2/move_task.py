@@ -13,21 +13,11 @@ Expected outcome: MOVE_TASK_ID appears in tasks_completed before max_ticks.
 
 from __future__ import annotations
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.environment import Environment
-from simulation.domain.move_task import MoveTask, MoveTaskState
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.base_task import TaskId
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.runner import SimulationRunner
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
-from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
-from simulation.engine_rewrite.step_outcome import StepOutcome
+from simulation.algorithms import astar_pathfind
+from simulation.domain import Environment, MoveTask, MoveTaskState, Robot, RobotId, RobotState, TaskId
+from simulation.primitives import Position, Time
+from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
+from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
 
 
 MOVE_TASK_ID = TaskId(1)

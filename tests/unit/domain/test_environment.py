@@ -1,10 +1,8 @@
 import pytest
 
-from simulation.domain.environment import Environment, Obstacle
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.task import TaskId, SpatialConstraint
-from simulation.primitives.position import Position
-from simulation.primitives.zone import Zone, ZoneId, ZoneType
+from simulation.domain import Environment, RescuePoint, TaskId, SpatialConstraint
+from simulation.domain.environment import Obstacle
+from simulation.primitives import Position, Zone, ZoneId, ZoneType
 
 
 def _env(width: int = 5, height: int = 5) -> Environment:

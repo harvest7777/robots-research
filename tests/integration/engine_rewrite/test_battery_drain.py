@@ -1,4 +1,4 @@
-from simulation.engine_rewrite.step_outcome import IgnoreReason
+from simulation.engine_rewrite import IgnoreReason
 
 from scenarios_v2.battery_drain import run, TASK_ID
 

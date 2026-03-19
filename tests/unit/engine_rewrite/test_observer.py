@@ -9,24 +9,14 @@ from __future__ import annotations
 
 import pytest
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.base_task import TaskId
-from simulation.domain.environment import Environment
-from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import WorkTask, SpatialConstraint
-from simulation.domain.task_state import TaskState
-from simulation.primitives.capability import Capability
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-from simulation.primitives.zone import Zone, ZoneId, ZoneType
-
-from simulation.engine_rewrite.assignment import Assignment
+from simulation.algorithms import astar_pathfind
+from simulation.domain import (
+    TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
+    SearchTask, SearchTaskState, WorkTask, SpatialConstraint, TaskState,
+)
+from simulation.primitives import Capability, Position, Time, Zone, ZoneId, ZoneType
+from simulation.engine_rewrite import Assignment, SimulationState, IgnoreReason
 from simulation.engine_rewrite._observer import classify_step
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.step_outcome import IgnoreReason
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +249,7 @@ def test_wrong_capability_is_ignored():
 
 
 def test_terminal_task_is_ignored():
-    from simulation.domain.base_task import TaskStatus
+    from simulation.domain import TaskStatus
     task = _work_task(1, x=0, y=0)
     ts = TaskState(task_id=TaskId(1), status=TaskStatus.DONE)
     state = _state(

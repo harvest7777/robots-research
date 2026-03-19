@@ -13,21 +13,11 @@ Expected outcome (2 robots): task completes in ~half the ticks of 1 robot.
 
 from __future__ import annotations
 
-from simulation.algorithms.astar_pathfinding import astar_pathfind
-from simulation.domain.environment import Environment
-from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import WorkTask, SpatialConstraint
-from simulation.domain.base_task import TaskId
-from simulation.primitives.position import Position
-from simulation.primitives.time import Time
-
-from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.runner import SimulationRunner
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
-from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
-from simulation.engine_rewrite.step_outcome import StepOutcome
+from simulation.algorithms import astar_pathfind
+from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
+from simulation.primitives import Position, Time
+from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
+from simulation.engine_rewrite.services import InMemoryAssignmentService, InMemoryTaskRegistry
 
 
 TASK_ID = TaskId(1)

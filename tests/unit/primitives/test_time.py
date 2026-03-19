@@ -1,6 +1,6 @@
 import pytest
 
-from simulation.primitives.time import Time
+from simulation.primitives import Time
 
 
 def test_add_two_times():

@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
-from simulation.domain.base_task import TaskId, TaskStatus
-from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import WorkTask
-from simulation.domain.task_state import TaskState
-from simulation.primitives.time import Time
+from simulation.domain import TaskId, TaskStatus, SearchTask, SearchTaskState, WorkTask, TaskState
+from simulation.primitives import Time
 
 from simulation_view.v2.symbols import (
     task_id_symbol,
