@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from simulation.domain import (
     TaskId, TaskStatus, Environment, MoveTask, MoveTaskState, RescuePoint, SearchTask,
-    WorkTask, SpatialConstraint,
+    SearchTaskState, WorkTask, SpatialConstraint,
 )
 from simulation.primitives import Position, ZoneType
 from simulation.domain import SimulationState
@@ -36,8 +36,13 @@ def render_environment(state: SimulationState) -> list[str]:
         robot_positions[cell] = rid
 
     targets, areas = _compute_task_work_areas(state)
+    rescue_found: set[object] = set()
+    for ts in state.task_states.values():
+        if isinstance(ts, SearchTaskState):
+            rescue_found.update(ts.rescue_found)
     rescue_point_positions: set[Position] = {
         rp.position for rp in env.rescue_points.values()
+        if rp.id not in rescue_found
     }
     move_task_positions: set[Position] = {
         ts.current_position

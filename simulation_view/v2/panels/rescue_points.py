@@ -30,8 +30,9 @@ def render_rescue_points(state: SimulationState) -> list[str]:
     for rp in sorted(state.environment.rescue_points.values(), key=lambda r: r.id):
         found = rp.id in rescue_found
         status = "FOUND!" if found else "      "
+        symbol = " " if found else RESCUE_POINT_SYMBOL
         lines.append(
-            f"  {RESCUE_POINT_SYMBOL} [{status}] {rp.name}"
+            f"  {symbol} [{status}] {rp.name}"
             f" at ({rp.position.x},{rp.position.y})"
         )
     return lines
