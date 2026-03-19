@@ -18,16 +18,19 @@ def astar_pathfind(
     environment: Environment,
     start: Position,
     goal: Position,
+    occupied: frozenset[Position] = frozenset(),
 ) -> Position | None:
     """Find the next step on the shortest path from start to goal.
 
     Uses A* over the 4-connected grid with Manhattan distance heuristic.
-    Treats obstacle cells as impassable.
+    Treats obstacle cells and occupied cells as impassable, except the goal
+    cell is always reachable regardless of occupancy.
 
     Args:
         environment: The grid environment (provides bounds and obstacles).
         start: Current robot position (integer grid cell).
         goal: Target position (integer grid cell).
+        occupied: Additional cells to treat as blocked (e.g. other robots).
 
     Returns:
         The next Position (adjacent grid cell) on the shortest path, or None
@@ -38,6 +41,8 @@ def astar_pathfind(
 
     obstacle_cells: frozenset[tuple[int, int]] = frozenset(
         (p.x, p.y) for p in environment.obstacles
+    ) | frozenset(
+        (p.x, p.y) for p in occupied if p != goal
     )
 
     start_cell = (start.x, start.y)

@@ -53,7 +53,7 @@ def compute_search_goal(
 
     # Step 2: Keep existing waypoint if reachable and not yet reached
     if state.current_waypoint is not None and state.current_waypoint != state.position:
-        next_step = pathfinding(environment, state.position, state.current_waypoint)
+        next_step = pathfinding(environment, state.position, state.current_waypoint, frozenset())
         if next_step is not None:
             return state.current_waypoint
         # Waypoint unreachable — fall through to pick a new one

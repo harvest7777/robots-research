@@ -9,12 +9,12 @@ from simulation.algorithms import compute_search_goal
 # Pathfinding stubs
 # ---------------------------------------------------------------------------
 
-def _reachable(env, start, goal):
+def _reachable(env, start, goal, occupied=frozenset()):
     """Stub: waypoint is always reachable (returns an arbitrary next step)."""
     return Position(start.x + 1, start.y)
 
 
-def _unreachable(env, start, goal):
+def _unreachable(env, start, goal, occupied=frozenset()):
     """Stub: waypoint is never reachable."""
     return None
 

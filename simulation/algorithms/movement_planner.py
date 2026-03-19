@@ -14,7 +14,7 @@ from simulation.primitives.position import Position
 from simulation.domain.robot_state import RobotId
 
 
-PathfindingAlgorithm = Callable[[Environment, Position, Position], Position | None]
+PathfindingAlgorithm = Callable[[Environment, Position, Position, frozenset[Position]], Position | None]
 GoalResolver = Callable[[RobotId, "RobotState"], Position | None]
 
 
