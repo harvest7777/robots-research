@@ -19,13 +19,10 @@ runner = SimulationRunner(
     registry=registry,
     state_service=state_service,
     assignment_service=assigner,
+    view=True
 )
 
 renderer = TerminalRenderer()
 view = SimulationViewV2()
 
 state, _outcome = runner.step()
-term = get_terminal_size(fallback=(120, 40))
-frame = view.render(state, width=term.columns, height=term.lines)
-renderer.draw(frame)
-renderer.cleanup()
