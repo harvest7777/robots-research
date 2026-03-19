@@ -76,7 +76,8 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
             started_at=started_at,
         )
 
-    # Apply rescue point discoveries to SearchTaskState
+    # Apply rescue point discoveries to SearchTaskState.
+    # Update every SearchTask — there may be more than one.
     for rp_id in outcome.rescue_points_found:
         for search_task_id, task_state in new_task_states.items():
             if isinstance(task_state, SearchTaskState):
@@ -84,7 +85,6 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
                     task_state,
                     rescue_found=task_state.rescue_found | frozenset({rp_id}),
                 )
-                break
 
     # Apply move task position advances
     for task_id, new_position in outcome.tasks_moved:
