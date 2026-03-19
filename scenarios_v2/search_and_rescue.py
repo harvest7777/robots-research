@@ -108,7 +108,7 @@ def run(max_ticks: int = 150) -> tuple[SimulationState, list[StepOutcome], Simul
         outcomes.append(outcome)
 
         # React to discovery: assign all robots to the rescue task.
-        for task in outcome.tasks_spawned:
+        for task, _ in outcome.tasks_spawned:
             if isinstance(task, RescuePoint):
                 assignment_service.update([
                     Assignment(task_id=task.id, robot_id=robot_id)
@@ -138,7 +138,7 @@ if __name__ == "__main__":
             state, outcome = runner.step()
             outcomes.append(outcome)
 
-            for task in outcome.tasks_spawned:
+            for task, _ in outcome.tasks_spawned:
                 if isinstance(task, RescuePoint):
                     assignment_service.update([
                         Assignment(task_id=task.id, robot_id=robot_id)

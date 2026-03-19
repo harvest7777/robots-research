@@ -19,7 +19,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
-from simulation.domain.base_task import BaseTask, TaskId
+from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
 from simulation.domain.robot_state import RobotId
 from simulation.primitives.position import Position
 
@@ -38,7 +38,7 @@ class StepOutcome:
     moved:               list[tuple[RobotId, Position]]          = field(default_factory=list)
     worked:              list[tuple[RobotId, TaskId]]            = field(default_factory=list)
     tasks_completed:     list[TaskId]                            = field(default_factory=list)
-    tasks_spawned:       list[BaseTask]                          = field(default_factory=list)
+    tasks_spawned:       list[tuple[BaseTask, BaseTaskState]]    = field(default_factory=list)
     assignments_ignored: list[tuple[Assignment, IgnoreReason]]   = field(default_factory=list)
     rescue_points_found: list[TaskId]                            = field(default_factory=list)
     # rescue_points_found: needed so apply_outcome can update SearchTaskState.rescue_found

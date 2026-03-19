@@ -186,7 +186,7 @@ def run(max_ticks: int = 400) -> tuple[SimulationState, list[StepOutcome], Simul
         state, outcome = runner.step()
         outcomes.append(outcome)
 
-        for task in outcome.tasks_spawned:
+        for task, _ in outcome.tasks_spawned:
             if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_A_ID:
                 assignment_service.update([
                     Assignment(task_id=MOVE_TASK_A_ID, robot_id=RobotId(1)),
@@ -224,7 +224,7 @@ if __name__ == "__main__":
             state, outcome = runner.step()
             outcomes.append(outcome)
 
-            for task in outcome.tasks_spawned:
+            for task, _ in outcome.tasks_spawned:
                 if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_A_ID:
                     assignment_service.update([
                         Assignment(task_id=MOVE_TASK_A_ID, robot_id=RobotId(1)),

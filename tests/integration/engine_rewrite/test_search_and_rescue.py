@@ -5,7 +5,7 @@ from scenarios_v2.search_and_rescue import run, RESCUE_POINT_ID, ROBOT_IDS
 
 def test_rescue_point_is_discovered():
     _, outcomes, _ = run()
-    assert any(isinstance(t, RescuePoint) for o in outcomes for t in o.tasks_spawned)
+    assert any(isinstance(t, RescuePoint) for o in outcomes for t, _ in o.tasks_spawned)
 
 
 def test_rescue_task_completes():

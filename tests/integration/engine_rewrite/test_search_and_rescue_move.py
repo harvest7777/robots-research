@@ -26,7 +26,7 @@ def test_casualty_discovered_on_tick_1():
     discovery must happen on the very first tick."""
     runner, _ = build()
     _, outcome = runner.step()
-    assert any(isinstance(t, RescuePoint) for t in outcome.tasks_spawned)
+    assert any(isinstance(t, RescuePoint) for t, _ in outcome.tasks_spawned)
 
 
 def test_searcher_does_not_step_onto_rescue_point():
@@ -35,12 +35,12 @@ def test_searcher_does_not_step_onto_rescue_point():
     runner, _ = build()
     state, outcome = runner.step()
 
-    assert RESCUE_POINT_ID in {t.id for t in outcome.tasks_spawned}, \
+    assert RESCUE_POINT_ID in {t.id for t, _ in outcome.tasks_spawned}, \
         "discovery did not fire on tick 1"
 
     # Derive casualty position from the discovered rescue point task itself.
     casualty_pos = next(
-        t for t in outcome.tasks_spawned if t.id == RESCUE_POINT_ID
+        t for t, _ in outcome.tasks_spawned if t.id == RESCUE_POINT_ID
     ).spatial_constraint.target
 
     robot1_pos = state.robot_states[RobotId(1)].position

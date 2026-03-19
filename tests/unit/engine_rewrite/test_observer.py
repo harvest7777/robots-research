@@ -473,7 +473,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     )
     outcome = classify_step(state, astar_pathfind)
     assert len(outcome.tasks_spawned) == 1
-    spawned = outcome.tasks_spawned[0]
+    spawned, _ = outcome.tasks_spawned[0]
     assert isinstance(spawned, RescuePoint)
     assert spawned.required_work_time == Time(30)
     assert spawned.min_robots_needed == 2

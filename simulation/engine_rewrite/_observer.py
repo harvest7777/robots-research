@@ -265,7 +265,7 @@ def classify_step(
                 outcome.rescue_points_found.append(rescue_point.id)
                 seen_rescue_ids.add(rescue_point.id)
                 # The rescue point IS the task — no transformation needed.
-                outcome.tasks_spawned.append(rescue_point)
+                outcome.tasks_spawned.append((rescue_point, TaskState(task_id=rescue_point.id)))
                 break
 
     # -------------------------------------------------------------------------

@@ -139,7 +139,7 @@ def build(
 
 def _handle_discovery(outcome: StepOutcome, assignment_service: BaseAssignmentService) -> None:
     """On rescue point discovery, reassign all robots to carry the casualty out."""
-    for task in outcome.tasks_spawned:
+    for task, _ in outcome.tasks_spawned:
         if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_ID:
             assignment_service.update([
                 Assignment(task_id=MOVE_TASK_ID, robot_id=robot_id)

@@ -86,8 +86,8 @@ class SimulationRunner:
 
         new_state, outcome = engine_step(current_state, self._pathfinding)
 
-        for task in outcome.tasks_spawned:
-            self.add_task(task)
+        for task, _ in outcome.tasks_spawned:
+            self._registry.add_task(task)
 
         self._state_service.apply(new_state.robot_states, new_state.task_states)
         self._t_now = new_state.t_now
