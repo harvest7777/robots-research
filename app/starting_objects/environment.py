@@ -1,15 +1,3 @@
-"""
-app/environment.py
-
-40×30 disaster-response environment.
-
-Five casualties are scattered across the map; each spawns a MoveTask
-when discovered, carrying the victim to a safe extraction point.
-
-Obstacles are sparse rubble clusters that create routing variation
-without forming bottlenecks that would block multi-robot formations.
-"""
-
 from __future__ import annotations
 
 from simulation.domain import (
@@ -22,16 +10,8 @@ from simulation.domain import (
 )
 from simulation.primitives import Capability, Position
 
-# ---------------------------------------------------------------------------
-# Dimensions
-# ---------------------------------------------------------------------------
-
 WIDTH = 40
 HEIGHT = 30
-
-# ---------------------------------------------------------------------------
-# Task IDs
-# ---------------------------------------------------------------------------
 
 RESCUE_POINT_ALPHA_ID = TaskId(10)
 RESCUE_POINT_BRAVO_ID = TaskId(11)
@@ -45,37 +25,21 @@ MOVE_TASK_CHARLIE_ID = TaskId(22)
 MOVE_TASK_DELTA_ID = TaskId(23)
 MOVE_TASK_ECHO_ID = TaskId(24)
 
-# ---------------------------------------------------------------------------
-# Key positions
-# ---------------------------------------------------------------------------
+CASUALTY_ALPHA   = Position(7, 8)
+CASUALTY_BRAVO   = Position(31, 6)
+CASUALTY_CHARLIE = Position(9, 16)
+CASUALTY_DELTA   = Position(33, 16)
+CASUALTY_ECHO    = Position(20, 25)
 
-# Casualties: where each victim is found.
-CASUALTY_ALPHA = Position(7, 8)     # west district, north tier
-CASUALTY_BRAVO = Position(31, 6)    # east district, north tier
-CASUALTY_CHARLIE = Position(9, 16)  # west district, mid tier
-CASUALTY_DELTA = Position(33, 16)   # east district, mid tier
-CASUALTY_ECHO = Position(20, 25)    # south staging area — hardest to reach
-
-# Extraction destinations for each MoveTask.
-EXTRACTION_ALPHA = Position(3, 26)   # inside LOADING zone
-EXTRACTION_BRAVO = Position(37, 3)   # inside CHARGING zone
-EXTRACTION_CHARLIE = Position(1, 14) # west corridor open ground
-EXTRACTION_DELTA = Position(36, 26)  # inside MAINTENANCE zone
-EXTRACTION_ECHO = Position(12, 28)   # south open area
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+EXTRACTION_ALPHA   = Position(3, 26)
+EXTRACTION_BRAVO   = Position(37, 3)
+EXTRACTION_CHARLIE = Position(1, 14)
+EXTRACTION_DELTA   = Position(36, 26)
+EXTRACTION_ECHO    = Position(12, 28)
 
 
 def _rect(x0: int, y0: int, x1: int, y1: int) -> list[Position]:
-    """Inclusive axis-aligned rectangle of positions."""
     return [Position(x, y) for y in range(y0, y1 + 1) for x in range(x0, x1 + 1)]
-
-
-# ---------------------------------------------------------------------------
-# Obstacle construction
-# ---------------------------------------------------------------------------
 
 _PROTECTED: frozenset[Position] = frozenset(
     {
@@ -112,13 +76,7 @@ def _build_obstacles() -> list[Position]:
 _OBSTACLES: list[Position] = _build_obstacles()
 
 
-# ---------------------------------------------------------------------------
-# Environment builder
-# ---------------------------------------------------------------------------
-
-
 def build_environment() -> Environment:
-    """Return a fully configured 40×30 Environment."""
     env = Environment(width=WIDTH, height=HEIGHT)
 
     for pos in _OBSTACLES:
@@ -149,7 +107,7 @@ def build_environment() -> Environment:
     env.add_rescue_point(RescuePoint(
         id=RESCUE_POINT_CHARLIE_ID,
         name="Casualty Charlie",
-        spatial_constraint=SpatialConstraint(target=CASUALTY_CHARLIE, max_distance=1),
+        spatial_constraint=SpatialConstraint(target=CASUALTY_CHARLIE, max_distance=5),
         task=MoveTask(
             id=MOVE_TASK_CHARLIE_ID, priority=9, destination=EXTRACTION_CHARLIE,
             min_robots_required=2, min_distance=1,
@@ -160,7 +118,7 @@ def build_environment() -> Environment:
     env.add_rescue_point(RescuePoint(
         id=RESCUE_POINT_DELTA_ID,
         name="Casualty Delta",
-        spatial_constraint=SpatialConstraint(target=CASUALTY_DELTA, max_distance=1),
+        spatial_constraint=SpatialConstraint(target=CASUALTY_DELTA, max_distance=5),
         task=MoveTask(
             id=MOVE_TASK_DELTA_ID, priority=9, destination=EXTRACTION_DELTA,
             min_robots_required=2, min_distance=1,
@@ -171,7 +129,7 @@ def build_environment() -> Environment:
     env.add_rescue_point(RescuePoint(
         id=RESCUE_POINT_ECHO_ID,
         name="Casualty Echo",
-        spatial_constraint=SpatialConstraint(target=CASUALTY_ECHO, max_distance=1),
+        spatial_constraint=SpatialConstraint(target=CASUALTY_ECHO, max_distance=5),
         task=MoveTask(
             id=MOVE_TASK_ECHO_ID, priority=9, destination=EXTRACTION_ECHO,
             min_robots_required=3, min_distance=1,
