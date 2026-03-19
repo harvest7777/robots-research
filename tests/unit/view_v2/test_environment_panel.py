@@ -8,7 +8,7 @@ from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.primitives.position import Position
@@ -81,10 +81,9 @@ def test_obstacle_symbol():
 
 
 def test_task_target_shows_task_id():
-    task = Task(
+    task = WorkTask(
         id=TaskId(3),
         priority=1,
-        type=TaskType.ROUTINE_INSPECTION,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(2, 2), max_distance=0),
     )
@@ -98,10 +97,9 @@ def test_task_target_shows_task_id():
 
 
 def test_task_area_symbol_within_radius():
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
         priority=1,
-        type=TaskType.ROUTINE_INSPECTION,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(2, 2), max_distance=1),
     )
@@ -117,10 +115,9 @@ def test_task_area_symbol_within_radius():
 
 
 def test_done_task_not_rendered():
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
         priority=1,
-        type=TaskType.ROUTINE_INSPECTION,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(2, 2), max_distance=0),
     )

@@ -10,7 +10,7 @@ from __future__ import annotations
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
 from simulation.domain.move_task import MoveTask
 from simulation.domain.rescue_point import RescuePoint
-from simulation.domain.task import Task, TaskType
+from simulation.domain.task import WorkTask
 from simulation.domain.search_task import SearchTask
 from simulation.domain.task_state import TaskState
 from simulation.primitives.zone import ZoneType
@@ -38,41 +38,21 @@ ZONE_SYMBOLS: dict[ZoneType, str] = {
     ZoneType.CHARGING: "C",
 }
 
-TASK_TYPE_LABELS: dict[TaskType, str] = {
-    TaskType.ROUTINE_INSPECTION: "RI",
-    TaskType.ANOMALY_INVESTIGATION: "AI",
-    TaskType.PREVENTIVE_MAINTENANCE: "PM",
-    TaskType.EMERGENCY_RESPONSE: "ER",
-    TaskType.PICKUP: "PU",
-    TaskType.IDLE: "--",
-    TaskType.RESCUE: "RS",
-}
-
-TASK_TYPE_FULL_NAMES: dict[TaskType, str] = {
-    TaskType.ROUTINE_INSPECTION: "Routine Inspection",
-    TaskType.ANOMALY_INVESTIGATION: "Anomaly Investigation",
-    TaskType.PREVENTIVE_MAINTENANCE: "Preventive Maintenance",
-    TaskType.EMERGENCY_RESPONSE: "Emergency Response",
-    TaskType.PICKUP: "Pickup",
-    TaskType.IDLE: "Idle",
-    TaskType.RESCUE: "Rescue",
-}
-
 # ---------------------------------------------------------------------------
 # Pure symbol-derivation functions
 # ---------------------------------------------------------------------------
 
 
 def task_label(task: BaseTask) -> str:
-    """Return a short 2-char label for a task (e.g. "SR", "RI", "RS")."""
+    """Return a short 2-char label for a task (e.g. "SR", "MV", "WK")."""
     if isinstance(task, SearchTask):
         return "SR"
     if isinstance(task, RescuePoint):
         return "RS"
     if isinstance(task, MoveTask):
         return "MV"
-    assert isinstance(task, Task)
-    return TASK_TYPE_LABELS.get(task.type, "??")
+    assert isinstance(task, WorkTask)
+    return "WK"
 
 
 def task_full_name(task: BaseTask) -> str:
@@ -83,8 +63,8 @@ def task_full_name(task: BaseTask) -> str:
         return "Rescue"
     if isinstance(task, MoveTask):
         return "Move"
-    assert isinstance(task, Task)
-    return TASK_TYPE_FULL_NAMES.get(task.type, "Unknown")
+    assert isinstance(task, WorkTask)
+    return "Work"
 
 
 def task_status_symbol(state: BaseTaskState) -> str:

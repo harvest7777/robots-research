@@ -8,7 +8,7 @@ from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.primitives.position import Position
@@ -37,15 +37,13 @@ def _state(
 
 def _work_task(
     task_id: int = 1,
-    task_type: TaskType = TaskType.ROUTINE_INSPECTION,
     required: int = 10,
     work_done: int = 0,
     pos: Position = Position(5, 5),
-) -> tuple[Task, TaskState]:
-    task = Task(
+) -> tuple[WorkTask, TaskState]:
+    task = WorkTask(
         id=TaskId(task_id),
         priority=5,
-        type=task_type,
         required_work_time=Time(required),
         spatial_constraint=SpatialConstraint(target=pos, max_distance=0),
     )
@@ -59,9 +57,9 @@ def test_shows_tasks_header():
 
 
 def test_shows_task_label():
-    task, ts = _work_task(task_type=TaskType.ROUTINE_INSPECTION)
+    task, ts = _work_task()
     lines = render_tasks(_state(tasks={task.id: task}, task_states={ts.task_id: ts}))
-    assert any("[RI]" in l for l in lines)
+    assert any("[WK]" in l for l in lines)
 
 
 def test_shows_task_priority():

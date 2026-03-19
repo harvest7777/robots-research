@@ -6,7 +6,7 @@ from simulation.domain.base_task import TaskId
 from simulation.domain.environment import Environment
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import Task, TaskType
+from simulation.domain.task import WorkTask
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.simulation_state import SimulationState
@@ -20,7 +20,7 @@ def _minimal_state(
     t: int = 0,
     assignments: tuple[Assignment, ...] = (),
 ) -> SimulationState:
-    task = Task(id=TaskId(1), priority=1, type=TaskType.ROUTINE_INSPECTION)
+    task = WorkTask(id=TaskId(1), priority=1)
     return SimulationState(
         environment=Environment(width=5, height=5),
         robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
@@ -54,7 +54,7 @@ def test_single_assignment():
 
 
 def test_multiple_robots_same_task_grouped():
-    task = Task(id=TaskId(1), priority=1, type=TaskType.ROUTINE_INSPECTION)
+    task = WorkTask(id=TaskId(1), priority=1)
     state = SimulationState(
         environment=Environment(width=5, height=5),
         robots={

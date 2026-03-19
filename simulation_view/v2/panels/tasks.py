@@ -8,7 +8,7 @@ from simulation.domain.base_task import TaskId
 from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, WorkTask
+from simulation.domain.task import WorkTask
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.primitives.position import Position

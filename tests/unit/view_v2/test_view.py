@@ -8,7 +8,7 @@ from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.simulation_state import SimulationState
@@ -24,10 +24,9 @@ def _base_state(
     rescue_points: list[RescuePoint] | None = None,
 ) -> SimulationState:
     env = Environment(width=5, height=5)
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
         priority=3,
-        type=TaskType.ROUTINE_INSPECTION,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
     )

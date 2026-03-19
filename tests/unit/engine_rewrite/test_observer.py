@@ -16,7 +16,7 @@ from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.capability import Capability
 from simulation.primitives.position import Position
@@ -45,10 +45,9 @@ def _robot_state(rid: int, x: int, y: int, battery: float = 1.0) -> RobotState:
     return RobotState(robot_id=RobotId(rid), position=Position(x, y), battery_level=battery)
 
 
-def _work_task(tid: int, x: int, y: int, work: int = 10, caps: frozenset = frozenset(), max_distance=0) -> Task:
-    return Task(
+def _work_task(tid: int, x: int, y: int, work: int = 10, caps: frozenset = frozenset(), max_distance=0) -> WorkTask:
+    return WorkTask(
         id=TaskId(tid),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(work),
         spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=max_distance),
@@ -316,9 +315,8 @@ def test_waypoint_set_to_nearest_zone_cell():
     env = _env()
     zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(8, 0), Position(8, 5)])
     env.add_zone(zone)
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=ZoneId(1)),
@@ -340,9 +338,8 @@ def test_waypoint_nearest_zone_cell_tracks_robot_position():
     env = _env()
     zone = Zone.from_positions(ZoneId(1), ZoneType.INSPECTION, [Position(8, 0), Position(8, 5)])
     env.add_zone(zone)
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=ZoneId(1)),
@@ -361,9 +358,8 @@ def test_waypoint_nearest_zone_cell_tracks_robot_position():
 
 def test_waypoint_not_set_when_task_has_no_spatial_constraint():
     # A task with no spatial_constraint has no meaningful goal — no waypoint.
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=None,

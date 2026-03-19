@@ -14,7 +14,7 @@ from simulation.domain.base_task import TaskId
 from simulation.domain.environment import Environment
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
@@ -26,9 +26,8 @@ from simulation.engine_rewrite.step_outcome import StepOutcome
 
 
 def _base_state() -> SimulationState:
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=Position(0, 0), max_distance=0),

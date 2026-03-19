@@ -1,14 +1,13 @@
 from simulation.domain.base_task import TaskId
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
 from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
 
 
-def _task(tid: int, x: int = 0, y: int = 0) -> Task:
-    return Task(
+def _task(tid: int, x: int = 0, y: int = 0) -> WorkTask:
+    return WorkTask(
         id=TaskId(tid),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=Position(x, y)),

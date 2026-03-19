@@ -12,7 +12,7 @@ from simulation.domain.environment import Environment
 from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.search_task import SearchTask
-from simulation.domain.task import Task, WorkTask, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.primitives.position import Position
 from simulation.primitives.zone import Zone, ZoneType
 from simulation.engine_rewrite.simulation_state import SimulationState

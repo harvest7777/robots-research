@@ -17,7 +17,7 @@ from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.environment import Environment
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.base_task import TaskId
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
@@ -36,9 +36,8 @@ _TASK_POSITION = Position(5, 5)
 
 
 def build(num_robots: int = 2) -> SimulationRunner:
-    task = Task(
+    task = WorkTask(
         id=TASK_ID,
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(TASK_WORK_TIME),
         spatial_constraint=SpatialConstraint(target=_TASK_POSITION, max_distance=0),

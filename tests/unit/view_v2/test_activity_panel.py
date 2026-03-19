@@ -6,7 +6,7 @@ from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.environment import Environment
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.simulation_state import SimulationState
@@ -21,10 +21,9 @@ def _state(
     assignments: tuple[Assignment, ...] = (),
     task_done: bool = False,
 ) -> SimulationState:
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
         priority=1,
-        type=TaskType.ROUTINE_INSPECTION,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
     )
@@ -63,7 +62,7 @@ def test_working_robot_shows_task():
 def test_working_robot_shows_task_name():
     a = Assignment(task_id=TaskId(1), robot_id=RobotId(1))
     lines = render_activity(_state(assignments=(a,)))
-    assert any("Routine Inspection" in l for l in lines)
+    assert any("Work" in l for l in lines)
 
 
 def test_done_task_assignment_shows_idle():

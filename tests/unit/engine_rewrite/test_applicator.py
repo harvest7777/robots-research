@@ -14,7 +14,7 @@ from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
@@ -30,9 +30,8 @@ def _env() -> Environment:
 
 
 def _base_state() -> SimulationState:
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
@@ -89,9 +88,8 @@ def test_idle_robot_drains_idle_battery():
 
 
 def test_battery_does_not_go_below_zero():
-    task = Task(
+    task = WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),

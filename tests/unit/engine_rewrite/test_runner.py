@@ -13,7 +13,7 @@ from simulation.domain.environment import Environment
 from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.task import Task, TaskType, SpatialConstraint
+from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.capability import Capability
 from simulation.primitives.position import Position
@@ -26,10 +26,9 @@ from simulation.engine_rewrite.services.in_memory_assignment_service import InMe
 from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
 
 
-def _base_task() -> Task:
-    return Task(
+def _base_task() -> WorkTask:
+    return WorkTask(
         id=TaskId(1),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=5,
         required_work_time=Time(10),
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
@@ -92,9 +91,8 @@ def test_step_syncs_externally_added_tasks_from_registry():
         pathfinding=astar_pathfind,
     )
 
-    new_task = Task(
+    new_task = WorkTask(
         id=TaskId(2),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=3,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
@@ -109,9 +107,8 @@ def test_unassigned_task_has_no_task_state():
     # A task in the registry that is never assigned should produce no
     # task_states entry — there is nothing to track until work begins.
     task = _base_task()
-    unassigned_task = Task(
+    unassigned_task = WorkTask(
         id=TaskId(2),
-        type=TaskType.ROUTINE_INSPECTION,
         priority=3,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),

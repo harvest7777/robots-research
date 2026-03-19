@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import pytest
-
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.search_task import SearchTask, SearchTaskState
-from simulation.domain.task import Task, TaskType
+from simulation.domain.task import WorkTask
 from simulation.domain.task_state import TaskState
 from simulation.primitives.time import Time
 
@@ -28,21 +26,9 @@ def test_task_label_search_task():
     assert task_label(task) == "SR"
 
 
-@pytest.mark.parametrize(
-    "task_type, expected",
-    [
-        (TaskType.ROUTINE_INSPECTION, "RI"),
-        (TaskType.ANOMALY_INVESTIGATION, "AI"),
-        (TaskType.PREVENTIVE_MAINTENANCE, "PM"),
-        (TaskType.EMERGENCY_RESPONSE, "ER"),
-        (TaskType.PICKUP, "PU"),
-        (TaskType.IDLE, "--"),
-        (TaskType.RESCUE, "RS"),
-    ],
-)
-def test_task_label_typed_task(task_type, expected):
-    task = Task(id=TaskId(1), priority=1, type=task_type)
-    assert task_label(task) == expected
+def test_task_label_work_task():
+    task = WorkTask(id=TaskId(1), priority=1)
+    assert task_label(task) == "WK"
 
 
 # ---------------------------------------------------------------------------
@@ -55,9 +41,9 @@ def test_task_full_name_search_task():
     assert task_full_name(task) == "Search"
 
 
-def test_task_full_name_typed_task():
-    task = Task(id=TaskId(1), priority=1, type=TaskType.ROUTINE_INSPECTION)
-    assert task_full_name(task) == "Routine Inspection"
+def test_task_full_name_work_task():
+    task = WorkTask(id=TaskId(1), priority=1)
+    assert task_full_name(task) == "Work"
 
 
 # ---------------------------------------------------------------------------
