@@ -21,7 +21,7 @@ from __future__ import annotations
 import os
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
-from simulation.algorithms import astar_pathfinding
+from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.environment import Environment
 from simulation.primitives.time import Time
 
@@ -43,7 +43,7 @@ class SimulationRunner:
         environment: Environment,
         store: BaseSimulationStore,
         assignment_service: BaseAssignmentService,
-        pathfinding: PathfindingAlgorithm = astar_pathfinding,
+        pathfinding: PathfindingAlgorithm = astar_pathfind,
         view: bool = False,
     ) -> None:
         self._environment = environment

@@ -4,6 +4,7 @@ from pathlib import Path
 from .environment import build_environment
 from .robots import ROBOTS, ROBOT_STATES
 from .tasks import TASKS, TASK_STATES
+import time
 
 from simulation_view.v2.view import SimulationViewV2
 
@@ -34,4 +35,6 @@ for k, v in ROBOT_STATES.items():
 for k, v in TASK_STATES.items():
     store.add_task(TASKS[k], v)
 
-state, _outcome = runner.step()
+for _ in range(200):
+    state, _outcome = runner.step()
+    time.sleep(1)
