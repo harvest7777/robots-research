@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
+from simulation.domain.task_state import TaskState
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, IgnoreReason, StepOutcome
 from simulation.engine_rewrite.services import (
@@ -58,7 +59,7 @@ def build() -> SimulationRunner:
         robot,
         RobotState(robot_id=ROBOT_ID, position=_TASK_POSITION, battery_level=_STARTING_BATTERY),
     )
-    runner.add_task(task)
+    runner.add_task(task, TaskState(task_id=TASK_ID))
     return runner
 
 

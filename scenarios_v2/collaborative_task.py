@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
+from simulation.domain.task_state import TaskState
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
@@ -57,7 +58,7 @@ def build(num_robots: int = 2) -> SimulationRunner:
     # All robots start directly on the task — no travel time, pure work.
     for robot in robots:
         runner.add_robot(robot, RobotState(robot_id=robot.id, position=_TASK_POSITION))
-    runner.add_task(task)
+    runner.add_task(task, TaskState(task_id=TASK_ID))
     return runner
 
 

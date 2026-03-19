@@ -32,6 +32,7 @@ from simulation.domain import (
     Environment, MoveTask, MoveTaskState, RescuePoint, Robot, RobotId, RobotState,
     SearchTask, TaskId, SpatialConstraint,
 )
+from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
@@ -132,8 +133,8 @@ def build(
             Robot(id=robot_id, capabilities=frozenset({Capability.VISION})),
             RobotState(robot_id=robot_id, position=_ROBOT_STARTS[robot_id]),
         )
-    runner.add_task(search)
-    runner.add_task(move, initial_state=MoveTaskState(task_id=MOVE_TASK_ID, current_position=_CASUALTY_POS))
+    runner.add_task(search, SearchTaskState(task_id=SEARCH_TASK_ID))
+    runner.add_task(move, MoveTaskState(task_id=MOVE_TASK_ID, current_position=_CASUALTY_POS))
     return runner, assignment_service
 
 

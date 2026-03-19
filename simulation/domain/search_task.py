@@ -46,5 +46,3 @@ class SearchTask(BaseTask):
     RescuePoint.spatial_constraint.max_distance.
     """
 
-    def initial_state(self) -> SearchTaskState:
-        return SearchTaskState(task_id=self.id, rescue_found=frozenset())

@@ -37,9 +37,3 @@ class MoveTask(BaseTask):
     min_robots_required: int = 1
     min_distance: int = 1
 
-    def initial_state(self) -> MoveTaskState:
-        raise NotImplementedError(
-            "MoveTask has no default initial position. "
-            "Pass initial_state=MoveTaskState(task_id=..., current_position=...) "
-            "to add_task() explicitly."
-        )

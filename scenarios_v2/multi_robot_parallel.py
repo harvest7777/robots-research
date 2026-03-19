@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
+from simulation.domain.task_state import TaskState
 from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
@@ -55,7 +56,7 @@ def build() -> SimulationRunner:
     )
     for i in range(3):
         runner.add_robot(robots[i], RobotState(robot_id=ROBOT_IDS[i], position=_ROBOT_STARTS[i]))
-        runner.add_task(tasks[i])
+        runner.add_task(tasks[i], TaskState(task_id=TASK_IDS[i]))
     return runner
 
 

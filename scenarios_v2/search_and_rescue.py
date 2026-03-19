@@ -30,6 +30,7 @@ from simulation.domain import (
     Environment, RescuePoint, Robot, RobotId, RobotState,
     SearchTask, TaskId, SpatialConstraint,
 )
+from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
@@ -95,7 +96,7 @@ def build() -> tuple[SimulationRunner, BaseAssignmentService]:
     )
     for robot in robots:
         runner.add_robot(robot, RobotState(robot_id=robot.id, position=_ROBOT_STARTS[robot.id]))
-    runner.add_task(search)
+    runner.add_task(search, SearchTaskState(task_id=SEARCH_TASK_ID))
     return runner, assignment_service
 
 

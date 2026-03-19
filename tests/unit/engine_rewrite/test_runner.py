@@ -9,6 +9,8 @@ from simulation.domain import (
     TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
     WorkTask, SpatialConstraint,
 )
+from simulation.domain.search_task import SearchTaskState
+from simulation.domain.task_state import TaskState
 from simulation.primitives import Capability, Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner
 from simulation.engine_rewrite.services import (
@@ -42,7 +44,7 @@ def _make_runner(
         Robot(id=RobotId(1), capabilities=frozenset()),
         RobotState(robot_id=RobotId(1), position=Position(0, 0)),
     )
-    runner.add_task(t)
+    runner.add_task(t, TaskState(task_id=t.id))
     return runner, registry
 
 
@@ -64,7 +66,7 @@ def test_step_syncs_externally_added_tasks_from_registry():
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
     )
-    runner.add_task(new_task)
+    runner.add_task(new_task, TaskState(task_id=TaskId(2)))
 
     new_state, _ = runner.step()
     assert TaskId(2) in new_state.tasks
@@ -107,7 +109,7 @@ def test_step_adds_spawned_tasks_to_registry():
         pathfinding=astar_pathfind,
     )
     runner.add_robot(robot, RobotState(robot_id=RobotId(1), position=Position(0, 0)))
-    runner.add_task(search)
+    runner.add_task(search, SearchTaskState(task_id=TaskId(1)))
 
     runner.step()
     assert registry.get_task(TaskId(2)) is not None

@@ -57,16 +57,10 @@ class SimulationRunner:
         self._registry.add_robot(robot)
         self._state_service.init_robot(robot.id, initial_state)
 
-    def add_task(self, task: BaseTask, initial_state: BaseTaskState | None = None) -> None:
-        """Register a task definition and its initial runtime state.
-
-        If initial_state is omitted, task.initial_state() is called. MoveTask
-        always requires an explicit initial_state (its starting position must
-        be specified by the caller).
-        """
+    def add_task(self, task: BaseTask, initial_state: BaseTaskState) -> None:
+        """Register a task definition and its initial runtime state."""
         self._registry.add_task(task)
-        state = initial_state if initial_state is not None else task.initial_state()
-        self._state_service.init_task(task.id, state)
+        self._state_service.init_task(task.id, initial_state)
 
     def step(self) -> tuple[SimulationState, StepOutcome]:
         robot_states, task_states = self._state_service.get_snapshot()
