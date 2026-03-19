@@ -26,3 +26,6 @@ class InMemoryAssignmentService(BaseAssignmentService):
     def update(self, assignments: list[Assignment]) -> None:
         for assignment in assignments:
             self._assignments[assignment.robot_id] = assignment
+
+    def unassign(self, robot_id: RobotId) -> None:
+        self._assignments.pop(robot_id, None)

@@ -48,6 +48,11 @@ class JsonAssignmentService(BaseAssignmentService):
             current[a.robot_id] = a
         self._flush(current)
 
+    def unassign(self, robot_id: RobotId) -> None:
+        current = {a.robot_id: a for a in self.get_current()}
+        current.pop(robot_id, None)
+        self._flush(current)
+
     def clear(self) -> None:
         """Remove all assignments — robots will idle."""
         self._flush({})

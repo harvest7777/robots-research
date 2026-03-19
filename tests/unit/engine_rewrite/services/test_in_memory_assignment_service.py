@@ -32,3 +32,15 @@ def test_update_leaves_unmentioned_robots_unchanged():
     service = InMemoryAssignmentService(assignments=[_assign(1, 10), _assign(2, 20)])
     service.update([_assign(1, 99)])
     assert set(service.get_current()) == {_assign(1, 99), _assign(2, 20)}
+
+
+def test_unassign_removes_robot():
+    service = InMemoryAssignmentService(assignments=[_assign(1, 10), _assign(2, 20)])
+    service.unassign(RobotId(1))
+    assert service.get_current() == [_assign(2, 20)]
+
+
+def test_unassign_noop_when_not_assigned():
+    service = InMemoryAssignmentService(assignments=[_assign(1, 10)])
+    service.unassign(RobotId(99))  # robot 99 doesn't exist
+    assert service.get_current() == [_assign(1, 10)]
