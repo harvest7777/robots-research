@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from simulation.domain import (
     TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, SearchTaskState, SpatialConstraint,
+    SearchTask, SearchTaskState, SpatialConstraint, WorkTask, TaskState,
 )
 from simulation.engine_rewrite import SimulationState
 from simulation.primitives import Position, Time
@@ -13,11 +13,17 @@ from simulation_view.v2.panels.rescue_points import render_rescue_points
 
 
 def _rp(task_id: int = 10, name: str = "Base Camp", x: int = 3, y: int = 4) -> RescuePoint:
-    return RescuePoint(
+    _task = WorkTask(
         id=TaskId(task_id),
         priority=1,
+        spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
+    )
+    return RescuePoint(
+        id=TaskId(task_id),
         name=name,
         spatial_constraint=SpatialConstraint(target=Position(x, y), max_distance=0),
+        task=_task,
+        initial_task_state=TaskState(task_id=TaskId(task_id)),
     )
 
 

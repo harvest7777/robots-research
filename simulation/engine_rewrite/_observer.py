@@ -29,7 +29,6 @@ from simulation.algorithms.movement_planner import PathfindingAlgorithm, resolve
 from simulation.algorithms.search_goal import compute_search_goal
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId, TaskStatus
 from simulation.domain.move_task import MoveTask, MoveTaskState
-from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot import Robot
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
@@ -37,9 +36,7 @@ from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 
-from .assignment import Assignment
-from .simulation_state import SimulationState
-from .step_outcome import IgnoreReason, StepOutcome
+from simulation.domain import Assignment, SimulationState, IgnoreReason, StepOutcome
 
 
 def classify_step(
@@ -265,7 +262,7 @@ def classify_step(
                 outcome.rescue_points_found.append(rescue_point.id)
                 seen_rescue_ids.add(rescue_point.id)
                 # The rescue point IS the task — no transformation needed.
-                outcome.tasks_spawned.append((rescue_point, TaskState(task_id=rescue_point.id)))
+                outcome.tasks_spawned.append((rescue_point.task, rescue_point.initial_task_state))
                 break
 
     # -------------------------------------------------------------------------

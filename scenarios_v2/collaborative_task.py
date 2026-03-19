@@ -114,8 +114,8 @@ if __name__ == "__main__":
     finally:
         renderer.cleanup()
 
-    solo = solo_runner.report()
-    duo  = duo_runner.report()
+    solo = solo_runner.stop()
+    duo  = duo_runner.stop()
 
     print(f"solo (1 robot):  {solo}")
     print(f"duo  (2 robots): {duo}")

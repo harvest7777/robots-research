@@ -4,7 +4,7 @@ Robots panel: one line per robot showing id, position, and battery level.
 
 from __future__ import annotations
 
-from simulation.engine_rewrite import SimulationState
+from simulation.domain import SimulationState
 from simulation_view.v2.symbols import ROBOT_SYMBOL
 
 

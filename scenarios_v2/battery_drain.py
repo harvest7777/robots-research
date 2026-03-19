@@ -101,4 +101,4 @@ if __name__ == "__main__":
     finally:
         renderer.cleanup()
 
-    print(runner.report())
+    print(runner.stop())

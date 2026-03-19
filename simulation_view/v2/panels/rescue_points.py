@@ -8,7 +8,7 @@ Only rendered when rescue points exist in the environment.
 from __future__ import annotations
 
 from simulation.domain import TaskId, SearchTaskState
-from simulation.engine_rewrite import SimulationState
+from simulation.domain import SimulationState
 
 from simulation_view.v2.symbols import RESCUE_POINT_SYMBOL
 

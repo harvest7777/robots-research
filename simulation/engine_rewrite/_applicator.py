@@ -23,8 +23,8 @@ from simulation.domain.search_task import SearchTaskState
 from simulation.domain.task_state import TaskState
 from simulation.primitives.time import Time
 
-from .simulation_state import SimulationState
-from .step_outcome import StepOutcome
+from simulation.domain.simulation_state import SimulationState
+from simulation.domain.step_outcome import StepOutcome
 
 
 def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationState:

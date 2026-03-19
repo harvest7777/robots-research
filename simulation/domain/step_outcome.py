@@ -23,7 +23,7 @@ from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
 from simulation.domain.robot_state import RobotId
 from simulation.primitives.position import Position
 
-from .assignment import Assignment
+from simulation.domain import Assignment
 
 
 class IgnoreReason(Enum):

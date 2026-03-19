@@ -91,11 +91,17 @@ def test_shows_in_progress_symbol():
 
 def test_search_task_shows_found_progress():
     task = SearchTask(id=TaskId(1), priority=1)
-    rp = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(2),
         priority=1,
+        spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+    )
+    rp = RescuePoint(
+        id=TaskId(2),
         name="RP1",
         spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(2)),
     )
 
     def add_rp(env):

@@ -28,7 +28,7 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     Environment, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, TaskId, SpatialConstraint,
+    SearchTask, TaskId, SpatialConstraint, WorkTask, TaskState,
 )
 from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
@@ -58,7 +58,7 @@ _ROBOT_STARTS = {
 
 
 def build() -> tuple[SimulationRunner, BaseAssignmentService]:
-    rescue = RescuePoint(
+    _rescue_task = WorkTask(
         id=RESCUE_POINT_ID,
         priority=10,
         required_work_time=Time(_RESCUE_WORK_TIME),
@@ -67,6 +67,16 @@ def build() -> tuple[SimulationRunner, BaseAssignmentService]:
             max_distance=_RESCUE_MAX_DIST,
         ),
         required_capabilities=frozenset({Capability.VISION}),
+    )
+    rescue = RescuePoint(
+        id=RESCUE_POINT_ID,
+        name="",
+        spatial_constraint=SpatialConstraint(
+            target=_RESCUE_POSITION,
+            max_distance=_RESCUE_MAX_DIST,
+        ),
+        task=_rescue_task,
+        initial_task_state=TaskState(task_id=RESCUE_POINT_ID),
     )
     env = Environment(width=10, height=10)
     env.add_rescue_point(rescue)
@@ -110,7 +120,7 @@ def run(max_ticks: int = 150) -> tuple[SimulationState, list[StepOutcome], Simul
 
         # React to discovery: assign all robots to the rescue task.
         for task, _ in outcome.tasks_spawned:
-            if isinstance(task, RescuePoint):
+            if task.id == RESCUE_POINT_ID:
                 assignment_service.update([
                     Assignment(task_id=task.id, robot_id=robot_id)
                     for robot_id in ROBOT_IDS
@@ -140,7 +150,7 @@ if __name__ == "__main__":
             outcomes.append(outcome)
 
             for task, _ in outcome.tasks_spawned:
-                if isinstance(task, RescuePoint):
+                if task.id == RESCUE_POINT_ID:
                     assignment_service.update([
                         Assignment(task_id=task.id, robot_id=robot_id)
                         for robot_id in ROBOT_IDS
@@ -167,7 +177,7 @@ if __name__ == "__main__":
         for robot_id, rs in state.robot_states.items()
     }
 
-    print(runner.report())
+    print(runner.stop())
     print(f"Rescue point discovered at tick: {discovery_tick}")
     print(f"Final robot positions: {final_positions}")
     print(f"Distance to rescue point: { {rid: pos.manhattan(_RESCUE_POSITION) for rid, pos in final_positions.items()} }")

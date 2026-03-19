@@ -9,7 +9,7 @@ Key behaviour under test:
   casualty to the extraction zone.
 """
 
-from simulation.domain import RescuePoint, RobotId
+from simulation.domain import RobotId
 from simulation.domain.move_task import MoveTask, MoveTaskState
 
 from scenarios_v2.search_and_rescue_move import (
@@ -26,7 +26,7 @@ def test_casualty_discovered_on_tick_1():
     discovery must happen on the very first tick."""
     runner, _ = build()
     _, outcome = runner.step()
-    assert any(isinstance(t, RescuePoint) for t, _ in outcome.tasks_spawned)
+    assert outcome.rescue_points_found
 
 
 def test_searcher_does_not_step_onto_rescue_point():

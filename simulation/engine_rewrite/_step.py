@@ -11,8 +11,8 @@ from simulation.algorithms.movement_planner import PathfindingAlgorithm
 
 from ._applicator import apply_outcome
 from ._observer import classify_step
-from .simulation_state import SimulationState
-from .step_outcome import StepOutcome
+from simulation.domain.simulation_state import SimulationState
+from simulation.domain.step_outcome import StepOutcome
 
 
 def step(

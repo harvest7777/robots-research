@@ -9,13 +9,13 @@ def test_all_tasks_complete_before_max_ticks():
 
 def test_makespan_is_set():
     _, _, runner = run()
-    report = runner.report()
+    report = runner.stop()
     assert report.makespan is not None
 
 
 
 def test_analysis_counts_all_completed_tasks():
     _, _, runner = run()
-    report = runner.report()
+    report = runner.stop()
     assert report.tasks_completed == len(TASK_IDS)
     assert report.tasks_failed == 0

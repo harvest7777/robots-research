@@ -20,7 +20,6 @@ from pathlib import Path
 
 from simulation.domain.base_task import BaseTaskState, TaskId
 from simulation.domain.move_task import MoveTask, MoveTaskState
-from simulation.domain.rescue_point import RescuePoint
 from simulation.domain.robot_state import RobotId, RobotState
 from simulation.domain.search_task import SearchTask, SearchTaskState
 
@@ -120,9 +119,6 @@ class JsonSimulationStateService(BaseSimulationStateService):
                 entry["min_robots_required"] = task.min_robots_required
                 if isinstance(ts, MoveTaskState):
                     entry["current_position"] = [ts.current_position.x, ts.current_position.y]
-            elif isinstance(task, RescuePoint):
-                entry["task_type"] = "rescue_point"
-                entry["location"] = [task.position.x, task.position.y]
             elif isinstance(task, SearchTask):
                 entry["task_type"] = "search"
                 if isinstance(ts, SearchTaskState):

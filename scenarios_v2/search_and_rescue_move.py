@@ -30,7 +30,7 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     Environment, MoveTask, MoveTaskState, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, TaskId, SpatialConstraint,
+    SearchTask, TaskId, SpatialConstraint, WorkTask, TaskState,
 )
 from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
@@ -86,7 +86,7 @@ def build(
     # Rescue point — discovery marker with proximity lock radius = 1.
     # Robot 1 starts adjacent, so the lock fires on tick 1 and discovery on tick 2.
     # No robot is ever assigned to work it; it only triggers the MoveTask handover.
-    rescue = RescuePoint(
+    _rescue_task = WorkTask(
         id=RESCUE_POINT_ID,
         priority=10,
         required_work_time=Time(1),
@@ -95,6 +95,16 @@ def build(
             max_distance=1,
         ),
         required_capabilities=frozenset({Capability.VISION}),
+    )
+    rescue = RescuePoint(
+        id=RESCUE_POINT_ID,
+        name="",
+        spatial_constraint=SpatialConstraint(
+            target=_CASUALTY_POS,
+            max_distance=1,
+        ),
+        task=_rescue_task,
+        initial_task_state=TaskState(task_id=RESCUE_POINT_ID),
     )
     env.add_rescue_point(rescue)
 
@@ -141,7 +151,7 @@ def build(
 def _handle_discovery(outcome: StepOutcome, assignment_service: BaseAssignmentService) -> None:
     """On rescue point discovery, reassign all robots to carry the casualty out."""
     for task, _ in outcome.tasks_spawned:
-        if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_ID:
+        if task.id == RESCUE_POINT_ID:
             assignment_service.update([
                 Assignment(task_id=MOVE_TASK_ID, robot_id=robot_id)
                 for robot_id in ROBOT_IDS
@@ -202,7 +212,7 @@ if __name__ == "__main__":
     }
     move_state = state.task_states.get(MOVE_TASK_ID)
 
-    print(runner.report())
+    print(runner.stop())
     print(f"Casualty discovered at tick: {discovery_tick}")
     print(f"Final robot positions: {final_positions}")
     print(f"Final casualty position: {getattr(move_state, 'current_position', '?')}")

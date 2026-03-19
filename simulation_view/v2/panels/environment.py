@@ -12,7 +12,7 @@ from simulation.domain import (
     WorkTask, SpatialConstraint,
 )
 from simulation.primitives import Position, ZoneType
-from simulation.engine_rewrite import SimulationState
+from simulation.domain import SimulationState
 
 from simulation_view.v2.symbols import (
     ROBOT_SYMBOL,

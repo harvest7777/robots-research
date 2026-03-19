@@ -8,7 +8,7 @@ per task showing which robots are assigned to it.
 from __future__ import annotations
 
 from simulation.domain import TaskId, RobotId
-from simulation.engine_rewrite import SimulationState
+from simulation.domain import SimulationState
 
 
 def render_header(state: SimulationState) -> list[str]:

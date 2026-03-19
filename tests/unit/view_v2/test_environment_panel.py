@@ -123,11 +123,17 @@ def test_done_task_not_rendered():
 
 
 def test_rescue_point_symbol():
-    rp = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(1),
         priority=1,
+        spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+    )
+    rp = RescuePoint(
+        id=TaskId(1),
         name="RP1",
         spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(1)),
     )
 
     def setup(env: Environment):

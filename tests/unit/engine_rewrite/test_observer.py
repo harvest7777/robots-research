@@ -386,13 +386,19 @@ def test_waypoint_set_even_when_robot_already_at_goal():
 # ---------------------------------------------------------------------------
 
 def test_search_robot_discovers_rescue_point_when_at_position():
-    rescue_point = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(20),
         min_robots_needed=1,
+    )
+    rescue_point = RescuePoint(
+        id=TaskId(1),
         name="Alpha",
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(1)),
     )
     env = _env()
     env.add_rescue_point(rescue_point)
@@ -417,13 +423,19 @@ def test_search_robot_discovers_rescue_point_when_at_position():
 
 
 def test_already_found_rescue_point_not_re_discovered():
-    rescue_point = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(20),
         min_robots_needed=1,
+    )
+    rescue_point = RescuePoint(
+        id=TaskId(1),
         name="Alpha",
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(1)),
     )
     env = _env()
     env.add_rescue_point(rescue_point)
@@ -447,13 +459,19 @@ def test_already_found_rescue_point_not_re_discovered():
 
 
 def test_spawned_rescue_task_has_correct_location_and_work_time():
-    rescue_point = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
         required_work_time=Time(30),
         min_robots_needed=2,
+    )
+    rescue_point = RescuePoint(
+        id=TaskId(1),
         name="Bravo",
+        spatial_constraint=SpatialConstraint(target=Position(3, 3), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(1)),
     )
     env = _env()
     env.add_rescue_point(rescue_point)
@@ -474,7 +492,7 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
     outcome = classify_step(state, astar_pathfind)
     assert len(outcome.tasks_spawned) == 1
     spawned, _ = outcome.tasks_spawned[0]
-    assert isinstance(spawned, RescuePoint)
+    assert isinstance(spawned, WorkTask)
     assert spawned.required_work_time == Time(30)
     assert spawned.min_robots_needed == 2
     assert spawned.spatial_constraint is not None
@@ -482,19 +500,31 @@ def test_spawned_rescue_task_has_correct_location_and_work_time():
 
 
 def test_search_task_not_complete_when_rescue_point_remaining():
-    rp_found = RescuePoint(
+    _rp_task_found = WorkTask(
         id=TaskId(2),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(10),
-        name="Alpha",
     )
-    rp_unfound = RescuePoint(
+    rp_found = RescuePoint(
+        id=TaskId(2),
+        name="Alpha",
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        task=_rp_task_found,
+        initial_task_state=TaskState(task_id=TaskId(2)),
+    )
+    _rp_task_unfound = WorkTask(
         id=TaskId(3),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
         required_work_time=Time(10),
+    )
+    rp_unfound = RescuePoint(
+        id=TaskId(3),
         name="Bravo",
+        spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
+        task=_rp_task_unfound,
+        initial_task_state=TaskState(task_id=TaskId(3)),
     )
     env = _env()
     env.add_rescue_point(rp_found)
@@ -520,19 +550,31 @@ def test_search_task_completes_when_last_rescue_point_found():
     # Simulates a multi-tick scenario: one rescue point was already found in a
     # previous tick (reflected in rescue_found), robot discovers the last one
     # this tick — search task should complete.
-    rp_previous = RescuePoint(
+    _rp_task_previous = WorkTask(
         id=TaskId(2),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(1, 1), max_distance=0),
         required_work_time=Time(10),
-        name="Alpha",
     )
-    rp_last = RescuePoint(
+    rp_previous = RescuePoint(
+        id=TaskId(2),
+        name="Alpha",
+        spatial_constraint=SpatialConstraint(target=Position(1, 1), max_distance=0),
+        task=_rp_task_previous,
+        initial_task_state=TaskState(task_id=TaskId(2)),
+    )
+    _rp_task_last = WorkTask(
         id=TaskId(3),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(10),
+    )
+    rp_last = RescuePoint(
+        id=TaskId(3),
         name="Bravo",
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        task=_rp_task_last,
+        initial_task_state=TaskState(task_id=TaskId(3)),
     )
     env = _env()
     env.add_rescue_point(rp_previous)

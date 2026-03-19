@@ -19,6 +19,6 @@ def test_no_battery_fires():
 
 def test_analysis_shows_no_completions():
     _, _, runner = run()
-    report = runner.report()
+    report = runner.stop()
     assert report.tasks_completed == 0
     assert report.makespan is None

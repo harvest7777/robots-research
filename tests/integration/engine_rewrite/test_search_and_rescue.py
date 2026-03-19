@@ -1,11 +1,9 @@
-from simulation.domain import RescuePoint
-
 from scenarios_v2.search_and_rescue import run, RESCUE_POINT_ID, ROBOT_IDS
 
 
 def test_rescue_point_is_discovered():
     _, outcomes, _ = run()
-    assert any(isinstance(t, RescuePoint) for o in outcomes for t, _ in o.tasks_spawned)
+    assert any(o.rescue_points_found for o in outcomes)
 
 
 def test_rescue_task_completes():
@@ -27,7 +25,7 @@ def test_all_robots_converge_within_max_distance():
 
 def test_analysis_counts_both_tasks_completed():
     _, _, runner = run()
-    report = runner.report()
+    report = runner.stop()
     # search task + rescue task
     assert report.tasks_completed == 2
     assert report.makespan is not None

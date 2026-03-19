@@ -22,8 +22,8 @@ from dataclasses import dataclass
 
 from simulation.domain.base_task import TaskId, TaskStatus
 
-from .simulation_state import SimulationState
-from .step_outcome import StepOutcome
+from simulation.domain.simulation_state import SimulationState
+from simulation.domain.step_outcome import StepOutcome
 
 
 @dataclass(frozen=True)

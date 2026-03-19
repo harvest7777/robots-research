@@ -7,7 +7,7 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
-    WorkTask, SpatialConstraint,
+    WorkTask, SpatialConstraint, TaskState,
 )
 from simulation.domain.search_task import SearchTaskState
 from simulation.domain.task_state import TaskState
@@ -77,12 +77,19 @@ def test_step_adds_spawned_tasks_to_registry():
     # registry so it becomes available for assignment in subsequent steps.
     from simulation.domain import SearchTask
 
-    rescue = RescuePoint(
+    _rescue_task = WorkTask(
         id=TaskId(2),
         priority=10,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(0, 0), max_distance=0),
         required_capabilities=frozenset({Capability.VISION}),
+    )
+    rescue = RescuePoint(
+        id=TaskId(2),
+        name="",
+        spatial_constraint=SpatialConstraint(target=Position(0, 0), max_distance=0),
+        task=_rescue_task,
+        initial_task_state=TaskState(task_id=TaskId(2)),
     )
     env = Environment(width=10, height=10)
     env.add_rescue_point(rescue)

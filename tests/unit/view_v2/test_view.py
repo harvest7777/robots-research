@@ -90,11 +90,17 @@ def test_rescue_points_section_absent_when_no_rescue_points():
 
 
 def test_rescue_points_section_present_when_rescue_points_exist():
-    rp = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(10),
         priority=1,
+        spatial_constraint=SpatialConstraint(target=Position(2, 2), max_distance=0),
+    )
+    rp = RescuePoint(
+        id=TaskId(10),
         name="Camp",
         spatial_constraint=SpatialConstraint(target=Position(2, 2), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(10)),
     )
     view = SimulationViewV2()
     frame = view.render(_base_state(rescue_points=[rp]), width=80, height=50)

@@ -10,8 +10,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from simulation.domain.robot_state import RobotId
-from simulation.engine_rewrite.assignment import Assignment
+from simulation.domain import Assignment, RobotId
 
 
 class BaseAssignmentService(ABC):

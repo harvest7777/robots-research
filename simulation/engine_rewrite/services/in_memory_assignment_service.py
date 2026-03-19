@@ -7,8 +7,7 @@ Stores one assignment per robot in a dict keyed by RobotId.
 
 from __future__ import annotations
 
-from simulation.domain.robot_state import RobotId
-from simulation.engine_rewrite.assignment import Assignment
+from simulation.domain import RobotId, Assignment
 
 from .base_assignment_service import BaseAssignmentService
 

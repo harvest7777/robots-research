@@ -174,12 +174,18 @@ def test_completed_task_has_completed_at_set():
 
 def test_rescue_point_marked_found_in_search_state():
     env = _env()
-    rescue_point = RescuePoint(
+    _rp_task = WorkTask(
         id=TaskId(1),
         priority=10,
         spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
         required_work_time=Time(10),
+    )
+    rescue_point = RescuePoint(
+        id=TaskId(1),
         name="A",
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+        task=_rp_task,
+        initial_task_state=TaskState(task_id=TaskId(1)),
     )
     env.add_rescue_point(rescue_point)
 

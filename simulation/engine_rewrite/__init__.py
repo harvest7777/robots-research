@@ -1,7 +1,7 @@
-from simulation.engine_rewrite.assignment import Assignment
+from simulation.domain.assignment import Assignment
+from simulation.domain.simulation_state import SimulationState
 from simulation.engine_rewrite.runner import SimulationRunner
-from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.step_outcome import IgnoreReason, StepOutcome
+from simulation.domain.step_outcome import IgnoreReason, StepOutcome
 from simulation.engine_rewrite.services import (
     BaseAssignmentService,
     BaseSimulationRegistry,
@@ -10,6 +10,7 @@ from simulation.engine_rewrite.services import (
     InMemorySimulationRegistry,
     InMemorySimulationStateService,
     JsonAssignmentService,
+    JsonSimulationRegistry,
     JsonSimulationStateService,
 )
 
@@ -28,5 +29,6 @@ __all__ = [
     "InMemorySimulationRegistry",
     "InMemorySimulationStateService",
     "JsonAssignmentService",
+    "JsonSimulationRegistry",
     "JsonSimulationStateService",
 ]

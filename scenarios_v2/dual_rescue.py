@@ -45,7 +45,7 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import (
     Environment, MoveTask, MoveTaskState, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, TaskId, SpatialConstraint,
+    SearchTask, TaskId, SpatialConstraint, WorkTask, TaskState,
 )
 from simulation.domain.search_task import SearchTaskState
 from simulation.primitives import Capability, Position, Time
@@ -104,25 +104,33 @@ def build(
         env.add_obstacle(pos)
 
     # Two rescue points — proximity lock radius 1 so adjacent robots discover.
-    rescue_a = RescuePoint(
+    _rescue_task_a = WorkTask(
         id=RESCUE_POINT_A_ID,
         priority=10,
         required_work_time=Time(1),
-        spatial_constraint=SpatialConstraint(
-            target=_CASUALTY_A_POS,
-            max_distance=1,
-        ),
+        spatial_constraint=SpatialConstraint(target=_CASUALTY_A_POS, max_distance=1),
+        required_capabilities=frozenset({Capability.VISION}),
+    )
+    rescue_a = RescuePoint(
+        id=RESCUE_POINT_A_ID,
+        name="",
+        spatial_constraint=SpatialConstraint(target=_CASUALTY_A_POS, max_distance=1),
+        task=_rescue_task_a,
+        initial_task_state=TaskState(task_id=RESCUE_POINT_A_ID),
+    )
+    _rescue_task_b = WorkTask(
+        id=RESCUE_POINT_B_ID,
+        priority=10,
+        required_work_time=Time(1),
+        spatial_constraint=SpatialConstraint(target=_CASUALTY_B_POS, max_distance=1),
         required_capabilities=frozenset({Capability.VISION}),
     )
     rescue_b = RescuePoint(
         id=RESCUE_POINT_B_ID,
-        priority=10,
-        required_work_time=Time(1),
-        spatial_constraint=SpatialConstraint(
-            target=_CASUALTY_B_POS,
-            max_distance=1,
-        ),
-        required_capabilities=frozenset({Capability.VISION}),
+        name="",
+        spatial_constraint=SpatialConstraint(target=_CASUALTY_B_POS, max_distance=1),
+        task=_rescue_task_b,
+        initial_task_state=TaskState(task_id=RESCUE_POINT_B_ID),
     )
     env.add_rescue_point(rescue_a)
     env.add_rescue_point(rescue_b)
@@ -188,12 +196,12 @@ def run(max_ticks: int = 400) -> tuple[SimulationState, list[StepOutcome], Simul
         outcomes.append(outcome)
 
         for task, _ in outcome.tasks_spawned:
-            if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_A_ID:
+            if task.id == RESCUE_POINT_A_ID:
                 assignment_service.update([
                     Assignment(task_id=MOVE_TASK_A_ID, robot_id=RobotId(1)),
                     Assignment(task_id=MOVE_TASK_A_ID, robot_id=RobotId(3)),
                 ])
-            elif isinstance(task, RescuePoint) and task.id == RESCUE_POINT_B_ID:
+            elif task.id == RESCUE_POINT_B_ID:
                 assignment_service.update([
                     Assignment(task_id=MOVE_TASK_B_ID, robot_id=RobotId(2)),
                     Assignment(task_id=MOVE_TASK_B_ID, robot_id=RobotId(4)),
@@ -226,12 +234,12 @@ if __name__ == "__main__":
             outcomes.append(outcome)
 
             for task, _ in outcome.tasks_spawned:
-                if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_A_ID:
+                if task.id == RESCUE_POINT_A_ID:
                     assignment_service.update([
                         Assignment(task_id=MOVE_TASK_A_ID, robot_id=RobotId(1)),
                         Assignment(task_id=MOVE_TASK_A_ID, robot_id=RobotId(3)),
                     ])
-                elif isinstance(task, RescuePoint) and task.id == RESCUE_POINT_B_ID:
+                elif task.id == RESCUE_POINT_B_ID:
                     assignment_service.update([
                         Assignment(task_id=MOVE_TASK_B_ID, robot_id=RobotId(2)),
                         Assignment(task_id=MOVE_TASK_B_ID, robot_id=RobotId(4)),
@@ -259,7 +267,7 @@ if __name__ == "__main__":
     move_a_state = state.task_states.get(MOVE_TASK_A_ID)
     move_b_state = state.task_states.get(MOVE_TASK_B_ID)
 
-    print(runner.report())
+    print(runner.stop())
     print(f"Final robot positions: {final_positions}")
     print(f"Final position casualty A: {getattr(move_a_state, 'current_position', '?')}")
     print(f"Final position casualty B: {getattr(move_b_state, 'current_position', '?')}")

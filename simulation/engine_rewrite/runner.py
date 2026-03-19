@@ -18,20 +18,26 @@ Each call to step():
 
 from __future__ import annotations
 
+import os
+
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
+from simulation.algorithms import astar_pathfinding
 from simulation.domain.base_task import BaseTask, BaseTaskState
 from simulation.domain.environment import Environment
 from simulation.domain.robot import Robot
-from simulation.domain.robot_state import RobotId, RobotState
+from simulation.domain.robot_state import RobotState
 from simulation.primitives.time import Time
+
+from simulation_view.terminal_renderer import TerminalRenderer
+from simulation_view.v2.view import SimulationViewV2
 
 from ._analysis import SimulationAnalysis
 from .services.base_assignment_service import BaseAssignmentService
 from .services.base_simulation_registry import BaseSimulationRegistry
 from .services.base_simulation_state_service import BaseSimulationStateService
-from .simulation_state import SimulationState
+from simulation.domain.simulation_state import SimulationState
 from ._step import step as engine_step
-from .step_outcome import StepOutcome
+from simulation.domain.step_outcome import StepOutcome
 
 
 class SimulationRunner:
@@ -42,7 +48,8 @@ class SimulationRunner:
         registry: BaseSimulationRegistry,
         state_service: BaseSimulationStateService,
         assignment_service: BaseAssignmentService,
-        pathfinding: PathfindingAlgorithm,
+        pathfinding: PathfindingAlgorithm = astar_pathfinding,
+        view: bool = False,
     ) -> None:
         self._environment = environment
         self._registry = registry
@@ -51,6 +58,10 @@ class SimulationRunner:
         self._pathfinding = pathfinding
         self._t_now: Time = Time(0)
         self._history: list[tuple[SimulationState, StepOutcome]] = []
+        self._view = view
+        if view:
+            self._view_assembler = SimulationViewV2()
+            self._view_renderer = TerminalRenderer()
 
     def add_robot(self, robot: Robot, initial_state: RobotState) -> None:
         """Register a robot definition and its initial runtime state."""
@@ -87,24 +98,18 @@ class SimulationRunner:
         self._t_now = new_state.t_now
 
         self._history.append((new_state, outcome))
+
+        if self._view:
+            cols, rows = os.get_terminal_size()
+            frame = self._view_assembler.render(new_state, cols, rows)
+            self._view_renderer.draw(frame)
+
         return new_state, outcome
 
-    @property
-    def registry(self) -> BaseSimulationRegistry:
-        return self._registry
+    def stop(self) -> SimulationAnalysis:
+        if self._view:
+            self._view_renderer.cleanup()
+        return self._report()
 
-    def use_state_service(self, service: BaseSimulationStateService) -> None:
-        """Replace the state service and transfer all existing state into it.
-
-        Useful for hot-swapping an in-memory service for a file-backed one
-        after build() has already registered robots and tasks.
-        """
-        robot_states, task_states = self._state_service.get_snapshot()
-        for robot_id, rs in robot_states.items():
-            service.init_robot(robot_id, rs)
-        for task_id, ts in task_states.items():
-            service.init_task(task_id, ts)
-        self._state_service = service
-
-    def report(self) -> SimulationAnalysis:
+    def _report(self) -> SimulationAnalysis:
         return SimulationAnalysis.from_history(self._history)

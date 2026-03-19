@@ -7,7 +7,7 @@ task/state data to display strings.
 
 from __future__ import annotations
 
-from simulation.domain import BaseTask, BaseTaskState, TaskId, TaskStatus, MoveTask, RescuePoint, WorkTask, SearchTask, TaskState
+from simulation.domain import BaseTask, BaseTaskState, TaskId, TaskStatus, MoveTask, WorkTask, SearchTask, TaskState
 from simulation.primitives import ZoneType
 
 # ---------------------------------------------------------------------------
@@ -42,8 +42,6 @@ def task_label(task: BaseTask) -> str:
     """Return a short 2-char label for a task (e.g. "SR", "MV", "WK")."""
     if isinstance(task, SearchTask):
         return "SR"
-    if isinstance(task, RescuePoint):
-        return "RS"
     if isinstance(task, MoveTask):
         return "MV"
     assert isinstance(task, WorkTask)
@@ -54,8 +52,6 @@ def task_full_name(task: BaseTask) -> str:
     """Return a human-readable name for a task."""
     if isinstance(task, SearchTask):
         return "Search"
-    if isinstance(task, RescuePoint):
-        return "Rescue"
     if isinstance(task, MoveTask):
         return "Move"
     assert isinstance(task, WorkTask)
