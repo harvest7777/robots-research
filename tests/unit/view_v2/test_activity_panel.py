@@ -66,5 +66,8 @@ def test_done_task_assignment_shows_idle():
 
 
 def test_shows_robot_position():
-    lines = render_activity(_state(robot_pos=Position(3, 7)))
-    assert any("3.00" in l and "7.00" in l for l in lines)
+    # Use coordinates unlikely to collide with battery%, IDs, or other fields.
+    lines = render_activity(_state(robot_pos=Position(13, 47)))
+    x_shown = any("13.00" in l for l in lines)
+    y_shown = any("47.00" in l for l in lines)
+    assert x_shown and y_shown

@@ -112,14 +112,29 @@ def test_work_accumulates_on_worked_task():
 
 
 def test_two_robots_contribute_two_ticks():
-    state = _base_state()
-    state.robots[RobotId(2)] = Robot(id=RobotId(2), capabilities=frozenset())
-    state.robot_states[RobotId(2)] = RobotState(robot_id=RobotId(2), position=Position(0, 0))
+    task = WorkTask(
+        id=TaskId(1),
+        priority=5,
+        required_work_time=Time(10),
+        spatial_constraint=SpatialConstraint(target=Position(5, 5), max_distance=0),
+    )
+    state = SimulationState(
+        environment=_env(),
+        robots={
+            RobotId(1): Robot(id=RobotId(1), capabilities=frozenset()),
+            RobotId(2): Robot(id=RobotId(2), capabilities=frozenset()),
+        },
+        robot_states={
+            RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0)),
+            RobotId(2): RobotState(robot_id=RobotId(2), position=Position(0, 0)),
+        },
+        tasks={TaskId(1): task},
+        task_states={TaskId(1): TaskState(task_id=TaskId(1))},
+        t_now=Time(0),
+    )
     outcome = StepOutcome(worked=[(RobotId(1), TaskId(1)), (RobotId(2), TaskId(1))])
     new_state = apply_outcome(state, outcome)
-    task_state = new_state.task_states[TaskId(1)]
-    assert isinstance(task_state, TaskState)
-    assert task_state.work_done == Time(2)
+    assert new_state.task_states[TaskId(1)].work_done == Time(2)
 
 
 def test_started_at_set_on_first_work():

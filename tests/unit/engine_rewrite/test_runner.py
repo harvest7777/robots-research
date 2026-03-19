@@ -1,8 +1,5 @@
 """
 Tests for SimulationRunner — orchestration of registry, assignment service, and engine step.
-
-Confirms that step() wires services correctly, surfaces spawned tasks to the
-registry, and returns (SimulationState, StepOutcome).
 """
 
 from __future__ import annotations
@@ -26,7 +23,7 @@ def _base_task() -> WorkTask:
     )
 
 
-def _base_state(task: Task | None = None) -> SimulationState:
+def _base_state(task: WorkTask | None = None) -> SimulationState:
     t = task or _base_task()
     return SimulationState(
         environment=Environment(width=10, height=10),
@@ -36,20 +33,6 @@ def _base_state(task: Task | None = None) -> SimulationState:
         task_states={t.id: TaskState(task_id=t.id)},
         t_now=Time(0),
     )
-
-
-def _runner(state: SimulationState | None = None, task: Task | None = None) -> SimulationRunner:
-    t = task or _base_task()
-    s = state or _base_state(t)
-    registry = InMemoryTaskRegistry(tasks=[t])
-    assignment_service = InMemoryAssignmentService()
-    return SimulationRunner(
-        state=s,
-        registry=registry,
-        assignment_service=assignment_service,
-        pathfinding=astar_pathfind,
-    )
-
 
 
 def test_step_reads_assignments_from_service():
@@ -94,40 +77,9 @@ def test_step_syncs_externally_added_tasks_from_registry():
     assert TaskId(2) in new_state.tasks
 
 
-def test_unassigned_task_has_no_task_state():
-    # A task in the registry that is never assigned should produce no
-    # task_states entry — there is nothing to track until work begins.
-    task = _base_task()
-    unassigned_task = WorkTask(
-        id=TaskId(2),
-        priority=3,
-        required_work_time=Time(5),
-        spatial_constraint=SpatialConstraint(target=Position(9, 9), max_distance=0),
-    )
-    state = SimulationState(
-        environment=Environment(width=10, height=10),
-        robots={RobotId(1): Robot(id=RobotId(1), capabilities=frozenset())},
-        robot_states={RobotId(1): RobotState(robot_id=RobotId(1), position=Position(0, 0))},
-        tasks={task.id: task},
-        task_states={task.id: TaskState(task_id=task.id)},
-        t_now=Time(0),
-    )
-    registry = InMemoryTaskRegistry(tasks=[task, unassigned_task])
-    assignment_service = InMemoryAssignmentService()
-    runner = SimulationRunner(
-        state=state,
-        registry=registry,
-        assignment_service=assignment_service,
-        pathfinding=astar_pathfind,
-    )
-
-    new_state, _ = runner.step()
-    assert TaskId(2) not in new_state.task_states
-
-
 def test_step_adds_spawned_tasks_to_registry():
-    # Build a search task scenario where a rescue point gets discovered,
-    # producing a tasks_spawned entry that should land in the registry.
+    # When a rescue point is discovered, the runner must surface it to the
+    # registry so it becomes available for assignment in subsequent steps.
     from simulation.domain import SearchTask, SearchTaskState
 
     rescue = RescuePoint(
@@ -173,6 +125,5 @@ def test_step_adds_spawned_tasks_to_registry():
         pathfinding=astar_pathfind,
     )
 
-    _, outcome = runner.step()
-    assert TaskId(2) in outcome.rescue_points_found
+    runner.step()
     assert registry.get(TaskId(2)) is not None

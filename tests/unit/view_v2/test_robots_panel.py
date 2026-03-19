@@ -46,8 +46,9 @@ def test_shows_full_battery():
 
 
 def test_shows_robot_position():
-    lines = render_robots(_state_with_robot(position=Position(3, 7)))
-    assert any("3" in l and "7" in l for l in lines)
+    # Use coordinates unlikely to appear in battery%, IDs, or other fields.
+    lines = render_robots(_state_with_robot(position=Position(13, 47)))
+    assert any("13" in l and "47" in l for l in lines)
 
 
 def test_one_line_per_robot():

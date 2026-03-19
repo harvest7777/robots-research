@@ -74,10 +74,12 @@ def test_render_contains_activity_section():
 
 
 def test_render_contains_environment_grid():
+    from simulation_view.v2.symbols import ROBOT_SYMBOL
     view = SimulationViewV2()
     frame = view.render(_base_state(), width=80, height=40)
-    content = frame_to_string(frame)
-    assert "R" in content  # robot symbol
+    lines = frame_to_string(frame)
+    # Robot is at (0,0) — confirm its symbol appears in the first grid row.
+    assert ROBOT_SYMBOL in lines
 
 
 def test_rescue_points_section_absent_when_no_rescue_points():

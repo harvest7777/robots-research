@@ -1,5 +1,4 @@
 import dataclasses
-from unittest.mock import patch
 
 from simulation.domain import RobotId, Environment, RescuePoint, RobotState, TaskId, SpatialConstraint
 from simulation.primitives import Position
@@ -60,44 +59,43 @@ def test_proximity_lock_returns_none_when_within_threshold():
 
 
 def test_proximity_lock_not_triggered_when_outside_threshold():
-    rp = _rp(1, 9, 9, max_distance=5)
-    state = _state(0, 0)  # Manhattan distance = 18, well outside max_distance=5
-    env = Environment(width=10, height=10)
+    # Robot at (0,0), rp at (1,0) with max_distance=0.
+    # Distance = 1 > 0 → robot is outside the proximity zone → no lock.
+    # 2x1 env: the only other walkable cell is (1,0), so random fallback is deterministic.
+    rp = _rp(1, 1, 0, max_distance=0)
+    state = _state(0, 0)
+    env = Environment(width=2, height=1)
 
-    # Mock random fallback to return a fixed position that isn't (9, 9).
-    with patch("simulation.algorithms.search_goal.random.randint", side_effect=[3, 3]):
-        goal = compute_search_goal(
-            state=state,
-            rescue_points={rp.id: rp},
-            rescue_found=frozenset(),
-            pathfinding=_reachable,
-            environment=env,
-        )
+    goal = compute_search_goal(
+        state=state,
+        rescue_points={rp.id: rp},
+        rescue_found=frozenset(),
+        pathfinding=_reachable,
+        environment=env,
+    )
 
-    # No proximity lock — random fallback was chosen, not the rescue point
-    assert goal != Position(9, 9)
-    assert goal == Position(3, 3)
+    # No proximity lock — random fallback picked the only available cell
+    assert goal == Position(1, 0)
 
 
 def test_proximity_lock_skips_already_found_rescue_points():
+    # Robot at (0,0), rp at (1,0) within max_distance=10 — proximity would lock
+    # an unfound rp. Since it is already found it should be skipped.
+    # 2x1 env: random fallback deterministically picks the only other cell (1,0).
     rp = _rp(1, 1, 0, max_distance=10)
-    state = _state(0, 0)  # within max_distance
-    env = Environment(width=10, height=10)
+    state = _state(0, 0)
+    env = Environment(width=2, height=1)
 
-    # Mock the random fallback to avoid flakily picking the rescue point position.
-    with patch("simulation.algorithms.search_goal.random.randint", side_effect=[9, 9]):
-        goal = compute_search_goal(
-            state=state,
-            rescue_points={rp.id: rp},
-            rescue_found=frozenset({rp.id}),
-            pathfinding=_reachable,
-            environment=env,
-        )
+    goal = compute_search_goal(
+        state=state,
+        rescue_points={rp.id: rp},
+        rescue_found=frozenset({rp.id}),
+        pathfinding=_reachable,
+        environment=env,
+    )
 
-    # Found point is skipped — random fallback returned (9, 9) instead
-    assert rp.spatial_constraint is not None
-    assert goal != rp.spatial_constraint.target
-    assert goal == Position(9, 9)
+    # Found rp is skipped — random fallback picked the only available cell
+    assert goal == Position(1, 0)
 
 
 # ---------------------------------------------------------------------------

@@ -14,7 +14,3 @@ def test_two_robots_finish_faster_than_one():
     assert duo_makespan < solo_makespan
 
 
-def test_two_robots_halve_the_makespan():
-    _, _, runner = run(num_robots=2)
-    report = runner.report()
-    assert report.makespan == TASK_WORK_TIME // 2

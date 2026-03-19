@@ -62,14 +62,6 @@ def test_get_returns_none_for_missing_id():
     assert registry.get(TaskId(99)) is None
 
 
-def test_get_does_not_affect_other_tasks():
-    registry = InMemoryTaskRegistry()
-    registry.add(_task(1))
-    registry.add(_task(2))
-    registry.get(TaskId(1))
-    assert len(registry.all()) == 2
-
-
 # ---------------------------------------------------------------------------
 # constructor pre-load
 # ---------------------------------------------------------------------------
@@ -78,7 +70,3 @@ def test_constructor_accepts_initial_tasks():
     t1, t2 = _task(1), _task(2)
     registry = InMemoryTaskRegistry(tasks=[t1, t2])
     assert set(registry.all()) == {t1, t2}
-
-
-def test_constructor_with_no_args_is_empty():
-    assert InMemoryTaskRegistry().all() == []

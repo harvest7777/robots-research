@@ -10,6 +10,7 @@ Key behaviour under test:
 """
 
 from simulation.domain import RescuePoint, RobotId
+from simulation.domain.move_task import MoveTask, MoveTaskState
 
 from scenarios_v2.search_and_rescue_move import (
     build,
@@ -17,8 +18,6 @@ from scenarios_v2.search_and_rescue_move import (
     MOVE_TASK_ID,
     RESCUE_POINT_ID,
     ROBOT_IDS,
-    _CASUALTY_POS,
-    _EXTRACTION_POS,
 )
 
 
@@ -39,10 +38,15 @@ def test_searcher_does_not_step_onto_rescue_point():
     assert RESCUE_POINT_ID in {t.id for t in outcome.tasks_spawned}, \
         "discovery did not fire on tick 1"
 
+    # Derive casualty position from the discovered rescue point task itself.
+    casualty_pos = next(
+        t for t in outcome.tasks_spawned if t.id == RESCUE_POINT_ID
+    ).spatial_constraint.target
+
     robot1_pos = state.robot_states[RobotId(1)].position
-    assert robot1_pos != _CASUALTY_POS, \
-        f"Robot 1 stepped onto the rescue point cell {_CASUALTY_POS}"
-    assert robot1_pos.manhattan(_CASUALTY_POS) <= 1, \
+    assert robot1_pos != casualty_pos, \
+        f"Robot 1 stepped onto the rescue point cell {casualty_pos}"
+    assert robot1_pos.manhattan(casualty_pos) <= 1, \
         f"Robot 1 ended up farther than max_distance=1 from casualty"
 
 
@@ -54,20 +58,18 @@ def test_move_task_completes():
 
 
 def test_casualty_reaches_extraction_zone():
-    """The MoveTask's final position must equal the extraction destination."""
-    from simulation.domain import MoveTaskState
-
+    """The MoveTask's final position must equal its destination."""
     state, _, _ = run()
+    move_task = state.tasks[MOVE_TASK_ID]
     move_state = state.task_states[MOVE_TASK_ID]
+    assert isinstance(move_task, MoveTask)
     assert isinstance(move_state, MoveTaskState)
-    assert move_state.current_position == _EXTRACTION_POS
+    assert move_state.current_position == move_task.destination
 
 
 def test_all_robots_reach_casualty_area():
-    """All three robots must end within 1 step of the final casualty position
+    """All robots must end within 1 step of the final casualty position
     (they form the extraction formation)."""
-    from simulation.domain import MoveTaskState
-
     state, _, _ = run()
     final_task_pos = state.task_states[MOVE_TASK_ID].current_position  # type: ignore[union-attr]
     for robot_id in ROBOT_IDS:
