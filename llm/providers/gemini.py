@@ -114,10 +114,4 @@ class GeminiProvider(LLMProvider):
                     args=dict(part.function_call.args),
                 ))
 
-        stop_reason = "tool_use" if tool_calls else "end_turn"
-
-        return LLMResponse(
-            text=text,
-            tool_calls=tool_calls,
-            stop_reason=stop_reason,
-        )
+        return LLMResponse(text=text, tool_calls=tool_calls)

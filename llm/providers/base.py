@@ -62,12 +62,6 @@ class Tool:
 class LLMResponse:
     text: str | None
     tool_calls: list[ToolUseContent] = field(default_factory=list)
-    stop_reason: str = "end_turn"  # "end_turn" | "tool_use"
-
-
-# ---------------------------------------------------------------------------
-# Abstract provider
-# ---------------------------------------------------------------------------
 
 
 class LLMProvider(ABC):
@@ -78,7 +72,3 @@ class LLMProvider(ABC):
         tools: list[Tool],
         system: str | None = None,
     ) -> LLMResponse: ...
-
-    @property
-    def supports_native_tools(self) -> bool:
-        return True

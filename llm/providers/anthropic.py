@@ -96,8 +96,4 @@ class AnthropicProvider(LLMProvider):
                     args=block.input,
                 ))
 
-        return LLMResponse(
-            text=text,
-            tool_calls=tool_calls,
-            stop_reason=response.stop_reason or "end_turn",
-        )
+        return LLMResponse(text=text, tool_calls=tool_calls)

@@ -67,7 +67,7 @@ class AssignmentAgent:
 
             self._history.append(Message(role="assistant", content=assistant_content))
 
-            if response.stop_reason == "end_turn" or not response.tool_calls:
+            if not response.tool_calls:
                 return response.text or ""
 
             # Dispatch all tool calls and collect results into one user turn.

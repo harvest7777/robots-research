@@ -125,11 +125,4 @@ class OpenAIProvider(LLMProvider):
                     args=json.loads(tc.function.arguments),
                 ))
 
-        finish_reason = choice.finish_reason
-        stop_reason = "tool_use" if finish_reason == "tool_calls" else "end_turn"
-
-        return LLMResponse(
-            text=text,
-            tool_calls=tool_calls,
-            stop_reason=stop_reason,
-        )
+        return LLMResponse(text=text, tool_calls=tool_calls)
