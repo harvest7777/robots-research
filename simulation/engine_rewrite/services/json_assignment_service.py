@@ -29,18 +29,25 @@ class JsonAssignmentService(BaseAssignmentService):
 
     def __init__(self, path: Path, initial: list[Assignment] | None = None) -> None:
         self._path = path
+        self._cached_mtime: float | None = None
+        self._cached: list[Assignment] = []
         if initial is not None:
             self._flush({a.robot_id: a for a in initial})
 
     def get_current(self) -> list[Assignment]:
         if not self._path.exists():
             return []
+        mtime = self._path.stat().st_mtime
+        if mtime == self._cached_mtime:
+            return list(self._cached)
         with open(self._path) as f:
             data = json.load(f)
-        return [
+        self._cached = [
             Assignment(task_id=TaskId(a["task_id"]), robot_id=RobotId(a["robot_id"]))
             for a in data
         ]
+        self._cached_mtime = mtime
+        return list(self._cached)
 
     def update(self, assignments: list[Assignment]) -> None:
         current = {a.robot_id: a for a in self.get_current()}
