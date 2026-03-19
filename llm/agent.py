@@ -78,7 +78,6 @@ class AssignmentAgent:
                     result = ToolResultContent(
                         tool_use_id=call.id,
                         content=f"Unknown tool: {call.name}",
-                        is_error=True,
                     )
                 else:
                     try:
@@ -88,7 +87,6 @@ class AssignmentAgent:
                         result = ToolResultContent(
                             tool_use_id=call.id,
                             content=str(exc),
-                            is_error=True,
                         )
                 tool_results.append(result)
 

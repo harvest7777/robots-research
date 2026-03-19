@@ -42,7 +42,6 @@ def _to_anthropic_content(content: str | list[Content]) -> str | list[dict]:
                 "type": "tool_result",
                 "tool_use_id": item.tool_use_id,
                 "content": item.content,
-                "is_error": item.is_error,
             })
     return blocks
 

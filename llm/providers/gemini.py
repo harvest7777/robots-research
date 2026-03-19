@@ -67,7 +67,7 @@ class GeminiProvider(LLMProvider):
                         function_response=types.FunctionResponse(
                             name=fn_name,
                             response={"result": item.content},
-                        )
+                        ),
                     ))
 
             if parts:
