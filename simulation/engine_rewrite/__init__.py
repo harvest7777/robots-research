@@ -12,6 +12,7 @@ from simulation.engine_rewrite.services import (
     InMemorySimulationStateService,
     InMemoryTaskRegistry,
     JsonAssignmentService,
+    JsonSimulationStateService,
 )
 
 __all__ = [
@@ -31,4 +32,5 @@ __all__ = [
     "InMemorySimulationStateService",
     "InMemoryTaskRegistry",
     "JsonAssignmentService",
+    "JsonSimulationStateService",
 ]

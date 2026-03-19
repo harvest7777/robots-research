@@ -95,5 +95,22 @@ class SimulationRunner:
         self._history.append((new_state, outcome))
         return new_state, outcome
 
+    @property
+    def registry(self) -> BaseSimulationRegistry:
+        return self._registry
+
+    def use_state_service(self, service: BaseSimulationStateService) -> None:
+        """Replace the state service and transfer all existing state into it.
+
+        Useful for hot-swapping an in-memory service for a file-backed one
+        after build() has already registered robots and tasks.
+        """
+        robot_states, task_states = self._state_service.get_snapshot()
+        for robot_id, rs in robot_states.items():
+            service.init_robot(robot_id, rs)
+        for task_id, ts in task_states.items():
+            service.init_task(task_id, ts)
+        self._state_service = service
+
     def report(self) -> SimulationAnalysis:
         return SimulationAnalysis.from_history(self._history)

@@ -7,6 +7,7 @@ from simulation.engine_rewrite.services.in_memory_simulation_registry import InM
 from simulation.engine_rewrite.services.in_memory_simulation_state_service import InMemorySimulationStateService
 from simulation.engine_rewrite.services.in_memory_task_registry import InMemoryTaskRegistry
 from simulation.engine_rewrite.services.json_assignment_service import JsonAssignmentService
+from simulation.engine_rewrite.services.json_simulation_state_service import JsonSimulationStateService
 
 __all__ = [
     "BaseAssignmentService",
@@ -18,4 +19,5 @@ __all__ = [
     "InMemorySimulationStateService",
     "InMemoryTaskRegistry",
     "JsonAssignmentService",
+    "JsonSimulationStateService",
 ]

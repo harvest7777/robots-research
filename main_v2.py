@@ -16,16 +16,12 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
 import os
-import tempfile
 import time
 from importlib import import_module
 from pathlib import Path
 
-from simulation.domain import MoveTask, MoveTaskState, RescuePoint, SearchTask, SearchTaskState
-from simulation.engine_rewrite import SimulationState
-from simulation.engine_rewrite.services import JsonAssignmentService
+from simulation.engine_rewrite.services import JsonAssignmentService, JsonSimulationStateService
 from simulation_view.terminal_renderer import TerminalRenderer
 from simulation_view.v2.view import SimulationViewV2
 
@@ -34,67 +30,6 @@ _STATE_PATH = _ROOT / "sim_state_v2.json"
 _ASSIGNMENTS_PATH = _ROOT / "sim_assignments_v2.json"
 
 _DEFAULT_MAX_TICKS = 500
-
-
-def _write_state(state: SimulationState, scenario_id: str, max_tick: int) -> None:
-    """Serialize SimulationState to sim_state_v2.json atomically."""
-    robot_to_task = {a.robot_id: a.task_id for a in state.assignments}
-    task_to_robots: dict = {}
-    for robot_id, task_id in robot_to_task.items():
-        task_to_robots.setdefault(task_id, []).append(robot_id)
-
-    robots = [
-        {
-            "robot_id": rs.robot_id,
-            "x": rs.position.x,
-            "y": rs.position.y,
-            "battery_level": rs.battery_level,
-        }
-        for rs in state.robot_states.values()
-    ]
-
-    tasks = []
-    for task_id, task in state.tasks.items():
-        ts = state.task_states.get(task_id)
-        entry: dict = {
-            "task_id": task_id,
-            "priority": task.priority,
-            "status": ts.status.value if ts and ts.status else None,
-            "assigned_robot_ids": sorted(task_to_robots.get(task_id, [])),
-        }
-        if isinstance(task, MoveTask):
-            entry["task_type"] = "move"
-            entry["destination"] = [task.destination.x, task.destination.y]
-            entry["min_robots_required"] = task.min_robots_required
-            if isinstance(ts, MoveTaskState):
-                entry["current_position"] = [ts.current_position.x, ts.current_position.y]
-        elif isinstance(task, RescuePoint):
-            entry["task_type"] = "rescue_point"
-            entry["location"] = [task.position.x, task.position.y]
-        elif isinstance(task, SearchTask):
-            entry["task_type"] = "search"
-            if isinstance(ts, SearchTaskState):
-                entry["rescue_found"] = sorted(ts.rescue_found)
-        else:
-            entry["task_type"] = "work"
-        tasks.append(entry)
-
-    data = {
-        "scenario_id": scenario_id,
-        "current_tick": state.t_now.tick,
-        "max_tick": max_tick,
-        "robots": robots,
-        "tasks": tasks,
-        "assignments": [
-            {"robot_id": a.robot_id, "task_id": a.task_id}
-            for a in state.assignments
-        ],
-    }
-    dir_ = _STATE_PATH.parent
-    with tempfile.NamedTemporaryFile("w", dir=dir_, suffix=".tmp", delete=False) as f:
-        json.dump(data, f, indent=2)
-        tmp = f.name
-    os.replace(tmp, _STATE_PATH)
 
 
 def main() -> None:
@@ -116,9 +51,21 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    mod = import_module(f"scenarios_v2.{args.scenario}")
-    json_svc = JsonAssignmentService(_ASSIGNMENTS_PATH)
-    runner, _ = mod.build(assignment_service=json_svc)
+    json_assignment_svc = JsonAssignmentService(_ASSIGNMENTS_PATH)
+    runner, _ = import_module(f"scenarios_v2.{args.scenario}").build(
+        assignment_service=json_assignment_svc
+    )
+
+    # Hot-swap the in-memory state service for a file-backed one so external
+    # consumers (e.g. an LLM on a separate thread) can read state between ticks.
+    json_state_svc = JsonSimulationStateService(
+        path=_STATE_PATH,
+        registry=runner.registry,
+        assignment_service=json_assignment_svc,
+        scenario_id=args.scenario,
+        max_tick=args.max_ticks,
+    )
+    runner.use_state_service(json_state_svc)
 
     view = SimulationViewV2()
     renderer = TerminalRenderer()
@@ -126,7 +73,6 @@ def main() -> None:
     try:
         for _ in range(args.max_ticks):
             state, _ = runner.step()
-            _write_state(state, args.scenario, args.max_ticks)
 
             cols, rows = os.get_terminal_size()
             frame = view.render(state, width=cols, height=rows)
