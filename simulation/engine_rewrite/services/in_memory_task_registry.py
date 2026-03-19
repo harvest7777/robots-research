@@ -1,8 +1,13 @@
 """
 InMemoryTaskRegistry
 
-In-memory implementation of BaseTaskRegistry. Suitable for tests, CLI tools,
-and any context where persistence is not needed.
+.. deprecated::
+    Use ``InMemorySimulationRegistry`` instead.  This class only holds task
+    definitions; ``InMemorySimulationRegistry`` holds both task *and* robot
+    definitions, which is what the runner and services expect.
+
+    This class will be removed in a future cleanup pass once all callers have
+    migrated.
 """
 
 from __future__ import annotations
