@@ -15,24 +15,29 @@ from .base_simulation_state_service import BaseSimulationStateService
 class InMemorySimulationStateService(BaseSimulationStateService):
 
     def __init__(self) -> None:
-        self._robot_states: dict[RobotId, RobotState] = {}
-        self._task_states: dict[TaskId, BaseTaskState] = {}
+        self._snapshot: tuple[dict[RobotId, RobotState], dict[TaskId, BaseTaskState]] = ({}, {})
 
     def get_snapshot(self) -> tuple[dict[RobotId, RobotState], dict[TaskId, BaseTaskState]]:
-        return dict(self._robot_states), dict(self._task_states)
+        robot_states, task_states = self._snapshot
+        return dict(robot_states), dict(task_states)
 
     def apply(
         self,
         robot_states: dict[RobotId, RobotState],
         task_states: dict[TaskId, BaseTaskState],
     ) -> None:
-        # Replace references atomically — readers on other threads always see
-        # a complete snapshot, never a half-written state.
-        self._robot_states = dict(robot_states)
-        self._task_states = dict(task_states)
+        # Single reference assignment — readers see either the old or the new
+        # snapshot, never a half-replaced state.
+        self._snapshot = (dict(robot_states), dict(task_states))
 
     def init_robot(self, robot_id: RobotId, state: RobotState) -> None:
-        self._robot_states[robot_id] = state
+        robot_states, task_states = self._snapshot
+        new_robot_states = dict(robot_states)
+        new_robot_states[robot_id] = state
+        self._snapshot = (new_robot_states, task_states)
 
     def init_task(self, task_id: TaskId, state: BaseTaskState) -> None:
-        self._task_states[task_id] = state
+        robot_states, task_states = self._snapshot
+        new_task_states = dict(task_states)
+        new_task_states[task_id] = state
+        self._snapshot = (robot_states, new_task_states)
