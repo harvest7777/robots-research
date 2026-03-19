@@ -9,8 +9,8 @@ from __future__ import annotations
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
 
-from .applicator import apply_outcome
-from .observer import classify_step
+from ._applicator import apply_outcome
+from ._observer import classify_step
 from .simulation_state import SimulationState
 from .step_outcome import StepOutcome
 

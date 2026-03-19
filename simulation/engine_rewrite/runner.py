@@ -21,11 +21,11 @@ import dataclasses
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
 
-from .analysis import SimulationAnalysis
+from ._analysis import SimulationAnalysis
 from .services.base_assignment_service import BaseAssignmentService
 from .services.base_task_registry import BaseTaskRegistry
 from .simulation_state import SimulationState
-from .step import step as engine_step
+from ._step import step as engine_step
 from .step_outcome import StepOutcome
 
 

@@ -24,7 +24,7 @@ from simulation.primitives.time import Time
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
 
 from simulation.engine_rewrite.assignment import Assignment
-from simulation.engine_rewrite.observer import classify_step
+from simulation.engine_rewrite._observer import classify_step
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.engine_rewrite.step_outcome import IgnoreReason
 

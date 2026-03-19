@@ -21,7 +21,7 @@ from simulation.primitives.time import Time
 
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.simulation_state import SimulationState
-from simulation.engine_rewrite.step import step
+from simulation.engine_rewrite._step import step
 from simulation.engine_rewrite.step_outcome import StepOutcome
 
 

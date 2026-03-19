@@ -19,7 +19,7 @@ from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
 
-from simulation.engine_rewrite.applicator import apply_outcome
+from simulation.engine_rewrite._applicator import apply_outcome
 from simulation.engine_rewrite.assignment import Assignment
 from simulation.engine_rewrite.simulation_state import SimulationState
 from simulation.engine_rewrite.step_outcome import StepOutcome
