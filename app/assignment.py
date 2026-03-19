@@ -33,7 +33,8 @@ def _slots(task, assigned: int) -> int:
 def greedy_assign(state: SimulationState) -> list[Assignment]:
     """Return assignments for all robots based on current task priorities."""
     available = sorted(
-        [t for t in state.tasks.values() if state.task_states[t.id].status is None],
+        [t for t in state.tasks.values()
+         if t.id in state.task_states and state.task_states[t.id].status is None],
         key=lambda t: t.priority,
         reverse=True,
     )
