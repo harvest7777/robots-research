@@ -124,79 +124,60 @@ def build_environment() -> Environment:
     for pos in _OBSTACLES:
         env.add_obstacle(pos)
 
-    # ── RESCUE POINTS (all spawn MoveTasks) ──────────────────────────
-    def _rescue_point(
-        rp_id: TaskId,
-        name: str,
-        casualty_pos: Position,
-        move_task_id: TaskId,
-        extraction_pos: Position,
-        min_robots: int = 2,
-    ) -> RescuePoint:
-        move_task = MoveTask(
-            id=move_task_id,
-            priority=9,
-            destination=extraction_pos,
-            min_robots_required=min_robots,
-            min_distance=1,
+    env.add_rescue_point(RescuePoint(
+        id=RESCUE_POINT_ALPHA_ID,
+        name="Casualty Alpha",
+        spatial_constraint=SpatialConstraint(target=CASUALTY_ALPHA, max_distance=1),
+        task=MoveTask(
+            id=MOVE_TASK_ALPHA_ID, priority=9, destination=EXTRACTION_ALPHA,
+            min_robots_required=2, min_distance=1,
             required_capabilities=frozenset({Capability.VISION}),
-        )
-        return RescuePoint(
-            id=rp_id,
-            name=name,
-            spatial_constraint=SpatialConstraint(target=casualty_pos, max_distance=1),
-            task=move_task,
-            initial_task_state=MoveTaskState(
-                task_id=move_task_id,
-                current_position=casualty_pos,
-            ),
-        )
-
-    env.add_rescue_point(
-        _rescue_point(
-            RESCUE_POINT_ALPHA_ID,
-            "Casualty Alpha",
-            CASUALTY_ALPHA,
-            MOVE_TASK_ALPHA_ID,
-            EXTRACTION_ALPHA,
-        )
-    )
-    env.add_rescue_point(
-        _rescue_point(
-            RESCUE_POINT_BRAVO_ID,
-            "Casualty Bravo",
-            CASUALTY_BRAVO,
-            MOVE_TASK_BRAVO_ID,
-            EXTRACTION_BRAVO,
-        )
-    )
-    env.add_rescue_point(
-        _rescue_point(
-            RESCUE_POINT_CHARLIE_ID,
-            "Casualty Charlie",
-            CASUALTY_CHARLIE,
-            MOVE_TASK_CHARLIE_ID,
-            EXTRACTION_CHARLIE,
-        )
-    )
-    env.add_rescue_point(
-        _rescue_point(
-            RESCUE_POINT_DELTA_ID,
-            "Casualty Delta",
-            CASUALTY_DELTA,
-            MOVE_TASK_DELTA_ID,
-            EXTRACTION_DELTA,
-        )
-    )
-    env.add_rescue_point(
-        _rescue_point(
-            RESCUE_POINT_ECHO_ID,
-            "Casualty Echo",
-            CASUALTY_ECHO,
-            MOVE_TASK_ECHO_ID,
-            EXTRACTION_ECHO,
-            min_robots=3,  # hardest rescue — needs a larger formation
-        )
-    )
+        ),
+        initial_task_state=MoveTaskState(task_id=MOVE_TASK_ALPHA_ID, current_position=CASUALTY_ALPHA),
+    ))
+    env.add_rescue_point(RescuePoint(
+        id=RESCUE_POINT_BRAVO_ID,
+        name="Casualty Bravo",
+        spatial_constraint=SpatialConstraint(target=CASUALTY_BRAVO, max_distance=1),
+        task=MoveTask(
+            id=MOVE_TASK_BRAVO_ID, priority=9, destination=EXTRACTION_BRAVO,
+            min_robots_required=2, min_distance=1,
+            required_capabilities=frozenset({Capability.VISION}),
+        ),
+        initial_task_state=MoveTaskState(task_id=MOVE_TASK_BRAVO_ID, current_position=CASUALTY_BRAVO),
+    ))
+    env.add_rescue_point(RescuePoint(
+        id=RESCUE_POINT_CHARLIE_ID,
+        name="Casualty Charlie",
+        spatial_constraint=SpatialConstraint(target=CASUALTY_CHARLIE, max_distance=1),
+        task=MoveTask(
+            id=MOVE_TASK_CHARLIE_ID, priority=9, destination=EXTRACTION_CHARLIE,
+            min_robots_required=2, min_distance=1,
+            required_capabilities=frozenset({Capability.VISION}),
+        ),
+        initial_task_state=MoveTaskState(task_id=MOVE_TASK_CHARLIE_ID, current_position=CASUALTY_CHARLIE),
+    ))
+    env.add_rescue_point(RescuePoint(
+        id=RESCUE_POINT_DELTA_ID,
+        name="Casualty Delta",
+        spatial_constraint=SpatialConstraint(target=CASUALTY_DELTA, max_distance=1),
+        task=MoveTask(
+            id=MOVE_TASK_DELTA_ID, priority=9, destination=EXTRACTION_DELTA,
+            min_robots_required=2, min_distance=1,
+            required_capabilities=frozenset({Capability.VISION}),
+        ),
+        initial_task_state=MoveTaskState(task_id=MOVE_TASK_DELTA_ID, current_position=CASUALTY_DELTA),
+    ))
+    env.add_rescue_point(RescuePoint(
+        id=RESCUE_POINT_ECHO_ID,
+        name="Casualty Echo",
+        spatial_constraint=SpatialConstraint(target=CASUALTY_ECHO, max_distance=1),
+        task=MoveTask(
+            id=MOVE_TASK_ECHO_ID, priority=9, destination=EXTRACTION_ECHO,
+            min_robots_required=3, min_distance=1,
+            required_capabilities=frozenset({Capability.VISION}),
+        ),
+        initial_task_state=MoveTaskState(task_id=MOVE_TASK_ECHO_ID, current_position=CASUALTY_ECHO),
+    ))
 
     return env
