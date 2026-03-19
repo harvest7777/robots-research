@@ -91,7 +91,13 @@ def classify_step(
         if goal is None or robot_state.position == goal:
             intended_moves[assignment.robot_id] = None
         else:
-            next_position = pathfinding(state.environment, robot_state.position, goal)
+            occupied: frozenset[Position] = frozenset()
+            if isinstance(task, MoveTask):
+                occupied = frozenset(
+                    rs.position for rid, rs in state.robot_states.items()
+                    if rid != assignment.robot_id
+                )
+            next_position = pathfinding(state.environment, robot_state.position, goal, occupied)
             if next_position is None:
                 outcome.assignments_ignored.append((assignment, IgnoreReason.NO_PATH))
                 continue

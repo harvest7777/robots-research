@@ -27,7 +27,6 @@ parks at (14, 2) and R2 / R1 never reach an adjacent slot, so the task
 never moves.
 """
 
-import pytest
 from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, MoveTask, MoveTaskState, Robot, RobotId, RobotState, TaskId
 from simulation.engine_rewrite import Assignment, SimulationRunner
@@ -70,7 +69,6 @@ def _build() -> SimulationRunner:
     return runner
 
 
-@pytest.mark.xfail(reason="pathfinding ignores robot occupancy; inline robots deadlock approaching formation")
 def test_formation_completes_despite_inline_approach():
     """Robots in a line must fan out around the task and complete the carry."""
     runner = _build()
