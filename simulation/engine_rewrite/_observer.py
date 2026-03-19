@@ -37,6 +37,7 @@ from simulation.domain.task import WorkTask, SpatialConstraint
 from simulation.domain.task_state import TaskState
 from simulation.primitives.position import Position
 
+from .assignment import Assignment
 from .simulation_state import SimulationState
 from .step_outcome import IgnoreReason, StepOutcome
 
