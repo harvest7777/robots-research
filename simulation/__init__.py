@@ -1,10 +1,8 @@
 from simulation.engine_rewrite.runner import SimulationRunner, SimulationState
 from simulation.engine_rewrite.services.in_memory_assignment_service import InMemoryAssignmentService
-from simulation.engine_rewrite.services.in_memory_simulation_registry import InMemorySimulationRegistry
-from simulation.engine_rewrite.services.in_memory_simulation_state_service import InMemorySimulationStateService
+from simulation.engine_rewrite.services.in_memory_simulation_store import InMemorySimulationStore
 from simulation.engine_rewrite.services.json_assignment_service import JsonAssignmentService
-from simulation.engine_rewrite.services.json_simulation_registry import JsonSimulationRegistry
-from simulation.engine_rewrite.services.json_simulation_state_service import JsonSimulationStateService
+from simulation.engine_rewrite.services.json_simulation_store import JsonSimulationStore
 from simulation.algorithms import astar_pathfind
 from simulation.domain.base_task import (
     BaseTask,
@@ -25,11 +23,9 @@ __all__ = [
     "SimulationRunner",
     "SimulationState",
     "InMemoryAssignmentService",
-    "InMemorySimulationRegistry",
-    "InMemorySimulationStateService",
+    "InMemorySimulationStore",
     "JsonAssignmentService",
-    "JsonSimulationRegistry",
-    "JsonSimulationStateService",
+    "JsonSimulationStore",
     # algorithms
     "astar_pathfind",
     # base

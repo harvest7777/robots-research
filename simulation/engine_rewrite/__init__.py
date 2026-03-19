@@ -4,16 +4,10 @@ from simulation.engine_rewrite.runner import SimulationRunner
 from simulation.domain.step_outcome import IgnoreReason, StepOutcome
 from simulation.engine_rewrite.services import (
     BaseAssignmentService,
-    BaseSimulationRegistry,
-    BaseSimulationStateService,
     BaseSimulationStore,
     InMemoryAssignmentService,
-    InMemorySimulationRegistry,
-    InMemorySimulationStateService,
     InMemorySimulationStore,
     JsonAssignmentService,
-    JsonSimulationRegistry,
-    JsonSimulationStateService,
     JsonSimulationStore,
 )
 
@@ -26,15 +20,9 @@ __all__ = [
     "IgnoreReason",
     # services
     "BaseAssignmentService",
-    "BaseSimulationRegistry",
-    "BaseSimulationStateService",
     "BaseSimulationStore",
     "InMemoryAssignmentService",
-    "InMemorySimulationRegistry",
-    "InMemorySimulationStateService",
     "InMemorySimulationStore",
     "JsonAssignmentService",
-    "JsonSimulationRegistry",
-    "JsonSimulationStateService",
     "JsonSimulationStore",
 ]
