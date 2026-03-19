@@ -32,6 +32,10 @@ from simulation.domain.base_task import BaseTask, TaskId, TaskStatus  # noqa: F4
 # Supporting Types
 # -----------------------------------------------------------------------------
 
+# TODO(cleanup): TaskType is a legacy artifact from the old engine, which used enum
+# dispatch instead of isinstance checks. The new engine never reads `.type`. Once
+# scenarios_v2 are updated to instantiate WorkTask directly (no type field), both
+# TaskType and Task can be deleted and WorkTask renamed to Task.
 class TaskType(Enum):
     """The kind of work-accumulation task to be performed."""
 
@@ -69,8 +73,7 @@ class WorkTask(BaseTask):
     This is the clean base for work-accumulation tasks. It intentionally has
     no `type` field — task type is identified by isinstance checks, not enums.
 
-    Phase 6 note: once the old engine is deleted, `Task` will be removed and
-    `WorkTask` renamed to `Task`.
+    TODO(cleanup): rename WorkTask → Task once Task (below) is deleted.
     """
 
     required_work_time: Time = Time(0)
@@ -79,6 +82,9 @@ class WorkTask(BaseTask):
     min_robots_needed: int = 1
 
 
+# TODO(cleanup): Task exists solely to carry the `type: TaskType` field that
+# the old engine required. The new engine never reads `.type`. Delete this class
+# and update all scenarios_v2 callers to use WorkTask directly.
 @dataclass(frozen=True)
 class Task(WorkTask):
     """
@@ -86,7 +92,6 @@ class Task(WorkTask):
 
     Extends WorkTask with a `type` enum for the old engine. The `type` field
     is legacy — the new engine identifies task kind via isinstance checks.
-    Scheduled for removal in Phase 6 when the old engine is deleted.
     """
 
     type: TaskType = TaskType.ROUTINE_INSPECTION

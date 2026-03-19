@@ -11,66 +11,11 @@ from collections.abc import Callable
 
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
-from simulation.domain.robot_state import RobotId, RobotState
-from simulation.domain.step_context import StepContext
-from simulation.domain.task import Task, TaskType
-from simulation.domain.search_task import SearchTask
-from simulation.domain.base_task import TaskStatus
+from simulation.domain.robot_state import RobotId
 
 
 PathfindingAlgorithm = Callable[[Environment, Position, Position], Position | None]
-GoalResolver = Callable[[RobotId, RobotState], Position | None]
-
-
-def plan_moves(
-    ctx: StepContext,
-    pathfinding: PathfindingAlgorithm,
-    goal_resolver: GoalResolver,
-) -> dict[RobotId, Position | None]:
-    """Compute the intended next position for every robot this tick.
-
-    For each robot:
-    - Unassigned, IDLE, or terminal task → None (stay in place).
-    - goal_resolver returns None → None (no spatial target).
-    - Already at goal → None (no movement needed).
-    - Otherwise → result of pathfinding(environment, position, goal).
-
-    Does not apply collision resolution — call resolve_collisions separately.
-    The goal_resolver may write to robot state (e.g. current_waypoint) as a
-    side effect; plan_moves itself does not mutate any state directly.
-    """
-    robot_to_task = {rid: a.task_id for a in ctx.assignments for rid in a.robot_ids}
-    planned: dict[RobotId, Position | None] = {}
-
-    for robot_id, state in ctx.robot_states.items():
-        if robot_id not in robot_to_task:
-            planned[robot_id] = None
-            continue
-
-        task_id = robot_to_task[robot_id]
-        task = ctx.task_by_id[task_id]
-        task_state = ctx.task_states[task_id]
-
-        if task_state.status in (TaskStatus.DONE, TaskStatus.FAILED):
-            planned[robot_id] = None
-            continue
-
-        if isinstance(task, Task) and task.type == TaskType.IDLE:
-            planned[robot_id] = None
-            continue
-
-        goal = goal_resolver(robot_id, state)
-        if goal is None:
-            planned[robot_id] = None
-            continue
-
-        if state.position == goal:
-            planned[robot_id] = None
-            continue
-
-        planned[robot_id] = pathfinding(ctx.environment, state.position, goal)
-
-    return planned
+GoalResolver = Callable[[RobotId, "RobotState"], Position | None]
 
 
 def resolve_collisions(
@@ -118,29 +63,3 @@ def resolve_collisions(
                 changed = True
 
     return resolved
-
-
-def resolve_task_target_position(
-    task: Task,
-    robot_pos: Position,
-    environment: Environment,
-) -> Position | None:
-    """Resolve a task's spatial constraint to a concrete target Position.
-
-    Returns:
-        The target Position, or None if the task has no spatial constraint
-        or the referenced zone does not exist in the environment.
-    """
-    sc = task.spatial_constraint
-    if sc is None:
-        return None
-
-    if isinstance(sc.target, Position):
-        return sc.target
-
-    # ZoneId — find nearest zone cell to the robot (Manhattan distance)
-    zone = environment.get_zone(sc.target)
-    if zone is None:
-        return None
-
-    return min(zone.cells, key=lambda cell: robot_pos.manhattan(cell))

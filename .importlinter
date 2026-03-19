@@ -5,7 +5,7 @@ root_package = simulation
 name = Enforce layered architecture
 type = layers
 layers =
-    simulation.engine
+    simulation.engine_rewrite
     simulation.algorithms
     simulation.domain
     simulation.primitives
