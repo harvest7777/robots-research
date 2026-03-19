@@ -62,7 +62,7 @@ class JsonSimulationStateService(BaseSimulationStateService):
     def get_snapshot(self) -> tuple[dict[RobotId, RobotState], dict[TaskId, BaseTaskState]]:
         return dict(self._robot_states), dict(self._task_states)
 
-    def apply(
+    def _set_state(
         self,
         robot_states: dict[RobotId, RobotState],
         task_states: dict[TaskId, BaseTaskState],

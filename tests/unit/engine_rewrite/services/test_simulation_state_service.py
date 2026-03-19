@@ -39,7 +39,7 @@ def test_apply_overwrites_state():
     svc.init_robot(RobotId(1), _robot_state(1, x=0, y=0))
     new_robot_states = {RobotId(1): _robot_state(1, x=5, y=5)}
     new_task_states = {TaskId(1): _task_state(1)}
-    svc.apply(new_robot_states, new_task_states)
+    svc._set_state(new_robot_states, new_task_states)
     robot_states, task_states = svc.get_snapshot()
     assert robot_states[RobotId(1)].position == Position(5, 5)
     assert TaskId(1) in task_states

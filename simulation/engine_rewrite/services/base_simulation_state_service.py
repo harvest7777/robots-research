@@ -28,7 +28,7 @@ class BaseSimulationStateService(ABC):
         """
 
     @abstractmethod
-    def apply(
+    def _set_state(
         self,
         robot_states: dict[RobotId, RobotState],
         task_states: dict[TaskId, BaseTaskState],
@@ -36,20 +36,4 @@ class BaseSimulationStateService(ABC):
         """Overwrite stored state with the results of the latest engine tick.
 
         Called by the runner after each step(). Replaces both dicts atomically.
-        """
-
-    @abstractmethod
-    def init_robot(self, robot_id: RobotId, state: RobotState) -> None:
-        """Register initial state for a newly added robot.
-
-        Called by SimulationRunner.add_robot() before the first tick that
-        includes this robot.
-        """
-
-    @abstractmethod
-    def init_task(self, task_id: TaskId, state: BaseTaskState) -> None:
-        """Register initial state for a newly added task.
-
-        Called by SimulationRunner.add_task() before the first tick that
-        includes this task.
         """

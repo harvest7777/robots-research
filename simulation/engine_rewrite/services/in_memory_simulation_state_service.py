@@ -21,7 +21,7 @@ class InMemorySimulationStateService(BaseSimulationStateService):
         robot_states, task_states = self._snapshot
         return dict(robot_states), dict(task_states)
 
-    def apply(
+    def _set_state(
         self,
         robot_states: dict[RobotId, RobotState],
         task_states: dict[TaskId, BaseTaskState],

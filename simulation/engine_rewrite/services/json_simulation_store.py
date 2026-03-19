@@ -83,5 +83,5 @@ class JsonSimulationStore(BaseSimulationStore):
         robot_states: dict[RobotId, RobotState],
         task_states: dict[TaskId, BaseTaskState],
     ) -> None:
-        self._state.apply(robot_states, task_states)
+        self._state._set_state(robot_states, task_states)
 
