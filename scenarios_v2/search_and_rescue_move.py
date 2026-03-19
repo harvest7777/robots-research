@@ -152,6 +152,16 @@ def build(
     return runner, assignment_service
 
 
+def _handle_discovery(outcome: StepOutcome, assignment_service: BaseAssignmentService) -> None:
+    """On rescue point discovery, reassign all robots to carry the casualty out."""
+    for task in outcome.tasks_spawned:
+        if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_ID:
+            assignment_service.update([
+                Assignment(task_id=MOVE_TASK_ID, robot_id=robot_id)
+                for robot_id in ROBOT_IDS
+            ])
+
+
 def run(max_ticks: int = 300) -> tuple[SimulationState, list[StepOutcome], SimulationRunner]:
     runner, assignment_service = build()
     outcomes: list[StepOutcome] = []
@@ -159,15 +169,7 @@ def run(max_ticks: int = 300) -> tuple[SimulationState, list[StepOutcome], Simul
     for _ in range(max_ticks):
         state, outcome = runner.step()
         outcomes.append(outcome)
-
-        # On discovery: reassign all three robots to carry the casualty out.
-        for task in outcome.tasks_spawned:
-            if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_ID:
-                assignment_service.update([
-                    Assignment(task_id=MOVE_TASK_ID, robot_id=robot_id)
-                    for robot_id in ROBOT_IDS
-                ])
-
+        _handle_discovery(outcome, assignment_service)
         if MOVE_TASK_ID in outcome.tasks_completed:
             break
 
@@ -190,13 +192,7 @@ if __name__ == "__main__":
         for _ in range(300):
             state, outcome = runner.step()
             outcomes.append(outcome)
-
-            for task in outcome.tasks_spawned:
-                if isinstance(task, RescuePoint) and task.id == RESCUE_POINT_ID:
-                    assignment_service.update([
-                        Assignment(task_id=MOVE_TASK_ID, robot_id=robot_id)
-                        for robot_id in ROBOT_IDS
-                    ])
+            _handle_discovery(outcome, assignment_service)
 
             terminal = os.get_terminal_size()
             frame = view.render(state, width=terminal.columns, height=terminal.lines)
