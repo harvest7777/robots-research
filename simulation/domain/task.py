@@ -25,6 +25,7 @@ from simulation.primitives.time import Time
 from simulation.primitives.zone import ZoneId
 
 from simulation.domain.base_task import BaseTask, TaskId, TaskStatus  # noqa: F401 (re-export)
+from simulation.domain.task_state import TaskState
 
 
 @dataclass(frozen=True)
@@ -54,3 +55,6 @@ class WorkTask(BaseTask):
     spatial_constraint: SpatialConstraint | None = None
     deadline: Time | None = None
     min_robots_needed: int = 1
+
+    def initial_state(self) -> TaskState:
+        return TaskState(task_id=self.id)

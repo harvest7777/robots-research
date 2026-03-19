@@ -23,6 +23,13 @@ from simulation.primitives.position import Position
 
 
 @dataclass(frozen=True)
+class MoveTaskState(BaseTaskState):
+    """Runtime state tracking where a MoveTask currently is."""
+
+    current_position: Position = Position(0, 0)
+
+
+@dataclass(frozen=True)
 class MoveTask(BaseTask):
     """Immutable definition of a task that must be physically carried."""
 
@@ -30,9 +37,9 @@ class MoveTask(BaseTask):
     min_robots_required: int = 1
     min_distance: int = 1
 
-
-@dataclass(frozen=True)
-class MoveTaskState(BaseTaskState):
-    """Runtime state tracking where a MoveTask currently is."""
-
-    current_position: Position = Position(0, 0)
+    def initial_state(self) -> MoveTaskState:
+        raise NotImplementedError(
+            "MoveTask has no default initial position. "
+            "Pass initial_state=MoveTaskState(task_id=..., current_position=...) "
+            "to add_task() explicitly."
+        )
