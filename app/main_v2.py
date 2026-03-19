@@ -38,6 +38,14 @@ for k, v in ROBOT_STATES.items():
 for k, v in TASK_STATES.items():
     store.add_task(TASKS[k], v)
 
-for _ in range(200):
-    state, _outcome = runner.step()
-    time.sleep(1)
+def _cleanup_storage() -> None:
+    for f in _STORAGE.iterdir():
+        f.unlink()
+    _STORAGE.rmdir()
+
+try:
+    for _ in range(200):
+        state, _outcome = runner.step()
+        time.sleep(1)
+except KeyboardInterrupt:
+    _cleanup_storage()
