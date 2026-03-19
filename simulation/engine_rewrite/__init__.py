@@ -5,9 +5,11 @@ from simulation.engine_rewrite.step_outcome import IgnoreReason, StepOutcome
 from simulation.engine_rewrite.services import (
     BaseAssignmentService,
     BaseSimulationRegistry,
+    BaseSimulationStateService,
     BaseTaskRegistry,
     InMemoryAssignmentService,
     InMemorySimulationRegistry,
+    InMemorySimulationStateService,
     InMemoryTaskRegistry,
     JsonAssignmentService,
 )
@@ -22,9 +24,11 @@ __all__ = [
     # services
     "BaseAssignmentService",
     "BaseSimulationRegistry",
+    "BaseSimulationStateService",
     "BaseTaskRegistry",
     "InMemoryAssignmentService",
     "InMemorySimulationRegistry",
+    "InMemorySimulationStateService",
     "InMemoryTaskRegistry",
     "JsonAssignmentService",
 ]
