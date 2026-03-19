@@ -11,6 +11,7 @@ TaskState depend on them, and both extend types defined in this module.
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass
 from enum import Enum
 from typing import NewType
@@ -82,13 +83,11 @@ class BaseTaskState:
 # State-transition functions (shared across all task types)
 # -----------------------------------------------------------------------------
 
-def mark_done(state: BaseTaskState, t_now: Time) -> None:
-    """Mark the task terminal-successful."""
-    object.__setattr__(state, "status", TaskStatus.DONE)
-    object.__setattr__(state, "completed_at", t_now)
+def mark_done(state: BaseTaskState, t_now: Time) -> BaseTaskState:
+    """Return a new state marked terminal-successful."""
+    return dataclasses.replace(state, status=TaskStatus.DONE, completed_at=t_now)
 
 
-def mark_failed(state: BaseTaskState, t_now: Time) -> None:
-    """Mark the task terminal-failed."""
-    object.__setattr__(state, "status", TaskStatus.FAILED)
-    object.__setattr__(state, "completed_at", t_now)
+def mark_failed(state: BaseTaskState, t_now: Time) -> BaseTaskState:
+    """Return a new state marked terminal-failed."""
+    return dataclasses.replace(state, status=TaskStatus.FAILED, completed_at=t_now)

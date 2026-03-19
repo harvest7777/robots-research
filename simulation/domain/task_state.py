@@ -13,6 +13,7 @@ apply_work is specific to work-accumulation tasks and lives here.
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass
 
 from simulation.domain.base_task import (  # noqa: F401 (re-export)
@@ -46,20 +47,19 @@ class TaskState(BaseTaskState):
 # Work-accumulation transition
 # ---------------------------------------------------------------------------
 
-def apply_work(state: TaskState, required_work_time: Time, dt: Time, t_now: Time) -> None:
-    """Apply linear work for `dt` ticks to `state`.
+def apply_work(state: TaskState, required_work_time: Time, dt: Time, t_now: Time) -> TaskState:
+    """Apply linear work for `dt` ticks and return the updated state.
 
-    No-op if the task is already in a terminal state. Sets `started_at` on
-    first call. Calls `mark_done` automatically when accumulated work reaches
-    `required_work_time`.
+    Returns `state` unchanged if already terminal. Sets `started_at` on first
+    call. Returns a DONE state when accumulated work reaches `required_work_time`.
     """
     if state.status in (TaskStatus.DONE, TaskStatus.FAILED):
-        return
-
-    if state.started_at is None:
-        object.__setattr__(state, "started_at", t_now)
-
-    object.__setattr__(state, "work_done", state.work_done.advance(dt))
-
-    if state.work_done.tick >= required_work_time.tick:
-        mark_done(state, t_now)
+        return state
+    started_at = state.started_at if state.started_at is not None else t_now
+    new_work = state.work_done.advance(dt)
+    if new_work.tick >= required_work_time.tick:
+        return dataclasses.replace(
+            state, started_at=started_at, work_done=new_work,
+            status=TaskStatus.DONE, completed_at=t_now,
+        )
+    return dataclasses.replace(state, started_at=started_at, work_done=new_work)
