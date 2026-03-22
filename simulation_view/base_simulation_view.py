@@ -10,10 +10,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from simulation.domain.simulation_state import SimulationState
 
-class BaseAssignmentService(ABC):
+class BaseViewService(ABC):
 
     @abstractmethod
-    def render(self, simulation_state: SimulationState) -> list[Assignment]:
+    def render(self, simulation_state: SimulationState):
         """Render the current state of the simulation."""
 
     def handle_exit(self):

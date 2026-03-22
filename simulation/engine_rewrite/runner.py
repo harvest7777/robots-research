@@ -21,6 +21,7 @@ from __future__ import annotations
 import os
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
+from simulation_view.base_simulation_view import BaseViewService
 from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.environment import Environment
 from simulation.primitives.time import Time
@@ -44,6 +45,7 @@ class SimulationRunner:
         store: BaseSimulationStore,
         assignment_service: BaseAssignmentService,
         pathfinding: PathfindingAlgorithm = astar_pathfind,
+        view_service: BaseViewService | None = None,
         view: bool = False,
     ) -> None:
         self._environment = environment
@@ -53,6 +55,7 @@ class SimulationRunner:
         self._t_now: Time = Time(0)
         self._history: list[tuple[SimulationState, StepOutcome]] = []
         self._view = view
+        self._view_service = view_service
         if view:
             self._view_assembler = SimulationViewV2()
             self._view_renderer = TerminalRenderer()
@@ -83,6 +86,9 @@ class SimulationRunner:
 
         self._history.append((new_state, outcome))
 
+        if self._view_service:
+            self._view_service.render(new_state)
+
         if self._view:
             cols, rows = os.get_terminal_size()
             frame = self._view_assembler.render(new_state, cols, rows)
@@ -91,6 +97,8 @@ class SimulationRunner:
         return new_state, outcome
 
     def stop(self) -> SimulationAnalysis:
+        if self._view_service:
+            self._view_service.handle_exit()
         if self._view:
             self._view_renderer.cleanup()
         return self._report()
