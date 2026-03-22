@@ -116,16 +116,27 @@ class MujocoViewService(BaseViewService):
             self._prev_positions[robot_id] = rs.position
 
             if is_moving:
-                # Trot gait: diagonal pairs (fl+br, fr+bl) alternate
+                # Trot gait: diagonal pairs (fl+br) and (fr+bl) alternate
                 t = self._anim_time
-                hip_a = 0.35 * math.sin(t)
-                hip_b = 0.35 * math.sin(t + math.pi)
-                ankle = -0.4
+                pa = math.sin(t)          # phase for fl+br
+                pb = math.sin(t + math.pi)  # phase for fr+bl
+
+                def leg(phase, flip=False):
+                    hip = 0.5 * phase * (-1 if flip else 1)
+                    # Lift ankle during forward swing, plant during stance
+                    ankle = -0.35 - 0.4 * max(0, phase)
+                    return hip, ankle
+
+                fl_h, fl_a = leg(pa)
+                fr_h, fr_a = leg(pb)
+                bl_h, bl_a = leg(pb, flip=True)  # back legs geometry is mirrored
+                br_h, br_a = leg(pa, flip=True)
+
                 self._data.qpos[start + 7:start + 15] = [
-                    hip_a, ankle,  # fl
-                    hip_b, ankle,  # fr
-                    hip_b, ankle,  # bl
-                    hip_a, ankle,  # br
+                    fl_h, fl_a,
+                    fr_h, fr_a,
+                    bl_h, bl_a,
+                    br_h, br_a,
                 ]
             else:
                 # Rest pose
