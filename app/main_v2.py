@@ -66,7 +66,7 @@ try:
         if outcome.tasks_spawned or outcome.tasks_completed:
             assigner.update(greedy_assign(state))
 
-        time.sleep(0.1)
+        time.sleep(0.5)
 except KeyboardInterrupt:
     pass
     _cleanup_storage()
