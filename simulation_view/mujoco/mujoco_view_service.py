@@ -122,7 +122,9 @@ def _build_xml(state: SimulationState, num_robots: int) -> str:
     robot_bodies = "\n".join(_ant_xml(i) for i in range(num_robots))
 
     return f"""<mujoco>
-  <option gravity="0 0 -9.81"/>
+  <option gravity="0 0 0">
+    <flag contact="disable" energy="disable"/>
+  </option>
   <visual>
     <headlight ambient="0.5 0.5 0.5" diffuse="0 0 0" specular="0 0 0"/>
   </visual>
@@ -133,8 +135,8 @@ def _build_xml(state: SimulationState, num_robots: int) -> str:
     {obstacle_geoms}
     {work_task_geoms}
     {rescue_geoms}
-    {move_obj_bodies}
     {robot_bodies}
+    {move_obj_bodies}
   </worldbody>
 </mujoco>"""
 
