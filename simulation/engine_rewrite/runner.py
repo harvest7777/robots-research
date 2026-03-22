@@ -43,7 +43,6 @@ class SimulationRunner:
         assignment_service: BaseAssignmentService,
         pathfinding: PathfindingAlgorithm = astar_pathfind,
         view_service: BaseViewService | None = None,
-        view: bool = False,
     ) -> None:
         self._environment = environment
         self._store = store
@@ -51,7 +50,6 @@ class SimulationRunner:
         self._pathfinding = pathfinding
         self._t_now: Time = Time(0)
         self._history: list[tuple[SimulationState, StepOutcome]] = []
-        self._view = view
         self._view_service = view_service
 
     def step(self) -> tuple[SimulationState, StepOutcome]:

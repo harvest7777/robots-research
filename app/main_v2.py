@@ -2,8 +2,7 @@ import time
 from pathlib import Path
 
 from simulation import *
-from simulation_view.terminal.terminal_renderer import TerminalRenderer
-from simulation_view.terminal.view import SimulationViewV2
+from simulation_view.terminal.terminal_view_service import TerminalViewService
 
 from app.assignment import greedy_assign
 from app.starting_objects.environment import build_environment
@@ -23,13 +22,15 @@ store = JsonSimulationStore(
     state_path=state_path,
     assignment_service=assigner,
 )
+
+view = TerminalViewService()
 environment = build_environment()
 
 runner = SimulationRunner(
     environment=environment,
     store=store,
     assignment_service=assigner,
-    view=True
+    view_service=view
 )
 
 for k, v in ROBOT_STATES.items():
