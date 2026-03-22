@@ -102,14 +102,16 @@ def apply_outcome(state: SimulationState, outcome: StepOutcome) -> SimulationSta
         )
 
     # Apply initial states for tasks spawned this tick
+    new_tasks = dict(state.tasks)
     for task, initial_state in outcome.tasks_spawned:
+        new_tasks[task.id] = task
         new_task_states[task.id] = initial_state
 
     return SimulationState(
         environment=state.environment,
         robots=state.robots,
         robot_states=new_robot_states,
-        tasks=state.tasks,
+        tasks=new_tasks,
         task_states=new_task_states,
         t_now=new_time,
         assignments=state.assignments,
