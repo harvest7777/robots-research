@@ -1,5 +1,6 @@
 import math
 import random
+import time
 
 import mujoco
 import mujoco.viewer
@@ -8,6 +9,7 @@ from simulation import SimulationState
 from simulation_view.base_simulation_view import BaseViewService
 
 CELL_SIZE = 1.5  # meters per grid cell
+ANIM_SPEED = 10.0  # animation radians per real second (~1.6 leg cycles/sec)
 _QPOS_PER_ROBOT = 15  # 7 (freejoint) + 8 (hinge joints, 2 per leg × 4 legs)
 
 
@@ -91,6 +93,7 @@ class MujocoViewService(BaseViewService):
         self._robot_ids = []
         self._prev_positions = {}
         self._anim_time = 0.0
+        self._last_render_time = None
         # Per-robot: 8 joints each get an independent (frequency, phase) pair
         self._leg_params: dict = {}
 
@@ -109,7 +112,10 @@ class MujocoViewService(BaseViewService):
         if not self._viewer.is_running():
             return
 
-        self._anim_time += 0.2
+        now = time.time()
+        dt = now - self._last_render_time if self._last_render_time else 0.0
+        self._last_render_time = now
+        self._anim_time += dt * ANIM_SPEED
 
         for i, robot_id in enumerate(self._robot_ids):
             rs = simulation_state.robot_states.get(robot_id)
