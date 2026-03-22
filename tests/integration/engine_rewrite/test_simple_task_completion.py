@@ -1,4 +1,4 @@
-from scenarios_v2.simple_task_completion import run, TASK_ID
+from tests.integration.fixtures.simple_task_completion import run, TASK_ID
 
 
 def test_task_completes_before_max_ticks():

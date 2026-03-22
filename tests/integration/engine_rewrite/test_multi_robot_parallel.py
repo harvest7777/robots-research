@@ -1,4 +1,4 @@
-from scenarios_v2.multi_robot_parallel import run, TASK_IDS
+from tests.integration.fixtures.multi_robot_parallel import run, TASK_IDS
 
 
 def test_all_tasks_complete_before_max_ticks():

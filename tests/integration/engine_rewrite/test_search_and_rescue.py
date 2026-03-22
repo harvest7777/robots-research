@@ -1,4 +1,4 @@
-from scenarios_v2.search_and_rescue import run, RESCUE_POINT_ID, ROBOT_IDS
+from tests.integration.fixtures.search_and_rescue import run, RESCUE_POINT_ID, ROBOT_IDS
 
 
 def test_rescue_point_is_discovered():

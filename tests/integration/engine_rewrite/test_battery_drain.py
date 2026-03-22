@@ -1,6 +1,6 @@
 from simulation.engine_rewrite import IgnoreReason
 
-from scenarios_v2.battery_drain import run, TASK_ID
+from tests.integration.fixtures.battery_drain import run, TASK_ID
 
 
 def test_task_does_not_complete():

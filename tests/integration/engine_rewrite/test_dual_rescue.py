@@ -1,4 +1,4 @@
-from scenarios_v2.dual_rescue import (
+from tests.integration.fixtures.dual_rescue import (
     run,
     RESCUE_POINT_A_ID,
     RESCUE_POINT_B_ID,

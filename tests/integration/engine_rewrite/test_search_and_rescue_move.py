@@ -12,7 +12,7 @@ Key behaviour under test:
 from simulation.domain import RobotId
 from simulation.domain.move_task import MoveTask, MoveTaskState
 
-from scenarios_v2.search_and_rescue_move import (
+from tests.integration.fixtures.search_and_rescue_move import (
     build,
     run,
     MOVE_TASK_ID,

@@ -1,4 +1,4 @@
-from scenarios_v2.collaborative_task import run, TASK_ID, TASK_WORK_TIME
+from tests.integration.fixtures.collaborative_task import run, TASK_ID
 
 
 def test_task_completes_with_two_robots():

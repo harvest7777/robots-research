@@ -1,6 +1,6 @@
 from simulation.domain.move_task import MoveTask, MoveTaskState
 
-from scenarios_v2.move_task import run, MOVE_TASK_ID
+from tests.integration.fixtures.move_task import run, MOVE_TASK_ID
 
 
 def test_move_task_completes_before_max_ticks():
