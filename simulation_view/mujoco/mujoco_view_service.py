@@ -1,4 +1,5 @@
 import math
+import random
 
 import mujoco
 import mujoco.viewer
@@ -90,6 +91,16 @@ class MujocoViewService(BaseViewService):
         self._robot_ids = []
         self._prev_positions = {}
         self._anim_time = 0.0
+        # Per-robot: 8 joints each get an independent (frequency, phase) pair
+        self._leg_params: dict = {}
+
+    def _get_leg_params(self, robot_id):
+        if robot_id not in self._leg_params:
+            self._leg_params[robot_id] = [
+                (random.uniform(0.8, 1.4), random.uniform(0, 2 * math.pi))
+                for _ in range(8)
+            ]
+        return self._leg_params[robot_id]
 
     def render(self, simulation_state: SimulationState) -> None:
         if self._model is None:
@@ -116,28 +127,16 @@ class MujocoViewService(BaseViewService):
             self._prev_positions[robot_id] = rs.position
 
             if is_moving:
-                # Trot gait: diagonal pairs (fl+br) and (fr+bl) alternate
+                params = self._get_leg_params(robot_id)
                 t = self._anim_time
-                pa = math.sin(t)          # phase for fl+br
-                pb = math.sin(t + math.pi)  # phase for fr+bl
-
-                def leg(phase, flip=False):
-                    hip = 0.5 * phase * (-1 if flip else 1)
-                    # Lift ankle during forward swing, plant during stance
-                    ankle = -0.35 - 0.4 * max(0, phase)
-                    return hip, ankle
-
-                fl_h, fl_a = leg(pa)
-                fr_h, fr_a = leg(pb)
-                bl_h, bl_a = leg(pb, flip=True)  # back legs geometry is mirrored
-                br_h, br_a = leg(pa, flip=True)
-
-                self._data.qpos[start + 7:start + 15] = [
-                    fl_h, fl_a,
-                    fr_h, fr_a,
-                    bl_h, bl_a,
-                    br_h, br_a,
-                ]
+                joints = []
+                for j, (freq, phase) in enumerate(params):
+                    s = math.sin(freq * t + phase)
+                    if j % 2 == 0:  # hip joints: swing ±0.5 rad
+                        joints.append(0.5 * s)
+                    else:           # ankle joints: oscillate within [-0.75, -0.2] rad
+                        joints.append(-0.475 + 0.275 * s)
+                self._data.qpos[start + 7:start + 15] = joints
             else:
                 # Rest pose
                 self._data.qpos[start + 7:start + 15] = [0, -0.4, 0, -0.4, 0, -0.4, 0, -0.4]
