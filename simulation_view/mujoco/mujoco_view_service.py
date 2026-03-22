@@ -27,8 +27,8 @@ ZONE_COLORS = {
 }
 
 
-def _to_world(x: float, y: float) -> tuple[float, float]:
-    return x * CELL_SIZE, -y * CELL_SIZE
+def _to_world(x: float, y: float, env_width: float, env_height: float) -> tuple[float, float]:
+    return (x - env_width / 2) * CELL_SIZE, -(y - env_height / 2) * CELL_SIZE
 
 
 def _ant_xml(idx: int) -> str:
@@ -74,19 +74,19 @@ def _ant_xml(idx: int) -> str:
 
 def _build_xml(state: SimulationState, num_robots: int) -> str:
     env = state.environment
-    cx, cy = _to_world(env.width / 2, env.height / 2)
+    tw = lambda x, y: _to_world(x, y, env.width, env.height)
     half = CELL_SIZE / 2
 
     # Obstacles
     obstacle_geoms = "\n".join(
-        f'    <geom type="box" pos="{_to_world(p.x, p.y)[0]} {_to_world(p.x, p.y)[1]} 0.5" '
+        f'    <geom type="box" pos="{tw(p.x, p.y)[0]} {tw(p.x, p.y)[1]} 0.5" '
         f'size="{half} {half} 0.5" rgba="0.4 0.3 0.2 1"/>'
         for p in env.obstacles
     )
 
     # Zones — one flat box per cell
     zone_geoms = "\n".join(
-        f'    <geom type="box" pos="{_to_world(pos.x, pos.y)[0]} {_to_world(pos.x, pos.y)[1]} 0.02" '
+        f'    <geom type="box" pos="{tw(pos.x, pos.y)[0]} {tw(pos.x, pos.y)[1]} 0.02" '
         f'size="{half} {half} 0.02" rgba="{ZONE_COLORS.get(zone.zone_type, "0.5 0.5 0.5 0.3")}"/>'
         for zone in env._zones.values()
         for pos in zone.cells
@@ -94,8 +94,8 @@ def _build_xml(state: SimulationState, num_robots: int) -> str:
 
     # WorkTask targets — green cylinders
     work_task_geoms = "\n".join(
-        f'    <geom type="cylinder" pos="{_to_world(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[0]} '
-        f'{_to_world(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[1]} 0.05" '
+        f'    <geom type="cylinder" pos="{tw(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[0]} '
+        f'{tw(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[1]} 0.05" '
         f'size="0.3 0.05" rgba="0.1 0.8 0.2 1"/>'
         for task in state.tasks.values()
         if isinstance(task, WorkTask)
@@ -105,8 +105,8 @@ def _build_xml(state: SimulationState, num_robots: int) -> str:
 
     # Rescue points — red spheres
     rescue_geoms = "\n".join(
-        f'    <geom type="sphere" pos="{_to_world(rp.position.x, rp.position.y)[0]} '
-        f'{_to_world(rp.position.x, rp.position.y)[1]} 0.4" size="0.2" rgba="0.9 0.1 0.1 1"/>'
+        f'    <geom type="sphere" pos="{tw(rp.position.x, rp.position.y)[0]} '
+        f'{tw(rp.position.x, rp.position.y)[1]} 0.4" size="0.2" rgba="0.9 0.1 0.1 1"/>'
         for rp in env.rescue_points.values()
     )
 
@@ -152,6 +152,8 @@ class MujocoViewService(BaseViewService):
         self._anim_time = 0.0
         self._last_render_time = None
         self._leg_params: dict = {}
+        self._env_width = 0
+        self._env_height = 0
         # MoveTask slot: task_id -> index into pre-allocated move bodies
         self._move_task_slots: dict = {}
         # qpos offset where move object data starts
@@ -190,6 +192,8 @@ class MujocoViewService(BaseViewService):
     def _init_scene(self, state: SimulationState) -> None:
         self._robot_ids = list(state.robots.keys())
         env = state.environment
+        self._env_width = env.width
+        self._env_height = env.height
 
         # Map each rescue point's MoveTask id to a pre-allocated slot index
         self._move_task_slots = {
@@ -210,7 +214,7 @@ class MujocoViewService(BaseViewService):
             if rs is None:
                 continue
 
-            wx, wy = _to_world(rs.position.x, rs.position.y)
+            wx, wy = _to_world(rs.position.x, rs.position.y, self._env_width, self._env_height)
             start = i * _QPOS_PER_ROBOT
 
             self._data.qpos[start:start + 3] = [wx, wy, 0.75]
@@ -243,5 +247,5 @@ class MujocoViewService(BaseViewService):
                 self._data.qpos[start:start + 7] = [0, 0, -10, 1, 0, 0, 0]
             else:
                 assert isinstance(ts, MoveTaskState)
-                wx, wy = _to_world(ts.current_position.x, ts.current_position.y)
+                wx, wy = _to_world(ts.current_position.x, ts.current_position.y, self._env_width, self._env_height)
                 self._data.qpos[start:start + 7] = [wx, wy, 0.3, 1, 0, 0, 0]
