@@ -2,7 +2,7 @@ import time
 from pathlib import Path
 
 from simulation import *
-from simulation_view.terminal.terminal_view_service import TerminalViewService
+from simulation_view.mujoco.mujoco_view_service import MujocoViewService
 
 from app.assignment import greedy_assign
 from app.starting_objects.environment import build_environment
@@ -23,7 +23,7 @@ store = JsonSimulationStore(
     assignment_service=assigner,
 )
 
-view = TerminalViewService()
+view = MujocoViewService()
 environment = build_environment()
 
 runner = SimulationRunner(
