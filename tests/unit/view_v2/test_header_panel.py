@@ -6,7 +6,7 @@ from simulation.domain import TaskId, Environment, Robot, RobotId, RobotState, W
 from simulation.engine_rewrite import Assignment, SimulationState
 from simulation.primitives import Position, Time
 
-from simulation_view.v2.panels.header import render_header
+from simulation_view.terminal.panels.header import render_header
 
 
 def _minimal_state(

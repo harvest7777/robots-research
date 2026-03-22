@@ -4,13 +4,13 @@ from __future__ import annotations
 
 from simulation.domain import (
     TaskId, Environment, RescuePoint, Robot, RobotId, RobotState,
-    SearchTask, SearchTaskState, WorkTask, SpatialConstraint, TaskState,
+    WorkTask, SpatialConstraint, TaskState,
 )
 from simulation.engine_rewrite import Assignment, SimulationState
 from simulation.primitives import Position, Time
 
-from simulation_view.frame import frame_to_string
-from simulation_view.v2.view import SimulationViewV2
+from simulation_view.terminal.frame import frame_to_string
+from simulation_view.terminal.view import SimulationViewV2
 
 
 def _base_state(
@@ -74,7 +74,7 @@ def test_render_contains_activity_section():
 
 
 def test_render_contains_environment_grid():
-    from simulation_view.v2.symbols import ROBOT_SYMBOL
+    from simulation_view.terminal.symbols import ROBOT_SYMBOL
     view = SimulationViewV2()
     frame = view.render(_base_state(), width=80, height=40)
     lines = frame_to_string(frame)

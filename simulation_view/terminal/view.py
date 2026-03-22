@@ -10,13 +10,13 @@ from __future__ import annotations
 
 from simulation.domain import SimulationState
 
-from simulation_view.frame import Frame, make_frame, stamp
-from simulation_view.v2.panels.activity import render_activity
-from simulation_view.v2.panels.environment import render_environment
-from simulation_view.v2.panels.header import render_header
-from simulation_view.v2.panels.rescue_points import render_rescue_points
-from simulation_view.v2.panels.robots import render_robots
-from simulation_view.v2.panels.tasks import render_tasks
+from simulation_view.terminal.frame import Frame, make_frame, stamp
+from simulation_view.terminal.panels.activity import render_activity
+from simulation_view.terminal.panels.environment import render_environment
+from simulation_view.terminal.panels.header import render_header
+from simulation_view.terminal.panels.rescue_points import render_rescue_points
+from simulation_view.terminal.panels.robots import render_robots
+from simulation_view.terminal.panels.tasks import render_tasks
 
 
 class SimulationViewV2:

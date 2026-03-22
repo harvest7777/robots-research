@@ -2,8 +2,8 @@ import time
 from pathlib import Path
 
 from simulation import *
-from simulation_view.terminal_renderer import TerminalRenderer
-from simulation_view.v2.view import SimulationViewV2
+from simulation_view.terminal.terminal_renderer import TerminalRenderer
+from simulation_view.terminal.view import SimulationViewV2
 
 from app.assignment import greedy_assign
 from app.starting_objects.environment import build_environment
@@ -32,14 +32,11 @@ runner = SimulationRunner(
     view=True
 )
 
-renderer = TerminalRenderer()
-view = SimulationViewV2()
 for k, v in ROBOT_STATES.items():
     store.add_robot(ROBOTS[k], v)
 
 for k, v in TASK_STATES.items():
     store.add_task(TASKS[k], v)
-
 
 def _cleanup_storage() -> None:
     for f in _STORAGE.iterdir():
@@ -71,4 +68,4 @@ try:
         time.sleep(0.1)
 except KeyboardInterrupt:
     pass
-    # _cleanup_storage()
+    _cleanup_storage()

@@ -25,8 +25,8 @@ from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.environment import Environment
 from simulation.primitives.time import Time
 
-from simulation_view.terminal_renderer import TerminalRenderer
-from simulation_view.v2.view import SimulationViewV2
+from simulation_view.terminal.terminal_renderer import TerminalRenderer
+from simulation_view.terminal.view import SimulationViewV2
 
 from ._analysis import SimulationAnalysis
 from .services.base_assignment_service import BaseAssignmentService

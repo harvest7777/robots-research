@@ -9,7 +9,8 @@ from simulation.domain import (
 from simulation.engine_rewrite import SimulationState
 from simulation.primitives import Position, Time
 
-from simulation_view.v2.panels.tasks import render_tasks
+from simulation_view.terminal.panels.tasks import render_tasks
+
 
 
 def _state(

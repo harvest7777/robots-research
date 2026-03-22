@@ -6,7 +6,7 @@ from simulation.domain import Environment, Robot, RobotId, RobotState
 from simulation.engine_rewrite import SimulationState
 from simulation.primitives import Position, Time
 
-from simulation_view.v2.panels.robots import render_robots
+from simulation_view.terminal.panels.robots import render_robots
 
 
 def _state_with_robot(

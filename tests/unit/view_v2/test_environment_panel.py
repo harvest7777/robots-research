@@ -7,10 +7,10 @@ from simulation.domain import (
     SearchTask, SearchTaskState, WorkTask, SpatialConstraint, TaskState,
 )
 from simulation.engine_rewrite import SimulationState
-from simulation.primitives import Position, Time, Zone, ZoneId, ZoneType
+from simulation.primitives import Position, Time
 
-from simulation_view.v2.panels.environment import render_environment
-from simulation_view.v2.symbols import (
+from simulation_view.terminal.panels.environment import render_environment
+from simulation_view.terminal.symbols import (
     ROBOT_SYMBOL,
     OBSTACLE_SYMBOL,
     TASK_AREA_SYMBOL,

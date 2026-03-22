@@ -77,8 +77,8 @@ if __name__ == "__main__":
     import os
     import time
 
-    from simulation_view.terminal_renderer import TerminalRenderer
-    from simulation_view.v2.view import SimulationViewV2
+    from simulation_view.terminal.terminal_renderer import TerminalRenderer
+    from simulation_view.terminal.view import SimulationViewV2
 
     runner = build()
     view = SimulationViewV2()

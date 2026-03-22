@@ -5,7 +5,7 @@ from __future__ import annotations
 from simulation.domain import TaskId, TaskStatus, SearchTask, SearchTaskState, WorkTask, TaskState
 from simulation.primitives import Time
 
-from simulation_view.v2.symbols import (
+from simulation_view.terminal.symbols import (
     task_id_symbol,
     task_label,
     task_full_name,

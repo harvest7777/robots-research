@@ -5,12 +5,12 @@ Tasks panel: one line per task showing status, label, priority, and progress.
 from __future__ import annotations
 
 from simulation.domain import (
-    TaskId, MoveTask, MoveTaskState, RescuePoint, SearchTask, SearchTaskState, WorkTask, TaskState,
+    MoveTask, MoveTaskState, SearchTask, SearchTaskState, WorkTask, TaskState,
 )
 from simulation.domain import SimulationState
 from simulation.primitives import Position
 
-from simulation_view.v2.symbols import task_label, task_status_symbol
+from simulation_view.terminal.symbols import task_label, task_status_symbol
 
 
 def render_tasks(state: SimulationState) -> list[str]:

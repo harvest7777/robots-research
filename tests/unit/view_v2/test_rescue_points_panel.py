@@ -9,7 +9,7 @@ from simulation.domain import (
 from simulation.engine_rewrite import SimulationState
 from simulation.primitives import Position, Time
 
-from simulation_view.v2.panels.rescue_points import render_rescue_points
+from simulation_view.terminal.panels.rescue_points import render_rescue_points
 
 
 def _rp(task_id: int = 10, name: str = "Base Camp", x: int = 3, y: int = 4) -> RescuePoint:

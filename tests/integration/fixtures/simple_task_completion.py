@@ -12,7 +12,7 @@ from __future__ import annotations
 from simulation.algorithms import astar_pathfind
 from simulation.domain import Environment, Robot, RobotId, RobotState, WorkTask, SpatialConstraint, TaskId
 from simulation.domain.task_state import TaskState
-from simulation.primitives import Capability, Position, Time
+from simulation.primitives import Position, Time
 from simulation.engine_rewrite import Assignment, SimulationRunner, SimulationState, StepOutcome
 from simulation.engine_rewrite.services import (
     InMemoryAssignmentService, InMemorySimulationStore,
@@ -64,8 +64,8 @@ if __name__ == "__main__":
     import os
     import time
 
-    from simulation_view.terminal_renderer import TerminalRenderer
-    from simulation_view.v2.view import SimulationViewV2
+    from simulation_view.terminal.terminal_renderer import TerminalRenderer
+    from simulation_view.terminal.view import SimulationViewV2
 
     runner = build()
     view = SimulationViewV2()

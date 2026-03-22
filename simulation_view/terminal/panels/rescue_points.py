@@ -10,7 +10,7 @@ from __future__ import annotations
 from simulation.domain import TaskId, SearchTaskState
 from simulation.domain import SimulationState
 
-from simulation_view.v2.symbols import RESCUE_POINT_SYMBOL
+from simulation_view.terminal.symbols import RESCUE_POINT_SYMBOL
 
 
 def render_rescue_points(state: SimulationState) -> list[str]:

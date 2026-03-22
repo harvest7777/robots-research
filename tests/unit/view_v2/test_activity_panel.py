@@ -6,7 +6,7 @@ from simulation.domain import TaskId, TaskStatus, Environment, Robot, RobotId, R
 from simulation.engine_rewrite import Assignment, SimulationState
 from simulation.primitives import Position, Time
 
-from simulation_view.v2.panels.activity import render_activity
+from simulation_view.terminal.panels.activity import render_activity
 
 
 def _state(

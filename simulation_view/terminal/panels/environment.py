@@ -8,13 +8,12 @@ work areas, rescue points, and zones overlaid.
 from __future__ import annotations
 
 from simulation.domain import (
-    TaskId, TaskStatus, Environment, MoveTask, MoveTaskState, RescuePoint, SearchTask,
-    SearchTaskState, WorkTask, SpatialConstraint,
-)
-from simulation.primitives import Position, ZoneType
+    TaskId, TaskStatus, Environment, MoveTask, MoveTaskState, SearchTask,
+    SearchTaskState, WorkTask, )
+from simulation.primitives import Position
 from simulation.domain import SimulationState
 
-from simulation_view.v2.symbols import (
+from simulation_view.terminal.symbols import (
     ROBOT_SYMBOL,
     OBSTACLE_SYMBOL,
     TASK_AREA_SYMBOL,
