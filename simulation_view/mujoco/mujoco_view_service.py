@@ -58,9 +58,10 @@ def _ant_xml(idx: int) -> str:
 def _build_xml(num_robots: int, width: int, height: int, obstacles) -> str:
     cx, cy = _to_world(width / 2, height / 2)
 
+    half = CELL_SIZE / 2
     obstacle_geoms = "\n".join(
         f'    <geom type="box" pos="{_to_world(p.x, p.y)[0]} {_to_world(p.x, p.y)[1]} 0.5" '
-        f'size="0.45 0.45 0.5" rgba="0.4 0.3 0.2 1"/>'
+        f'size="{half} {half} 0.5" rgba="0.4 0.3 0.2 1"/>'
         for p in obstacles
     )
 
@@ -69,10 +70,10 @@ def _build_xml(num_robots: int, width: int, height: int, obstacles) -> str:
     return f"""<mujoco>
   <option gravity="0 0 -9.81"/>
   <visual>
-    <headlight ambient="1 1 1" diffuse="1 1 1" specular="1 1 1"/>
+    <headlight ambient="0.3 0.3 0.3" diffuse="0.6 0.6 0.6" specular="0.1 0.1 0.1"/>
   </visual>
   <worldbody>
-    <light pos="{cx} {cy} 20" dir="0 0 -1" diffuse="1 1 1" specular="1 1 1" castshadow="false"/>
+    <light pos="{cx} {cy} 20" dir="0 0 -1" diffuse="0.8 0.8 0.8" specular="0.3 0.3 0.3" castshadow="false"/>
     <geom name="floor" type="plane" size="{width * CELL_SIZE} {height * CELL_SIZE} 0.1" rgba="0.8 0.85 0.8 1"/>
     {obstacle_geoms}
     {robot_bodies}
