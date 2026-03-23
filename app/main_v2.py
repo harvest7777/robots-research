@@ -1,13 +1,17 @@
+import asyncio
 import time
 from pathlib import Path
 
 from simulation import *
-from simulation_view.mujoco.mujoco_view_service import MujocoViewService
+# from simulation_view.mujoco.mujoco_view_service import MujocoViewService
 
 from app.assignment import greedy_assign
 from app.starting_objects.environment import build_environment
 from app.starting_objects.robots import ROBOTS, ROBOT_STATES
 from app.starting_objects.tasks import TASKS, TASK_STATES
+from llm.agent import AssignmentAgent
+from llm.providers.openai import OpenAIProvider
+from simulation_view.terminal.terminal_view_service import TerminalViewService
 
 _STORAGE = Path(__file__).parent / "storage"
 _STORAGE.mkdir(exist_ok=True)
@@ -23,7 +27,8 @@ store = JsonSimulationStore(
     assignment_service=assigner,
 )
 
-view = MujocoViewService()
+# view = MujocoViewService()
+view = TerminalViewService()
 environment = build_environment()
 
 runner = SimulationRunner(
@@ -57,16 +62,30 @@ def _build_state() -> SimulationState:
     )
 
 
+_SYSTEM = (
+    "You are a robot task assignment system. "
+    "Call get_state to inspect the current simulation state, "
+    "then call write_assignments to assign each robot to the highest-priority "
+    "task it is capable of performing. Prioritise tasks by their priority field."
+)
+
+agent = AssignmentAgent(
+    provider=OpenAIProvider(),
+    store=store,
+    assignment_service=assigner,
+    system=_SYSTEM,
+)
+
 try:
     assigner.update(greedy_assign(_build_state()))
 
-    for _ in range(200):
+    for _ in range(100):
         state, outcome = runner.step()
 
         if outcome.tasks_spawned or outcome.tasks_completed:
             assigner.update(greedy_assign(state))
 
-        time.sleep(0.5)
+        time.sleep(0.1)
 except KeyboardInterrupt:
     pass
-    _cleanup_storage()
+    # _cleanup_storage()
