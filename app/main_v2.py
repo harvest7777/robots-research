@@ -76,8 +76,9 @@ agent = AssignmentAgent(
 )
 
 def _agent_assign(prompt: str) -> None:
+    print("[agent] assigning...")
     _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=3))
-    print(f"[agent] tokens used: {tokens}")
+    print(f"[agent] done — tokens used: {tokens}")
 
 
 try:
@@ -87,7 +88,6 @@ try:
         state, outcome = runner.step()
 
         if outcome.tasks_spawned or outcome.tasks_completed:
-            print("LLM assigning...")
             _agent_assign("Tasks changed. Reassign robots as needed.")
 
         time.sleep(0.5)
