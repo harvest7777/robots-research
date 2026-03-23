@@ -48,9 +48,10 @@ class AssignmentAgent:
         self._tools, self._handlers = make_tools(store, assignment_service)
         self._history: list[Message] = []
 
-    async def invoke(self, message: str) -> str:
+    async def invoke(self, message: str, max_tool_calls: int | None = None) -> str:
         self._history.append(Message(role="user", content=message))
 
+        tool_calls_made = 0
         while True:
             response = await self._provider.complete(
                 messages=self._history,
@@ -68,6 +69,9 @@ class AssignmentAgent:
             self._history.append(Message(role="assistant", content=assistant_content))
 
             if not response.tool_calls:
+                return response.text or ""
+
+            if max_tool_calls is not None and tool_calls_made >= max_tool_calls:
                 return response.text or ""
 
             # Dispatch all tool calls and collect results into one user turn.
@@ -90,4 +94,5 @@ class AssignmentAgent:
                         )
                 tool_results.append(result)
 
+            tool_calls_made += len(tool_results)
             self._history.append(Message(role="user", content=tool_results))
