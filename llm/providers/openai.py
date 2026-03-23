@@ -125,4 +125,5 @@ class OpenAIProvider(LLMProvider):
                     args=json.loads(tc.function.arguments),
                 ))
 
-        return LLMResponse(text=text, tool_calls=tool_calls)
+        tokens_used = response.usage.total_tokens if response.usage else 0
+        return LLMResponse(text=text, tool_calls=tool_calls, tokens_used=tokens_used)

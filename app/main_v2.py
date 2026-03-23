@@ -76,19 +76,21 @@ agent = AssignmentAgent(
 )
 
 def _agent_assign(prompt: str) -> None:
-    asyncio.run(agent.invoke(prompt, max_tool_calls=3))
+    _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=3))
+    print(f"[agent] tokens used: {tokens}")
 
 
 try:
     _agent_assign("Simulation started. Assign all robots to tasks.")
 
-    for _ in range(100):
+    for _ in range(50):
         state, outcome = runner.step()
 
         if outcome.tasks_spawned or outcome.tasks_completed:
+            print("LLM assigning...")
             _agent_assign("Tasks changed. Reassign robots as needed.")
 
-        time.sleep(0.1)
+        time.sleep(0.5)
     print(runner.stop())
 except KeyboardInterrupt:
     pass

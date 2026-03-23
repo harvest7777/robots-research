@@ -62,6 +62,7 @@ class Tool:
 class LLMResponse:
     text: str | None
     tool_calls: list[ToolUseContent] = field(default_factory=list)
+    tokens_used: int = 0
 
 
 class LLMProvider(ABC):
