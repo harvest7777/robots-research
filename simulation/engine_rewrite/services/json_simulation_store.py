@@ -187,7 +187,7 @@ class JsonSimulationStore(BaseSimulationStore):
             "robots": robots,
             "tasks": tasks,
             "assignments": [
-                {"robot_id": int(a.robot_id), "task_id": int(a.task_id)}
+                {"robot_id": int(a.robot_id), "task_id": int(a.task_id) if a.task_id else None}
                 for a in assignments
             ],
         }
