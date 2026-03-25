@@ -10,8 +10,8 @@ from simulation.domain import (
 )
 from simulation.primitives import Capability, Position
 
-WIDTH = 40
-HEIGHT = 30
+WIDTH = 20
+HEIGHT = 15
 
 RESCUE_POINT_ALPHA_ID = TaskId(10)
 RESCUE_POINT_BRAVO_ID = TaskId(11)
@@ -25,17 +25,17 @@ MOVE_TASK_CHARLIE_ID = TaskId(22)
 MOVE_TASK_DELTA_ID = TaskId(23)
 MOVE_TASK_ECHO_ID = TaskId(24)
 
-CASUALTY_ALPHA   = Position(7, 8)
-CASUALTY_BRAVO   = Position(31, 6)
-CASUALTY_CHARLIE = Position(9, 16)
-CASUALTY_DELTA   = Position(33, 16)
-CASUALTY_ECHO    = Position(20, 25)
+CASUALTY_ALPHA   = Position(3, 4)
+CASUALTY_BRAVO   = Position(15, 3)
+CASUALTY_CHARLIE = Position(4, 8)
+CASUALTY_DELTA   = Position(16, 8)
+CASUALTY_ECHO    = Position(10, 12)
 
-EXTRACTION_ALPHA   = Position(3, 26)
-EXTRACTION_BRAVO   = Position(37, 3)
-EXTRACTION_CHARLIE = Position(1, 14)
-EXTRACTION_DELTA   = Position(36, 26)
-EXTRACTION_ECHO    = Position(12, 28)
+EXTRACTION_ALPHA   = Position(1, 13)
+EXTRACTION_BRAVO   = Position(18, 1)
+EXTRACTION_CHARLIE = Position(0, 7)
+EXTRACTION_DELTA   = Position(18, 13)
+EXTRACTION_ECHO    = Position(6, 14)
 
 
 def _rect(x0: int, y0: int, x1: int, y1: int) -> list[Position]:
@@ -62,11 +62,11 @@ def _build_obstacles() -> list[Position]:
     # No walls or corridors; formations can navigate freely around any cluster.
     o: list[Position] = []
 
-    o += _rect(17, 6, 20, 8)    # centre-north rubble
-    o += _rect(5, 12, 7, 14)    # west-mid rubble
-    o += _rect(24, 12, 26, 14)  # east-mid rubble
-    o += _rect(16, 19, 18, 21)  # centre-south rubble
-    o += _rect(30, 18, 32, 20)  # east-south rubble
+    o += _rect(8, 3, 10, 4)    # centre-north rubble
+    o += _rect(2, 6, 3, 7)    # west-mid rubble
+    o += _rect(12, 6, 13, 7)  # east-mid rubble
+    o += _rect(8, 9, 9, 10)   # centre-south rubble
+    o += _rect(15, 9, 16, 10) # east-south rubble
 
     blocked = {p for p in o if 0 <= p.x < WIDTH and 0 <= p.y < HEIGHT}
     blocked -= _PROTECTED

@@ -62,11 +62,11 @@ ROBOTS: dict[RobotId, Robot] = {
 # ---------------------------------------------------------------------------
 
 ROBOT_STATES: dict[RobotId, RobotState] = {
-    R1: RobotState(robot_id=R1, position=Position(20, 2)),   # north-center
-    R2: RobotState(robot_id=R2, position=Position(6, 7)),    # near Alpha
-    R3: RobotState(robot_id=R3, position=Position(11, 9)),   # near Alpha
-    R4: RobotState(robot_id=R4, position=Position(5, 14)),   # near Charlie
-    R5: RobotState(robot_id=R5, position=Position(30, 9)),   # near Bravo
-    R6: RobotState(robot_id=R6, position=Position(34, 14)),  # near Delta
-    R7: RobotState(robot_id=R7, position=Position(5, 27)),   # near Echo
+    R1: RobotState(robot_id=R1, position=Position(10, 1)),   # north-center
+    R2: RobotState(robot_id=R2, position=Position(3, 3)),    # near Alpha
+    R3: RobotState(robot_id=R3, position=Position(5, 4)),    # near Alpha
+    R4: RobotState(robot_id=R4, position=Position(4, 7)),    # near Charlie
+    R5: RobotState(robot_id=R5, position=Position(15, 4)),   # near Bravo
+    R6: RobotState(robot_id=R6, position=Position(17, 7)),   # near Delta
+    R7: RobotState(robot_id=R7, position=Position(9, 13)),   # near Echo
 }

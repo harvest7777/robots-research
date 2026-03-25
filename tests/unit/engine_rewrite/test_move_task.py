@@ -176,7 +176,9 @@ def test_formation_robots_all_shift_together():
 # Obstacle and robot blocking
 # ---------------------------------------------------------------------------
 
-def test_formation_stays_put_when_blocked_by_obstacle():
+def test_formation_routes_around_obstacle():
+    # Task at (4,0) heading east to (8,0); direct path blocked by obstacle at (5,0).
+    # Formation should detour south to (4,1) rather than staying stuck.
     env = _env()
     env.add_obstacle(Position(5, 0))
     task = _task(1, dest_x=8, dest_y=0, min_distance=1)
@@ -189,7 +191,7 @@ def test_formation_stays_put_when_blocked_by_obstacle():
         env=env,
     )
     outcome = classify_step(state, astar_pathfind)
-    assert outcome.tasks_moved == []
+    assert outcome.tasks_moved == [(TaskId(1), Position(4, 1))]
 
 
 def test_formation_stays_put_when_blocked_by_other_robot():

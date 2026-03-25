@@ -1,14 +1,16 @@
+import asyncio
 import time
 from pathlib import Path
 
 from simulation import *
-from simulation_view.terminal.terminal_renderer import TerminalRenderer
-from simulation_view.terminal.view import SimulationViewV2
+from simulation_view.mujoco.mujoco_view_service import MujocoViewService
 
-from app.assignment import greedy_assign
 from app.starting_objects.environment import build_environment
 from app.starting_objects.robots import ROBOTS, ROBOT_STATES
 from app.starting_objects.tasks import TASKS, TASK_STATES
+from llm.agent import AssignmentAgent
+from llm.providers.openai import OpenAIProvider
+from simulation_view.terminal.terminal_view_service import TerminalViewService
 
 _STORAGE = Path(__file__).parent / "storage"
 _STORAGE.mkdir(exist_ok=True)
@@ -23,13 +25,16 @@ store = JsonSimulationStore(
     state_path=state_path,
     assignment_service=assigner,
 )
+
+view = MujocoViewService()
+# view = TerminalViewService()
 environment = build_environment()
 
 runner = SimulationRunner(
     environment=environment,
     store=store,
     assignment_service=assigner,
-    view=True
+    view_service=view
 )
 
 for k, v in ROBOT_STATES.items():
@@ -56,16 +61,37 @@ def _build_state() -> SimulationState:
     )
 
 
-try:
-    assigner.update(greedy_assign(_build_state()))
+_SYSTEM = (
+    "You are a robot task assignment system. "
+    "Call get_state to inspect the current simulation state, "
+    "then call write_assignments to assign each robot to the highest-priority "
+    "task it is capable of performing. Prioritise tasks by their priority field."
+)
 
-    for _ in range(200):
+agent = AssignmentAgent(
+    provider=OpenAIProvider(),
+    store=store,
+    assignment_service=assigner,
+    system=_SYSTEM,
+)
+
+def _agent_assign(prompt: str) -> None:
+    print("[agent] assigning...")
+    _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=3))
+    print(f"[agent] done — tokens used: {tokens}")
+
+
+try:
+    _agent_assign("Simulation started. Assign all robots to tasks.")
+
+    for _ in range(50):
         state, outcome = runner.step()
 
         if outcome.tasks_spawned or outcome.tasks_completed:
-            assigner.update(greedy_assign(state))
+            _agent_assign("Tasks changed. Reassign robots as needed.")
 
-        time.sleep(0.1)
+        time.sleep(0.5)
+    print(runner.stop())
 except KeyboardInterrupt:
     pass
-    _cleanup_storage()
+    # _cleanup_storage()

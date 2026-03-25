@@ -48,9 +48,11 @@ class AssignmentAgent:
         self._tools, self._handlers = make_tools(store, assignment_service)
         self._history: list[Message] = []
 
-    async def invoke(self, message: str) -> str:
+    async def invoke(self, message: str, max_tool_calls: int | None = None) -> tuple[str, int]:
         self._history.append(Message(role="user", content=message))
 
+        tool_calls_made = 0
+        total_tokens = 0
         while True:
             response = await self._provider.complete(
                 messages=self._history,
@@ -60,6 +62,7 @@ class AssignmentAgent:
 
             # Build the assistant turn content so the history stays consistent
             # across providers (always a list so tool use blocks can be appended).
+            total_tokens += response.tokens_used
             assistant_content: list = []
             if response.text:
                 assistant_content.append(TextContent(text=response.text))
@@ -68,7 +71,10 @@ class AssignmentAgent:
             self._history.append(Message(role="assistant", content=assistant_content))
 
             if not response.tool_calls:
-                return response.text or ""
+                return response.text or "", total_tokens
+
+            if max_tool_calls is not None and tool_calls_made >= max_tool_calls:
+                return response.text or "", total_tokens
 
             # Dispatch all tool calls and collect results into one user turn.
             tool_results: list[ToolResultContent] = []
@@ -90,4 +96,5 @@ class AssignmentAgent:
                         )
                 tool_results.append(result)
 
+            tool_calls_made += len(tool_results)
             self._history.append(Message(role="user", content=tool_results))

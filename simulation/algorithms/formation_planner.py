@@ -23,6 +23,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
+from simulation.algorithms.astar_pathfinding import astar_pathfind
 from simulation.domain.environment import Environment
 from simulation.primitives.position import Position
 
@@ -96,11 +97,32 @@ def plan_formation_move(
             )
         return current_min - new_min  # positive = makes progress
 
-    candidates = sorted(
-        [d for d in _DIRECTIONS if _progress(d) > 0],
-        key=_progress,
-        reverse=True,
-    )
+    # Use A* on the task position to find the optimal next direction, including
+    # routes that temporarily move away from the destination to go around obstacles.
+    # Fall back to progress-only heuristic if A* finds no path.
+    candidates: list[tuple[int, int]]
+    if task_position is not None:
+        astar_next = astar_pathfind(environment, task_position, destination)
+        if astar_next is not None:
+            primary = (astar_next.x - task_position.x, astar_next.y - task_position.y)
+            fallbacks = sorted(
+                [d for d in _DIRECTIONS if d != primary and _progress(d) > 0],
+                key=_progress,
+                reverse=True,
+            )
+            candidates = [primary] + fallbacks
+        else:
+            candidates = sorted(
+                [d for d in _DIRECTIONS if _progress(d) > 0],
+                key=_progress,
+                reverse=True,
+            )
+    else:
+        candidates = sorted(
+            [d for d in _DIRECTIONS if _progress(d) > 0],
+            key=_progress,
+            reverse=True,
+        )
 
     for dx, dy in candidates:
         shifted = frozenset(Position(pos.x + dx, pos.y + dy) for pos in formation)
@@ -154,11 +176,21 @@ def plan_soft_formation_move(
         dx, dy = direction
         return current_dist - Position(task_position.x + dx, task_position.y + dy).manhattan(destination)
 
-    candidates = sorted(
-        [d for d in _DIRECTIONS if _task_progress(d) > 0],
-        key=_task_progress,
-        reverse=True,
-    )
+    astar_next = astar_pathfind(environment, task_position, destination)
+    if astar_next is not None:
+        primary = (astar_next.x - task_position.x, astar_next.y - task_position.y)
+        fallbacks = sorted(
+            [d for d in _DIRECTIONS if d != primary and _task_progress(d) > 0],
+            key=_task_progress,
+            reverse=True,
+        )
+        candidates = [primary] + fallbacks
+    else:
+        candidates = sorted(
+            [d for d in _DIRECTIONS if _task_progress(d) > 0],
+            key=_task_progress,
+            reverse=True,
+        )
 
     for direction in candidates:
         dx, dy = direction

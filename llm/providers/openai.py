@@ -88,7 +88,7 @@ def _to_openai_tool(tool: Tool) -> dict:
 
 
 class OpenAIProvider(LLMProvider):
-    def __init__(self, model: str = "gpt-4.1"):
+    def __init__(self, model: str = "gpt-4.1-mini"):
         self._client = openai.AsyncOpenAI()
         self._model = model
 
@@ -125,4 +125,5 @@ class OpenAIProvider(LLMProvider):
                     args=json.loads(tc.function.arguments),
                 ))
 
-        return LLMResponse(text=text, tool_calls=tool_calls)
+        tokens_used = response.usage.total_tokens if response.usage else 0
+        return LLMResponse(text=text, tool_calls=tool_calls, tokens_used=tokens_used)
