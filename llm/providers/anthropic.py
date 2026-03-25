@@ -6,6 +6,7 @@ calls the API, and maps the response back to LLMResponse.
 """
 
 import anthropic
+from langsmith import traceable
 
 from llm.providers.base import (
     Content,
@@ -59,6 +60,7 @@ class AnthropicProvider(LLMProvider):
         self._client = anthropic.AsyncAnthropic()
         self._model = model
 
+    @traceable(run_type="llm", name="Anthropic.complete")
     async def complete(
         self,
         messages: list[Message],

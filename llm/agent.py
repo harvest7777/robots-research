@@ -23,6 +23,8 @@ on its own.
 
 from __future__ import annotations
 
+from langsmith import traceable
+
 from llm.providers.base import (
     LLMProvider,
     Message,
@@ -48,6 +50,7 @@ class AssignmentAgent:
         self._tools, self._handlers = make_tools(store, assignment_service)
         self._history: list[Message] = []
 
+    @traceable(run_type="chain", name="AssignmentAgent.invoke")
     async def invoke(self, message: str, max_tool_calls: int | None = None) -> tuple[str, int]:
         self._history.append(Message(role="user", content=message))
 

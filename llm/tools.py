@@ -17,6 +17,8 @@ from __future__ import annotations
 import json
 from typing import Callable
 
+from langsmith import traceable
+
 from simulation.domain.move_task import MoveTask, MoveTaskState
 from simulation.domain.search_task import SearchTask, SearchTaskState
 from simulation.domain.task import WorkTask
@@ -136,6 +138,7 @@ def make_tools(
         },
     )
 
+    @traceable(run_type="tool", name="get_state")
     def handle_get_state(_args: dict) -> str:
         return json.dumps(_serialise_state(store, assignment_service), indent=2)
 
@@ -168,6 +171,7 @@ def make_tools(
         },
     )
 
+    @traceable(run_type="tool", name="write_assignments")
     def handle_write_assignments(args: dict) -> str:
         new_assignments = [
             Assignment(

@@ -8,6 +8,7 @@ calls the API, and maps the response back to LLMResponse.
 import json
 
 import openai
+from langsmith import traceable
 
 from llm.providers.base import (
     Content,
@@ -92,6 +93,7 @@ class OpenAIProvider(LLMProvider):
         self._client = openai.AsyncOpenAI()
         self._model = model
 
+    @traceable(run_type="llm", name="OpenAI.complete")
     async def complete(
         self,
         messages: list[Message],

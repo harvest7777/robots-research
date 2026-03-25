@@ -1,6 +1,7 @@
 import uuid
 
 from google import genai
+from langsmith import traceable
 from google.genai import types
 from dotenv import load_dotenv
 
@@ -77,6 +78,7 @@ class GeminiProvider(LLMProvider):
 
         return result
 
+    @traceable(run_type="llm", name="Gemini.complete")
     async def complete(
         self,
         messages: list[Message],
