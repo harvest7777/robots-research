@@ -1,15 +1,12 @@
 import asyncio
-import os
 import time
 from pathlib import Path
 
 from simulation import *
 # from simulation_view.mujoco.mujoco_view_service import MujocoViewService
 
-from app.starting_objects.environment import build_environment
-from app.starting_objects.robots import ROBOTS, ROBOT_STATES
-from app.starting_objects.tasks import TASKS, TASK_STATES
-from llm.agent import AssignmentAgent
+from app.starting_objects import build_environment, ROBOTS, ROBOT_STATES, TASKS, TASK_STATES
+from app.agents import ASI1_AGENT
 from simulation_view.terminal.terminal_view_service import TerminalViewService
 
 _STORAGE = Path(__file__).parent / "storage"
@@ -61,21 +58,7 @@ def _build_state() -> SimulationState:
     )
 
 
-_SYSTEM = (
-    "You are a robot task assignment system. "
-    "Call get_state to inspect the current simulation state, "
-    "then call write_assignments to assign each robot to the highest-priority "
-    "task it is capable of performing. Prioritise tasks by their priority field."
-)
-
-agent = AssignmentAgent(
-    model="openai/ep-8d4p2p-1774502943933981149",
-    api_base="https://vanchin.streamlake.ai/api/gateway/v1/endpoints",
-    api_key=os.getenv("STREAMLAKE_API_KEY"),
-    store=store,
-    assignment_service=assigner,
-    system=_SYSTEM,
-)
+agent = ASI1_AGENT(store, assigner)
 
 def _agent_assign(prompt: str) -> None:
     _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=5))
@@ -89,6 +72,5 @@ try:
 
         if outcome.tasks_spawned or outcome.tasks_completed:
             _agent_assign("Tasks changed. Reassign robots as needed.")
-    print(runner.stop())
 except KeyboardInterrupt:
     _cleanup_storage()
