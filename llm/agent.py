@@ -38,9 +38,13 @@ class AssignmentAgent:
         store: BaseSimulationStore,
         assignment_service: BaseAssignmentService,
         system: str | None = None,
+        api_base: str | None = None,
+        api_key: str | None = None,
     ) -> None:
         self._model = model
         self._system = system
+        self._api_base = api_base
+        self._api_key = api_key
         self._tools, self._handlers = make_tools(store, assignment_service)
         self._history: list[dict] = []
 
@@ -61,6 +65,8 @@ class AssignmentAgent:
                 messages=messages,
                 tools=self._tools,
                 max_tokens=4096,
+                api_base=self._api_base,
+                api_key=self._api_key,
             )
 
             msg = response.choices[0].message

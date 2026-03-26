@@ -1,4 +1,5 @@
 import asyncio
+import os
 import time
 from pathlib import Path
 
@@ -68,7 +69,9 @@ _SYSTEM = (
 )
 
 agent = AssignmentAgent(
-    model="openai/gpt-4.1-mini",
+    model="openai/asi1",
+    api_base="https://api.asi1.ai/v1",
+    api_key=os.getenv("ASI_ONE_API_KEY"),
     store=store,
     assignment_service=assigner,
     system=_SYSTEM,
