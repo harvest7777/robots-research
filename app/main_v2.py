@@ -69,9 +69,9 @@ _SYSTEM = (
 )
 
 agent = AssignmentAgent(
-    model="openai/asi1",
-    api_base="https://api.asi1.ai/v1",
-    api_key=os.getenv("ASI_ONE_API_KEY"),
+    model="openai/ep-8d4p2p-1774502943933981149",
+    api_base="https://vanchin.streamlake.ai/api/gateway/v1/endpoints",
+    api_key=os.getenv("STREAMLAKE_API_KEY"),
     store=store,
     assignment_service=assigner,
     system=_SYSTEM,
