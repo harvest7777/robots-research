@@ -4,12 +4,9 @@ llm/tools.py
 Tool definitions and handlers for LLM-based robot assignment.
 
 `make_tools(store, assignment_service)` returns:
-  - list[Tool]              — schemas to pass to LLMProvider.complete()
+  - list[dict]              — OpenAI-format tool schemas to pass to litellm
   - dict[str, Callable]     — handler map keyed by tool name; each handler
                               takes the LLM's args dict and returns a string
-
-Both services are injected, so the same tools work with any store or
-assignment service implementation (InMemory, JSON, etc.).
 """
 
 from __future__ import annotations
@@ -28,8 +25,6 @@ from simulation.engine_rewrite.services.base_simulation_store import BaseSimulat
 from simulation.domain.assignment import Assignment
 from simulation.domain.robot_state import RobotId
 from simulation.domain.base_task import TaskId
-
-from llm.providers.base import Tool
 
 
 # ---------------------------------------------------------------------------
@@ -114,62 +109,65 @@ def _serialise_state(
 def make_tools(
     store: BaseSimulationStore,
     assignment_service: BaseAssignmentService,
-) -> tuple[list[Tool], dict[str, Callable[[dict], str]]]:
+) -> tuple[list[dict], dict[str, Callable[[dict], str]]]:
     """
     Return (schemas, handlers) for the two assignment tools.
 
-    schemas  — pass directly to LLMProvider.complete(tools=schemas)
+    schemas  — OpenAI-format tool dicts, pass directly to litellm
     handlers — dispatch by tool name: handlers[name](args) -> result_str
     """
 
-    # ── get_state ────────────────────────────────────────────────────
-
-    get_state_tool = Tool(
-        name="get_state",
-        description=(
-            "Return the current simulation state: all robots (position, battery, "
-            "capabilities), all tasks (type, status, progress, location), and the "
-            "current robot-to-task assignments."
-        ),
-        input_schema={
-            "type": "object",
-            "properties": {},
-            "required": [],
+    schemas = [
+        {
+            "type": "function",
+            "function": {
+                "name": "get_state",
+                "description": (
+                    "Return the current simulation state: all robots (position, battery, "
+                    "capabilities), all tasks (type, status, progress, location), and the "
+                    "current robot-to-task assignments."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {},
+                    "required": [],
+                },
+            },
         },
-    )
+        {
+            "type": "function",
+            "function": {
+                "name": "write_assignments",
+                "description": (
+                    "Overwrite the current robot-to-task assignments. Each robot may be "
+                    "assigned to at most one task. Robots omitted from the list keep their "
+                    "existing assignment. Pass an empty list to clear all assignments."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "assignments": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "robot_id": {"type": "integer"},
+                                    "task_id": {"type": "integer"},
+                                },
+                                "required": ["robot_id", "task_id"],
+                            },
+                            "description": "List of robot-to-task pairs to apply.",
+                        }
+                    },
+                    "required": ["assignments"],
+                },
+            },
+        },
+    ]
 
     @traceable(run_type="tool", name="get_state")
     def handle_get_state(_args: dict) -> str:
         return json.dumps(_serialise_state(store, assignment_service), indent=2)
-
-    # ── write_assignments ─────────────────────────────────────────────
-
-    write_assignments_tool = Tool(
-        name="write_assignments",
-        description=(
-            "Overwrite the current robot-to-task assignments. Each robot may be "
-            "assigned to at most one task. Robots omitted from the list keep their "
-            "existing assignment. Pass an empty list to clear all assignments."
-        ),
-        input_schema={
-            "type": "object",
-            "properties": {
-                "assignments": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "robot_id": {"type": "integer"},
-                            "task_id": {"type": "integer"},
-                        },
-                        "required": ["robot_id", "task_id"],
-                    },
-                    "description": "List of robot-to-task pairs to apply.",
-                }
-            },
-            "required": ["assignments"],
-        },
-    )
 
     @traceable(run_type="tool", name="write_assignments")
     def handle_write_assignments(args: dict) -> str:
@@ -186,7 +184,6 @@ def make_tools(
         )
         return f"Assignments written ({len(new_assignments)}): {pairs or 'none'}"
 
-    schemas = [get_state_tool, write_assignments_tool]
     handlers: dict[str, Callable[[dict], str]] = {
         "get_state": handle_get_state,
         "write_assignments": handle_write_assignments,

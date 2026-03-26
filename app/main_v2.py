@@ -9,7 +9,6 @@ from app.starting_objects.environment import build_environment
 from app.starting_objects.robots import ROBOTS, ROBOT_STATES
 from app.starting_objects.tasks import TASKS, TASK_STATES
 from llm.agent import AssignmentAgent
-from llm.providers.litellm_provider import LiteLLMProvider
 from simulation_view.terminal.terminal_view_service import TerminalViewService
 
 _STORAGE = Path(__file__).parent / "storage"
@@ -69,7 +68,7 @@ _SYSTEM = (
 )
 
 agent = AssignmentAgent(
-    provider=LiteLLMProvider("openai/gpt-4.1-mini"),
+    model="openai/gpt-4.1-mini",
     store=store,
     assignment_service=assigner,
     system=_SYSTEM,

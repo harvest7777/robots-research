@@ -2,12 +2,12 @@
 llm/agent.py
 
 AssignmentAgent — drives an LLM through a tool-use loop to assign robots
-to tasks.
+to tasks via LiteLLM.
 
 Usage
 -----
     agent = AssignmentAgent(
-        provider=AnthropicProvider(),
+        model="openai/gpt-4.1-mini",
         store=store,
         assignment_service=assigner,
         system="You are a robot task assignment system ...",
@@ -16,22 +16,16 @@ Usage
     response = await agent.invoke("Tick 10: casualty Alpha was just discovered.")
 
 `invoke` appends the message to the shared conversation history, runs the
-provider's tool loop to completion, and returns the final text reply.
-The caller decides when to call invoke — the agent never writes assignments
-on its own.
+tool loop to completion, and returns the final text reply.
 """
 
 from __future__ import annotations
 
+import json
+
+import litellm
 from langsmith import traceable
 
-from llm.providers.base import (
-    LLMProvider,
-    Message,
-    TextContent,
-    ToolResultContent,
-    ToolUseContent,
-)
 from llm.tools import make_tools
 from simulation.engine_rewrite.services.base_assignment_service import BaseAssignmentService
 from simulation.engine_rewrite.services.base_simulation_store import BaseSimulationStore
@@ -40,64 +34,63 @@ from simulation.engine_rewrite.services.base_simulation_store import BaseSimulat
 class AssignmentAgent:
     def __init__(
         self,
-        provider: LLMProvider,
+        model: str,
         store: BaseSimulationStore,
         assignment_service: BaseAssignmentService,
         system: str | None = None,
     ) -> None:
-        self._provider = provider
+        self._model = model
         self._system = system
         self._tools, self._handlers = make_tools(store, assignment_service)
-        self._history: list[Message] = []
+        self._history: list[dict] = []
 
     @traceable(run_type="chain", name="AssignmentAgent.invoke")
     async def invoke(self, message: str, max_tool_calls: int | None = None) -> tuple[str, int]:
-        self._history.append(Message(role="user", content=message))
+        self._history.append({"role": "user", "content": message})
 
         tool_calls_made = 0
         total_tokens = 0
+
         while True:
-            response = await self._provider.complete(
-                messages=self._history,
+            messages = self._history
+            if self._system:
+                messages = [{"role": "system", "content": self._system}] + self._history
+
+            response = await litellm.acompletion(
+                model=self._model,
+                messages=messages,
                 tools=self._tools,
-                system=self._system,
+                max_tokens=4096,
             )
 
-            # Build the assistant turn content so the history stays consistent
-            # across providers (always a list so tool use blocks can be appended).
-            total_tokens += response.tokens_used
-            assistant_content: list = []
-            if response.text:
-                assistant_content.append(TextContent(text=response.text))
-            assistant_content.extend(response.tool_calls)
+            msg = response.choices[0].message
+            total_tokens += response.usage.total_tokens if response.usage else 0
 
-            self._history.append(Message(role="assistant", content=assistant_content))
+            assistant_msg: dict = {"role": "assistant", "content": msg.content}
+            if msg.tool_calls:
+                assistant_msg["tool_calls"] = [tc.model_dump() for tc in msg.tool_calls]
+            self._history.append(assistant_msg)
 
-            if not response.tool_calls:
-                return response.text or "", total_tokens
+            if not msg.tool_calls:
+                return msg.content or "", total_tokens
 
             if max_tool_calls is not None and tool_calls_made >= max_tool_calls:
-                return response.text or "", total_tokens
+                return msg.content or "", total_tokens
 
-            # Dispatch all tool calls and collect results into one user turn.
-            tool_results: list[ToolResultContent] = []
-            for call in response.tool_calls:
-                handler = self._handlers.get(call.name)
+            for tc in msg.tool_calls:
+                handler = self._handlers.get(tc.function.name)
                 if handler is None:
-                    result = ToolResultContent(
-                        tool_use_id=call.id,
-                        content=f"Unknown tool: {call.name}",
-                    )
+                    result = f"Unknown tool: {tc.function.name}"
                 else:
                     try:
-                        content = handler(call.args)
-                        result = ToolResultContent(tool_use_id=call.id, content=content)
+                        result = handler(json.loads(tc.function.arguments))
                     except Exception as exc:
-                        result = ToolResultContent(
-                            tool_use_id=call.id,
-                            content=str(exc),
-                        )
-                tool_results.append(result)
+                        result = str(exc)
 
-            tool_calls_made += len(tool_results)
-            self._history.append(Message(role="user", content=tool_results))
+                self._history.append({
+                    "role": "tool",
+                    "tool_call_id": tc.id,
+                    "content": result,
+                })
+
+            tool_calls_made += len(msg.tool_calls)
