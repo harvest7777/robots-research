@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from simulation import *
-from simulation_view.mujoco.mujoco_view_service import MujocoViewService
+# from simulation_view.mujoco.mujoco_view_service import MujocoViewService
 
 from app.starting_objects.environment import build_environment
 from app.starting_objects.robots import ROBOTS, ROBOT_STATES
@@ -26,8 +26,8 @@ store = JsonSimulationStore(
     assignment_service=assigner,
 )
 
-view = MujocoViewService()
-# view = TerminalViewService()
+# view = MujocoViewService()
+view = TerminalViewService()
 environment = build_environment()
 
 runner = SimulationRunner(
@@ -78,22 +78,17 @@ agent = AssignmentAgent(
 )
 
 def _agent_assign(prompt: str) -> None:
-    print("[agent] assigning...")
-    _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=3))
-    print(f"[agent] done — tokens used: {tokens}")
+    _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=5))
 
 
 try:
     _agent_assign("Simulation started. Assign all robots to tasks.")
 
-    for _ in range(50):
+    for _ in range(100):
         state, outcome = runner.step()
 
         if outcome.tasks_spawned or outcome.tasks_completed:
             _agent_assign("Tasks changed. Reassign robots as needed.")
-
-        time.sleep(0.5)
     print(runner.stop())
 except KeyboardInterrupt:
-    pass
-    # _cleanup_storage()
+    _cleanup_storage()
