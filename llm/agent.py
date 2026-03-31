@@ -61,6 +61,7 @@ class AssignmentAgent:
         tokens_in = 0
         tokens_out = 0
         started_at = time.time()
+        final_content = ""
 
         while True:
             messages = self._history
@@ -87,24 +88,12 @@ class AssignmentAgent:
             self._history.append(assistant_msg)
 
             if not msg.tool_calls:
-                self._records.append(AgentCallRecord(
-                    timestamp=started_at,
-                    latency_ms=int((time.time() - started_at) * 1000),
-                    tokens_in=tokens_in,
-                    tokens_out=tokens_out,
-                    tool_rounds=tool_rounds,
-                ))
-                return msg.content or "", tokens_in + tokens_out
+                final_content = msg.content or ""
+                break
 
             if max_tool_calls is not None and tool_calls_made >= max_tool_calls:
-                self._records.append(AgentCallRecord(
-                    timestamp=started_at,
-                    latency_ms=int((time.time() - started_at) * 1000),
-                    tokens_in=tokens_in,
-                    tokens_out=tokens_out,
-                    tool_rounds=tool_rounds,
-                ))
-                return msg.content or "", tokens_in + tokens_out
+                final_content = msg.content or ""
+                break
 
             for tc in msg.tool_calls:
                 handler = self._handlers.get(tc.function.name)
@@ -124,6 +113,15 @@ class AssignmentAgent:
 
             tool_calls_made += len(msg.tool_calls)
             tool_rounds += 1
+
+        self._records.append(AgentCallRecord(
+            timestamp=started_at,
+            latency_ms=int((time.time() - started_at) * 1000),
+            tokens_in=tokens_in,
+            tokens_out=tokens_out,
+            tool_rounds=tool_rounds,
+        ))
+        return final_content, tokens_in + tokens_out
 
     def get_analysis(self) -> AgentAnalysis:
         return AgentAnalysis.from_records(self._records)
