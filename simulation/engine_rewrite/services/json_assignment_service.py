@@ -7,7 +7,7 @@ Writes atomically (temp file + rename) so concurrent readers never see a
 partial write. Maintains one assignment per robot — same contract as
 InMemoryAssignmentService.
 
-Used by main_v2.py so the MCP server can inject assignments by writing to
+Used by main.py so the MCP server can inject assignments by writing to
 the JSON file while the simulation is running.
 """
 
