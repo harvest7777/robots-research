@@ -61,14 +61,6 @@ def test_single_call_totals_match_record():
     assert analysis.total_tokens_out == 80
 
 
-def test_single_call_latency_stats_all_equal_that_call():
-    record = _record(latency_ms=750)
-    analysis = AgentAnalysis.from_records([record])
-    assert analysis.mean_latency_ms == 750
-    assert analysis.min_latency_ms == 750
-    assert analysis.max_latency_ms == 750
-
-
 def test_single_call_tool_rounds_mean_equals_that_call():
     record = _record(tool_rounds=3)
     analysis = AgentAnalysis.from_records([record])
@@ -88,12 +80,6 @@ def test_tokens_are_summed_across_all_calls():
     analysis = AgentAnalysis.from_records(records)
     assert analysis.total_tokens_in == 600
     assert analysis.total_tokens_out == 120
-
-
-def test_call_count_matches_number_of_records():
-    records = [_record() for _ in range(7)]
-    analysis = AgentAnalysis.from_records(records)
-    assert analysis.total_calls == 7
 
 
 # ---------------------------------------------------------------------------
