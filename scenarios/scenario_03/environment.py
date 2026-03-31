@@ -1,5 +1,4 @@
-# Scenario 01 — flat 20x15 grid, no obstacles, no rescue points.
-# Task positions are defined directly in tasks.py as WorkTasks.
+# Scenario 03 — flat 20x15 grid, no obstacles, no rescue points.
 
 from __future__ import annotations
 
