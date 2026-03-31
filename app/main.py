@@ -24,14 +24,14 @@ store = JsonSimulationStore(
 )
 
 # view = MujocoViewService()
-view = TerminalViewService()
+# view = TerminalViewService()
 environment = build_environment()
 
 runner = SimulationRunner(
     environment=environment,
     store=store,
     assignment_service=assigner,
-    view_service=view
+    # view_service=view
 )
 
 for k, v in ROBOT_STATES.items():
@@ -62,6 +62,7 @@ agent = ASI1_AGENT(store, assigner)
 
 def _agent_assign(prompt: str) -> None:
     _, tokens = asyncio.run(agent.invoke(prompt, max_tool_calls=5))
+    print(tokens)
 
 
 try:
