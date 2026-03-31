@@ -87,11 +87,8 @@ class AssignmentAgent:
                 assistant_msg["tool_calls"] = [tc.model_dump() for tc in msg.tool_calls]
             self._history.append(assistant_msg)
 
-            if not msg.tool_calls:
-                final_content = msg.content or ""
-                break
-
-            if max_tool_calls is not None and tool_calls_made >= max_tool_calls:
+            tool_limit_reached = max_tool_calls is not None and tool_calls_made >= max_tool_calls
+            if not msg.tool_calls or tool_limit_reached:
                 final_content = msg.content or ""
                 break
 
