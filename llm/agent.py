@@ -22,10 +22,13 @@ tool loop to completion, and returns the final text reply.
 from __future__ import annotations
 
 import json
+import time
 
 import litellm
 from langsmith import traceable
 
+from llm.agent_analysis import AgentAnalysis
+from llm.agent_call_record import AgentCallRecord
 from llm.tools import make_tools
 from simulation.engine_rewrite.services.base_assignment_service import BaseAssignmentService
 from simulation.engine_rewrite.services.base_simulation_store import BaseSimulationStore
@@ -47,13 +50,17 @@ class AssignmentAgent:
         self._api_key = api_key
         self._tools, self._handlers = make_tools(store, assignment_service)
         self._history: list[dict] = []
+        self._records: list[AgentCallRecord] = []
 
     @traceable(run_type="chain", name="AssignmentAgent.invoke")
     async def invoke(self, message: str, max_tool_calls: int | None = None) -> tuple[str, int]:
         self._history.append({"role": "user", "content": message})
 
         tool_calls_made = 0
-        total_tokens = 0
+        tool_rounds = 0
+        tokens_in = 0
+        tokens_out = 0
+        started_at = time.time()
 
         while True:
             messages = self._history
@@ -70,7 +77,9 @@ class AssignmentAgent:
             )
 
             msg = response.choices[0].message
-            total_tokens += response.usage.total_tokens if response.usage else 0
+            if response.usage:
+                tokens_in += response.usage.prompt_tokens or 0
+                tokens_out += response.usage.completion_tokens or 0
 
             assistant_msg: dict = {"role": "assistant", "content": msg.content}
             if msg.tool_calls:
@@ -78,10 +87,24 @@ class AssignmentAgent:
             self._history.append(assistant_msg)
 
             if not msg.tool_calls:
-                return msg.content or "", total_tokens
+                self._records.append(AgentCallRecord(
+                    timestamp=started_at,
+                    latency_ms=int((time.time() - started_at) * 1000),
+                    tokens_in=tokens_in,
+                    tokens_out=tokens_out,
+                    tool_rounds=tool_rounds,
+                ))
+                return msg.content or "", tokens_in + tokens_out
 
             if max_tool_calls is not None and tool_calls_made >= max_tool_calls:
-                return msg.content or "", total_tokens
+                self._records.append(AgentCallRecord(
+                    timestamp=started_at,
+                    latency_ms=int((time.time() - started_at) * 1000),
+                    tokens_in=tokens_in,
+                    tokens_out=tokens_out,
+                    tool_rounds=tool_rounds,
+                ))
+                return msg.content or "", tokens_in + tokens_out
 
             for tc in msg.tool_calls:
                 handler = self._handlers.get(tc.function.name)
@@ -100,3 +123,7 @@ class AssignmentAgent:
                 })
 
             tool_calls_made += len(msg.tool_calls)
+            tool_rounds += 1
+
+    def get_analysis(self) -> AgentAnalysis:
+        return AgentAnalysis.from_records(self._records)
