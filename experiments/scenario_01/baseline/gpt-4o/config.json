@@ -1,6 +1,0 @@
-{
-  "scenario": "scenarios/scenario_01",
-  "model": "gpt-4o",
-  "override_type": "baseline",
-  "notes": ""
-}
