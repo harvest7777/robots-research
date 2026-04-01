@@ -19,6 +19,7 @@ mean_tool_rounds  : average tool loop iterations per decision; None if no calls
 from __future__ import annotations
 
 import dataclasses
+from collections import defaultdict
 from dataclasses import dataclass
 
 from llm.agent_call_record import AgentCallRecord
@@ -33,6 +34,13 @@ class AgentAnalysis:
     min_latency_ms: int | None
     max_latency_ms: int | None
     mean_tool_rounds: float | None
+    total_tool_calls_by_name: dict[str, int]
+    # total_tool_calls_by_name: sum of each tool's call count across all decisions.
+    # High get_state counts relative to write_assignments calls indicate the model
+    # is over-inspecting state before committing to assignments.
+    decisions_truncated_by_tool_limit: int
+    # decisions_truncated_by_tool_limit: number of decisions cut off by max_tool_calls
+    # before the model produced a final response. Non-zero means the limit is too tight.
 
     def to_json_dict(self) -> dict:
         return dataclasses.asdict(self)
@@ -48,9 +56,17 @@ class AgentAnalysis:
                 min_latency_ms=None,
                 max_latency_ms=None,
                 mean_tool_rounds=None,
+                total_tool_calls_by_name={},
+                decisions_truncated_by_tool_limit=0,
             )
 
         n = len(records)
+
+        total_tool_calls_by_name: dict[str, int] = defaultdict(int)
+        for r in records:
+            for name, count in r.tool_call_counts.items():
+                total_tool_calls_by_name[name] += count
+
         return cls(
             total_calls=n,
             total_tokens_in=sum(r.tokens_in for r in records),
@@ -59,4 +75,6 @@ class AgentAnalysis:
             min_latency_ms=min(r.latency_ms for r in records),
             max_latency_ms=max(r.latency_ms for r in records),
             mean_tool_rounds=sum(r.tool_rounds for r in records) / n,
+            total_tool_calls_by_name=dict(total_tool_calls_by_name),
+            decisions_truncated_by_tool_limit=sum(1 for r in records if r.truncated_by_tool_limit),
         )

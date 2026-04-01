@@ -60,6 +60,8 @@ class AssignmentAgent:
         tool_rounds = 0
         tokens_in = 0
         tokens_out = 0
+        tool_call_counts: dict[str, int] = {}
+        truncated_by_tool_limit = False
         started_at = time.time()
         final_content = ""
 
@@ -89,10 +91,12 @@ class AssignmentAgent:
 
             tool_limit_reached = max_tool_calls is not None and tool_calls_made >= max_tool_calls
             if not msg.tool_calls or tool_limit_reached:
+                truncated_by_tool_limit = tool_limit_reached
                 final_content = msg.content or ""
                 break
 
             for tc in msg.tool_calls:
+                tool_call_counts[tc.function.name] = tool_call_counts.get(tc.function.name, 0) + 1
                 handler = self._handlers.get(tc.function.name)
                 if handler is None:
                     result = f"Unknown tool: {tc.function.name}"
@@ -117,6 +121,8 @@ class AssignmentAgent:
             tokens_in=tokens_in,
             tokens_out=tokens_out,
             tool_rounds=tool_rounds,
+            tool_call_counts=tool_call_counts,
+            truncated_by_tool_limit=truncated_by_tool_limit,
         ))
         return final_content, tokens_in + tokens_out
 
