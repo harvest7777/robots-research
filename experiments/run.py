@@ -4,20 +4,20 @@ experiments/run.py
 Entrypoint for running a single experiment.
 
 Usage (from repo root):
-    python -m experiments.run <scenario> <override_variant> <model>
+    python -m experiments.run <scenario>/<override_variant> --model <model>
 
 Example:
-    python -m experiments.run scenario_01 baseline gpt-4o
-    python -m experiments.run scenario_01 structured_override gpt-4o
+    python -m experiments.run scenario_01/baseline --model gpt-4o
+    python -m experiments.run scenario_01/structured_override --model gpt-4o
 
 Outputs artifacts and results.json into:
     experiments/<scenario>/<override_variant>/runs/<model>-<timestamp>/
 """
 
+import argparse
 import asyncio
 import importlib
 import json
-import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -174,12 +174,21 @@ def write_results(runner, agent, results_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    if len(sys.argv) != 4:
-        raise SystemExit("usage: python -m experiments.run <scenario> <override_variant> <model>")
+    parser = argparse.ArgumentParser(
+        prog="python -m experiments.run",
+        usage="%(prog)s <scenario>/<override_variant> --model <model>",
+    )
+    parser.add_argument("condition", metavar="<scenario>/<override_variant>")
+    parser.add_argument("--model", required=True)
+    args = parser.parse_args()
 
-    _, scenario, override_variant, model = sys.argv
+    parts = args.condition.split("/")
+    if len(parts) != 2:
+        raise SystemExit("condition must be in the form <scenario>/<override_variant>, e.g. scenario_01/baseline")
+    scenario, override_variant = parts
 
-    validate_run(scenario, override_variant, model)
+    validate_run(scenario, override_variant, args.model)
+    model = args.model
 
     robots, robot_states, tasks, task_states, environment = load_definition(scenario)
     run_dir = make_run_dir(scenario, override_variant, model)
