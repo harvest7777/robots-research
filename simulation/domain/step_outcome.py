@@ -64,9 +64,3 @@ class StepOutcome:
     # robots that moved but to a different cell than pathfinding planned.
     # Indicates the robot was re-routed to avoid a collision — weaker than stuck
     # but still a signal of local congestion near that assignment area.
-
-    task_distances:      dict[RobotId, int]                      = field(default_factory=dict)
-    # task_distances: manhattan distance from each robot's effective position this
-    # tick to its assignment waypoint. 0 means the robot is at (or working on)
-    # its target; large persistent values signal poor assignment locality or a
-    # robot repeatedly assigned to a far region of the warehouse.

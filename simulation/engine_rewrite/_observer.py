@@ -146,10 +146,6 @@ def classify_step(
         if next_position is not None:
             outcome.moved.append((assignment.robot_id, next_position))
 
-        waypoint = outcome.waypoints.get(assignment.robot_id)
-        if waypoint is not None:
-            outcome.task_distances[assignment.robot_id] = effective_position.manhattan(waypoint)
-
         # Search robots move but do not accumulate work — completion is event-driven.
         if isinstance(task, SearchTask):
             continue
