@@ -1,0 +1,17 @@
+{
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 39,
+    "tasks_completed": 4,
+    "tasks_failed": 0
+  },
+  "agent": {
+    "total_calls": 5,
+    "total_tokens_in": 31368,
+    "total_tokens_out": 431,
+    "mean_latency_ms": 3172.2,
+    "min_latency_ms": 1981,
+    "max_latency_ms": 4036,
+    "mean_tool_rounds": 2.0
+  }
+}
