@@ -22,16 +22,9 @@ from datetime import datetime
 from pathlib import Path
 
 from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner
-from app.agents import ASI1_AGENT, GPT4O_AGENT, GEMINI_AGENT, CLAUDE_AGENT
+from experiments.agents import MODEL_REGISTRY
 
 MAX_TICKS = 100
-
-MODEL_REGISTRY = {
-    "gpt-4o":           GPT4O_AGENT,
-    "gemini-2.0-flash": GEMINI_AGENT,
-    "claude-haiku":     CLAUDE_AGENT,
-    "asi1":             ASI1_AGENT,
-}
 
 EXPERIMENTS_DIR = Path(__file__).parent
 
