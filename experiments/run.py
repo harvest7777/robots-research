@@ -141,12 +141,7 @@ def write_results(runner, agent, results_path: Path) -> None:
     llm  = agent.get_analysis()
 
     results = {
-        "simulation": {
-            "total_ticks":      sim.total_ticks,
-            "makespan":         sim.makespan,
-            "tasks_completed":  sim.tasks_completed,
-            "tasks_failed":     sim.tasks_failed,
-        },
+        "simulation": sim.to_json_dict(),
         "agent": {
             "total_calls":      llm.total_calls,
             "total_tokens_in":  llm.total_tokens_in,

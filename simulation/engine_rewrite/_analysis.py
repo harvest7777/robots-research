@@ -33,8 +33,11 @@ assignment_ignores_by_reason  : total ignored assignments per IgnoreReason acros
 
 from __future__ import annotations
 
+import dataclasses
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from enum import Enum
+from typing import Any
 
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.robot_state import RobotId
@@ -65,6 +68,14 @@ class SimulationAnalysis:
 
     # Assignment quality
     assignment_ignores_by_reason: dict[IgnoreReason, int]
+
+    def to_json_dict(self) -> dict[str, Any]:
+        """Return a JSON-serializable dict of all fields.
+
+        Handles dict keys that are int (RobotId, TaskId) or Enum (IgnoreReason)
+        by converting them to strings, so callers never need to know the field types.
+        """
+        return {f.name: _to_json(getattr(self, f.name)) for f in dataclasses.fields(self)}
 
     @classmethod
     def from_history(
@@ -190,3 +201,23 @@ class SimulationAnalysis:
             work_tasks_never_started_count=work_tasks_never_started_count,
             assignment_ignores_by_reason=dict(assignment_ignores_by_reason),
         )
+
+
+# -----------------------------------------------------------------------------
+# JSON serialization helpers
+# -----------------------------------------------------------------------------
+
+def _to_json(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {_json_key(k): _to_json(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_to_json(v) for v in value]
+    if isinstance(value, Enum):
+        return value.value
+    return value
+
+
+def _json_key(key: Any) -> str:
+    if isinstance(key, Enum):
+        return key.value
+    return str(key)  # RobotId and TaskId are NewType(int) — stringify for JSON
