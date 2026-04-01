@@ -115,6 +115,20 @@ def classify_step(
     resolved = resolve_collisions(intended_moves, current_positions)
 
     # -------------------------------------------------------------------------
+    # Pass 2.5: training metadata — stuck and collision diversions
+    # -------------------------------------------------------------------------
+    for assignment in valid:
+        robot_id = assignment.robot_id
+        intended = intended_moves.get(robot_id)
+        if intended is None:
+            continue  # robot was at its goal or has no goal — not a movement candidate
+        actual = resolved.get(robot_id)
+        if actual is None:
+            outcome.robots_stuck.append(robot_id)
+        elif actual != intended:
+            outcome.collision_diversions.append((robot_id, intended, actual))
+
+    # -------------------------------------------------------------------------
     # Pass 3: classify moves and work
     # -------------------------------------------------------------------------
     worked_by_task: dict[TaskId, list[RobotId]] = {}
@@ -131,6 +145,10 @@ def classify_step(
 
         if next_position is not None:
             outcome.moved.append((assignment.robot_id, next_position))
+
+        waypoint = outcome.waypoints.get(assignment.robot_id)
+        if waypoint is not None:
+            outcome.task_distances[assignment.robot_id] = effective_position.manhattan(waypoint)
 
         # Search robots move but do not accumulate work — completion is event-driven.
         if isinstance(task, SearchTask):
