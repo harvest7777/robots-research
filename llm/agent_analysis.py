@@ -18,6 +18,7 @@ mean_tool_rounds  : average tool loop iterations per decision; None if no calls
 
 from __future__ import annotations
 
+import dataclasses
 from dataclasses import dataclass
 
 from llm.agent_call_record import AgentCallRecord
@@ -32,6 +33,9 @@ class AgentAnalysis:
     min_latency_ms: int | None
     max_latency_ms: int | None
     mean_tool_rounds: float | None
+
+    def to_json_dict(self) -> dict:
+        return dataclasses.asdict(self)
 
     @classmethod
     def from_records(cls, records: list[AgentCallRecord]) -> AgentAnalysis:

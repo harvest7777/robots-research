@@ -142,15 +142,7 @@ def write_results(runner, agent, results_path: Path) -> None:
 
     results = {
         "simulation": sim.to_json_dict(),
-        "agent": {
-            "total_calls":      llm.total_calls,
-            "total_tokens_in":  llm.total_tokens_in,
-            "total_tokens_out": llm.total_tokens_out,
-            "mean_latency_ms":  llm.mean_latency_ms,
-            "min_latency_ms":   llm.min_latency_ms,
-            "max_latency_ms":   llm.max_latency_ms,
-            "mean_tool_rounds": llm.mean_tool_rounds,
-        },
+        "agent": llm.to_json_dict(),
     }
 
     results_path.write_text(json.dumps(results, indent=2))
