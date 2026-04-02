@@ -2,7 +2,7 @@
 SimulationAnalysis
 
 Pure value object derived from a simulation history (the sequence of
-(SimulationState, StepOutcome) pairs produced by SimulationRunner.step()).
+SimulationHistoryEntry produced by SimulationRunner.step()).
 
 Contains no runner coupling — callers that accumulate history manually
 can build this directly via from_history() without going through the runner.
@@ -42,6 +42,7 @@ from typing import Any
 
 from simulation.domain.base_task import TaskId, TaskStatus
 from simulation.domain.robot_state import RobotId
+from simulation.domain.simulation_history import SimulationHistoryEntry
 from simulation.domain.step_outcome import IgnoreReason, StepOutcome
 from simulation.domain.task_state import TaskState
 
@@ -84,7 +85,7 @@ class SimulationAnalysis:
     @classmethod
     def from_history(
         cls,
-        history: list[tuple[SimulationState, StepOutcome]],
+        history: list[SimulationHistoryEntry],
     ) -> SimulationAnalysis:
         if not history:
             return cls(
@@ -104,15 +105,15 @@ class SimulationAnalysis:
                 assignment_ignores_by_reason={},
             )
 
-        final_state, _ = history[-1]
+        final_state = history[-1].state
         total_ticks = final_state.t_now.tick
 
         # --- tasks completed / failed ---
         completed_ids: set[TaskId] = set()
         task_completion_tick: dict[TaskId, int] = {}
-        for tick_index, (_, outcome) in enumerate(history):
-            completed_ids.update(outcome.tasks_completed)
-            for task_id in outcome.tasks_completed:
+        for tick_index, entry in enumerate(history):
+            completed_ids.update(entry.outcome.tasks_completed)
+            for task_id in entry.outcome.tasks_completed:
                 if task_id not in task_completion_tick:
                     task_completion_tick[task_id] = tick_index
 
@@ -143,24 +144,24 @@ class SimulationAnalysis:
 
         assignment_ignores_by_reason: dict[IgnoreReason, int] = defaultdict(int)
 
-        for tick_index, (_, outcome) in enumerate(history):
+        for tick_index, entry in enumerate(history):
             robots_active_this_tick: set[RobotId] = set()
 
-            for robot_id, _task_id in outcome.worked:
+            for robot_id, _task_id in entry.outcome.worked:
                 robot_ticks_working[robot_id] += 1
                 robots_active_this_tick.add(robot_id)
 
-            for robot_id, _position in outcome.moved:
+            for robot_id, _position in entry.outcome.moved:
                 robot_ticks_moving[robot_id] += 1
                 robots_active_this_tick.add(robot_id)
 
-            for robot_id in outcome.robots_stuck:
+            for robot_id in entry.outcome.robots_stuck:
                 robot_ticks_stuck[robot_id] += 1
 
-            for robot_id, task_id in outcome.worked:
+            for robot_id, task_id in entry.outcome.worked:
                 task_ticks_worked_by[task_id].add(tick_index)
 
-            for assignment, reason in outcome.assignments_ignored:
+            for assignment, reason in entry.outcome.assignments_ignored:
                 assignment_ignores_by_reason[reason] += 1
 
         # idle = ticks where the robot appeared in neither worked nor moved

@@ -29,13 +29,13 @@ from simulation.primitives.time import Time
 from ._analysis import SimulationAnalysis
 from .services.base_assignment_service import BaseAssignmentService
 from .services.base_simulation_store import BaseSimulationStore
+from simulation.domain import SimulationHistoryEntry
 from simulation.domain.simulation_state import SimulationState
 from ._step import step as engine_step
 from simulation.domain.step_outcome import StepOutcome
 
 
 class SimulationRunner:
-
     def __init__(
         self,
         environment: Environment,
@@ -49,7 +49,7 @@ class SimulationRunner:
         self._assignment_service = assignment_service
         self._pathfinding = pathfinding
         self._t_now: Time = Time(0)
-        self._history: list[tuple[SimulationState, StepOutcome]] = []
+        self._history: list[SimulationHistoryEntry] = []
         self._view_service = view_service
 
     def step(self) -> tuple[SimulationState, StepOutcome]:
@@ -76,7 +76,13 @@ class SimulationRunner:
         self._store.apply(new_state.robot_states, new_state.task_states)
         self._t_now = new_state.t_now
 
-        self._history.append((new_state, outcome))
+        self._history.append(
+            SimulationHistoryEntry(
+                state=new_state,
+                outcome=outcome,
+                assignments=tuple(assignments),
+            )
+        )
 
         if self._view_service:
             self._view_service.render(new_state)
