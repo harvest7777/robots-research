@@ -152,7 +152,7 @@ def run_loop(runner, agent) -> None:
 # ---------------------------------------------------------------------------
 
 
-def write_results(runner, agent, results_path: Path) -> None:
+def write_results(runner, agent, results_path: Path, artifacts_dir: Path) -> None:
     sim = runner.stop()
     llm = agent.get_analysis()
 
@@ -163,6 +163,11 @@ def write_results(runner, agent, results_path: Path) -> None:
 
     results_path.write_text(json.dumps(results, indent=2))
     print(f"results written to {results_path}")
+
+    replay = runner.get_replay()
+    replay_path = artifacts_dir / "simulation_replay.json"
+    replay_path.write_text(json.dumps(replay, indent=2))
+    print(f"simulation replay written to {replay_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -207,7 +212,7 @@ def main() -> None:
     )
 
     run_loop(runner, agent)
-    write_results(runner, agent, run_dir / "results.json")
+    write_results(runner, agent, run_dir / "results.json", run_dir / "artifacts")
 
 
 if __name__ == "__main__":

@@ -19,6 +19,7 @@ Each call to step():
 from __future__ import annotations
 
 import os
+from typing import Any
 
 from simulation.algorithms.movement_planner import PathfindingAlgorithm
 from simulation_view.base_simulation_view import BaseViewService
@@ -96,3 +97,7 @@ class SimulationRunner:
 
     def _report(self) -> SimulationAnalysis:
         return SimulationAnalysis.from_history(self._history)
+
+    def get_replay(self) -> list[dict[str, Any]]:
+        """Return the full simulation history as JSON-serializable dict."""
+        return [entry.to_json_dict() for entry in self._history]

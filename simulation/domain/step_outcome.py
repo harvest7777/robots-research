@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any
 
 from simulation.domain.base_task import BaseTask, BaseTaskState, TaskId
 from simulation.domain.robot_state import RobotId
@@ -27,40 +28,66 @@ from simulation.domain import Assignment
 
 
 class IgnoreReason(Enum):
-    NO_BATTERY       = "no_battery"        # robot has 0 battery — cannot act
+    NO_BATTERY = "no_battery"  # robot has 0 battery — cannot act
     WRONG_CAPABILITY = "wrong_capability"  # robot lacks required capabilities
-    TASK_TERMINAL    = "task_terminal"     # task is already done or failed
-    NO_PATH          = "no_path"           # pathfinding could not reach task location
+    TASK_TERMINAL = "task_terminal"  # task is already done or failed
+    NO_PATH = "no_path"  # pathfinding could not reach task location
 
 
 @dataclass
 class StepOutcome:
-    moved:               list[tuple[RobotId, Position]]          = field(default_factory=list)
-    worked:              list[tuple[RobotId, TaskId]]            = field(default_factory=list)
-    tasks_completed:     list[TaskId]                            = field(default_factory=list)
-    tasks_spawned:       list[tuple[BaseTask, BaseTaskState]]    = field(default_factory=list)
-    assignments_ignored: list[tuple[Assignment, IgnoreReason]]   = field(default_factory=list)
-    rescue_points_found: list[TaskId]                            = field(default_factory=list)
+    moved: list[tuple[RobotId, Position]] = field(default_factory=list)
+    worked: list[tuple[RobotId, TaskId]] = field(default_factory=list)
+    tasks_completed: list[TaskId] = field(default_factory=list)
+    tasks_spawned: list[tuple[BaseTask, BaseTaskState]] = field(default_factory=list)
+    assignments_ignored: list[tuple[Assignment, IgnoreReason]] = field(
+        default_factory=list
+    )
+    rescue_points_found: list[TaskId] = field(default_factory=list)
     # rescue_points_found: needed so apply_outcome can update SearchTaskState.rescue_found
     # without re-deriving it (which would be business logic leaking into apply_outcome).
-    waypoints:           dict[RobotId, Position]                 = field(default_factory=dict)
+    waypoints: dict[RobotId, Position] = field(default_factory=dict)
     # waypoints: proposed next waypoint per robot this tick, written by Observer and
     # applied to RobotState.current_waypoint by apply_outcome. Keeps classify_step pure.
-    tasks_moved:         list[tuple[TaskId, Position]]           = field(default_factory=list)
+    tasks_moved: list[tuple[TaskId, Position]] = field(default_factory=list)
     # tasks_moved: new position for each MoveTask that advanced this tick.
     # Written by Observer; applied to MoveTaskState.current_position by apply_outcome.
 
     # -------------------------------------------------------------------------
     # Training metadata — enriched signals for per-step model training
     # -------------------------------------------------------------------------
-    robots_stuck:        list[RobotId]                           = field(default_factory=list)
+    robots_stuck: list[RobotId] = field(default_factory=list)
     # robots_stuck: robots that had a valid intended move this tick but were held
     # in place by collision resolution. Indicates congestion or pathfinding
     # contention at the robot's position. Detectable by comparing intended_moves
     # (pathfinder output) against resolve_collisions output.
 
-    collision_diversions: list[tuple[RobotId, Position, Position]] = field(default_factory=list)
+    collision_diversions: list[tuple[RobotId, Position, Position]] = field(
+        default_factory=list
+    )
     # collision_diversions: (robot_id, intended_position, actual_position) for
     # robots that moved but to a different cell than pathfinding planned.
     # Indicates the robot was re-routed to avoid a collision — weaker than stuck
     # but still a signal of local congestion near that assignment area.
+
+    def to_json_dict(self) -> dict[str, Any]:
+        """Convert to JSON-serializable dict."""
+        return {
+            "moved": [
+                {"robot_id": int(r), "position": {"x": p.x, "y": p.y}}
+                for r, p in self.moved
+            ],
+            "worked": [{"robot_id": int(r), "task_id": int(t)} for r, t in self.worked],
+            "tasks_completed": [int(t) for t in self.tasks_completed],
+            "tasks_spawned": [t.id for t, _ in self.tasks_spawned],
+            "assignments_ignored": [
+                {
+                    "robot_id": int(a.robot_id),
+                    "task_id": int(a.task_id),
+                    "reason": r.value,
+                }
+                for a, r in self.assignments_ignored
+            ],
+            "rescue_points_found": [int(t) for t in self.rescue_points_found],
+            "robots_stuck": [int(r) for r in self.robots_stuck],
+        }
