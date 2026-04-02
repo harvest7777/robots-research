@@ -33,6 +33,7 @@ EXPERIMENTS_DIR = Path(__file__).parent
 # 1. Validation
 # ---------------------------------------------------------------------------
 
+
 def validate_run(scenario: str, override_variant: str, model: str) -> None:
     defn_dir = EXPERIMENTS_DIR / scenario / "definition"
     for required in ("robots.py", "tasks.py", "environment.py"):
@@ -52,16 +53,17 @@ def validate_run(scenario: str, override_variant: str, model: str) -> None:
 # 2. Load scenario definition
 # ---------------------------------------------------------------------------
 
+
 def load_definition(scenario: str):
     base = f"experiments.{scenario}.definition"
     robots_mod = importlib.import_module(f"{base}.robots")
-    tasks_mod  = importlib.import_module(f"{base}.tasks")
-    env_mod    = importlib.import_module(f"{base}.environment")
+    tasks_mod = importlib.import_module(f"{base}.tasks")
+    env_mod = importlib.import_module(f"{base}.environment")
 
     for mod, names in (
         (robots_mod, ("ROBOTS", "ROBOT_STATES")),
-        (tasks_mod,  ("TASKS",  "TASK_STATES")),
-        (env_mod,    ("ENVIRONMENT",)),
+        (tasks_mod, ("TASKS", "TASK_STATES")),
+        (env_mod, ("ENVIRONMENT",)),
     ):
         for name in names:
             if not hasattr(mod, name):
@@ -80,9 +82,12 @@ def load_definition(scenario: str):
 # 3. Create run output directory
 # ---------------------------------------------------------------------------
 
+
 def make_run_dir(scenario: str, override_variant: str, model: str) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    run_dir = EXPERIMENTS_DIR / scenario / override_variant / "runs" / f"{model}-{timestamp}"
+    run_dir = (
+        EXPERIMENTS_DIR / scenario / override_variant / "runs" / f"{model}-{timestamp}"
+    )
     (run_dir / "artifacts").mkdir(parents=True)
     return run_dir
 
@@ -91,7 +96,17 @@ def make_run_dir(scenario: str, override_variant: str, model: str) -> Path:
 # 4. Wire simulation services and agent
 # ---------------------------------------------------------------------------
 
-def wire_services(robots, robot_states, tasks, task_states, environment, artifacts_dir: Path, model: str):
+
+def wire_services(
+    robots,
+    robot_states,
+    tasks,
+    task_states,
+    environment,
+    artifacts_dir: Path,
+    model: str,
+    rules: str | None,
+):
     assigner = JsonAssignmentService(artifacts_dir / "assignments.json")
     store = JsonSimulationStore(
         registry_path=artifacts_dir / "registry.json",
@@ -110,8 +125,7 @@ def wire_services(robots, robot_states, tasks, task_states, environment, artifac
         assignment_service=assigner,
     )
 
-    # TODO: inject override_variant rules.md into agent system prompt
-    agent = MODEL_REGISTRY[model](store, assigner)
+    agent = MODEL_REGISTRY[model](store, assigner, rules=rules)
 
     return runner, agent
 
@@ -119,6 +133,7 @@ def wire_services(robots, robot_states, tasks, task_states, environment, artifac
 # ---------------------------------------------------------------------------
 # 5. Simulation loop
 # ---------------------------------------------------------------------------
+
 
 def run_loop(runner, agent) -> None:
     def invoke(prompt: str) -> None:
@@ -136,9 +151,10 @@ def run_loop(runner, agent) -> None:
 # 6. Write results
 # ---------------------------------------------------------------------------
 
+
 def write_results(runner, agent, results_path: Path) -> None:
-    sim  = runner.stop()
-    llm  = agent.get_analysis()
+    sim = runner.stop()
+    llm = agent.get_analysis()
 
     results = {
         "simulation": sim.to_json_dict(),
@@ -153,6 +169,7 @@ def write_results(runner, agent, results_path: Path) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="python -m experiments.run",
@@ -164,18 +181,29 @@ def main() -> None:
 
     parts = args.condition.split("/")
     if len(parts) != 2:
-        raise SystemExit("condition must be in the form <scenario>/<override_variant>, e.g. scenario_01/baseline")
+        raise SystemExit(
+            "condition must be in the form <scenario>/<override_variant>, e.g. scenario_01/baseline"
+        )
     scenario, override_variant = parts
 
     validate_run(scenario, override_variant, args.model)
     model = args.model
 
+    rules_path = EXPERIMENTS_DIR / scenario / override_variant / "rules.md"
+    rules_text = rules_path.read_text() if rules_path.exists() else None
+    rules = rules_text if rules_text and rules_text.strip() else None
+
     robots, robot_states, tasks, task_states, environment = load_definition(scenario)
     run_dir = make_run_dir(scenario, override_variant, model)
     runner, agent = wire_services(
-        robots, robot_states, tasks, task_states, environment,
+        robots,
+        robot_states,
+        tasks,
+        task_states,
+        environment,
         run_dir / "artifacts",
         model,
+        rules,
     )
 
     run_loop(runner, agent)
