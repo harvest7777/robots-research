@@ -59,7 +59,6 @@ class BaseTask:
     id: TaskId
     priority: int
     required_capabilities: frozenset[Capability] = frozenset()
-    dependencies: frozenset[TaskId] = frozenset()
 
 
 @dataclass(frozen=True)

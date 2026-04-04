@@ -269,7 +269,6 @@ def _task_to_json(task: BaseTask) -> dict[str, Any]:
         "task_id": int(task.id),
         "priority": task.priority,
         "required_capabilities": _capabilities_to_json(task.required_capabilities),
-        "dependencies": [int(t) for t in sorted(task.dependencies)],
     }
 
     if isinstance(task, SearchTask):
@@ -300,7 +299,6 @@ def _task_from_json(data: dict[str, Any]) -> BaseTask:
         id=TaskId(int(data["task_id"])),
         priority=int(data.get("priority", 0)),
         required_capabilities=_capabilities_from_json(list(data.get("required_capabilities", []))),
-        dependencies=frozenset(TaskId(int(t)) for t in data.get("dependencies", [])),
     )
 
     if task_type == "search":

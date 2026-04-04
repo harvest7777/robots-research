@@ -21,6 +21,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from llm.agent import AssignmentAgent
 from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner
 from experiments.agents import MODEL_REGISTRY
 
@@ -135,7 +136,7 @@ def wire_services(
 # ---------------------------------------------------------------------------
 
 
-def run_loop(runner, agent) -> None:
+def run_loop(runner: SimulationRunner, agent: AssignmentAgent) -> None:
     def invoke(prompt: str) -> None:
         asyncio.run(agent.invoke(prompt, max_tool_calls=5))
 
