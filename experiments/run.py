@@ -21,9 +21,12 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from experiments.models.task_spawn import SpawnTask
 from llm.agent import AssignmentAgent
 from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner
 from experiments.agents import MODEL_REGISTRY
+from simulation.engine_rewrite import BaseSimulationStore
+from simulation.primitives import Time
 
 MAX_TICKS = 100
 
@@ -63,7 +66,7 @@ def load_definition(scenario: str):
 
     for mod, names in (
         (robots_mod, ("ROBOTS", "ROBOT_STATES")),
-        (tasks_mod, ("TASKS", "TASK_STATES")),
+        (tasks_mod, ("TASK_SPAWNS",)),
         (env_mod, ("ENVIRONMENT",)),
     ):
         for name in names:
@@ -73,8 +76,7 @@ def load_definition(scenario: str):
     return (
         robots_mod.ROBOTS,
         robots_mod.ROBOT_STATES,
-        tasks_mod.TASKS,
-        tasks_mod.TASK_STATES,
+        tasks_mod.TASK_SPAWNS,
         env_mod.ENVIRONMENT,
     )
 
@@ -101,8 +103,6 @@ def make_run_dir(scenario: str, override_variant: str, model: str) -> Path:
 def wire_services(
     robots,
     robot_states,
-    tasks,
-    task_states,
     environment,
     artifacts_dir: Path,
     model: str,
@@ -117,8 +117,6 @@ def wire_services(
 
     for robot_id, robot in robots.items():
         store.add_robot(robot, robot_states[robot_id])
-    for task_id, task in tasks.items():
-        store.add_task(task, task_states[task_id])
 
     runner = SimulationRunner(
         environment=environment,
@@ -128,7 +126,7 @@ def wire_services(
 
     agent = MODEL_REGISTRY[model](store, assigner, rules=rules)
 
-    return runner, agent
+    return runner, agent, store
 
 
 # ---------------------------------------------------------------------------
@@ -136,15 +134,30 @@ def wire_services(
 # ---------------------------------------------------------------------------
 
 
-def run_loop(runner: SimulationRunner, agent: AssignmentAgent) -> None:
+def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimulationStore, tasks_to_spawn: list[SpawnTask]) -> None:
     def invoke(prompt: str) -> None:
         asyncio.run(agent.invoke(prompt, max_tool_calls=5))
+
+    time_to_tasks: dict[Time, list[SpawnTask]] = {}
+
+    for s in tasks_to_spawn:
+        time_to_tasks.setdefault(s.time_to_spawn, []).append(s)
+
+    # Spawn t=0 tasks before the first invoke so the LLM sees them immediately.
+    for spawn_task in time_to_tasks.get(runner._t_now, []):
+        store.add_task(spawn_task.task_to_spawn, spawn_task.task_state)
 
     invoke("Simulation started. Assign all robots to tasks.")
 
     for _ in range(MAX_TICKS):
         _, outcome = runner.step()
-        if outcome.tasks_spawned or outcome.tasks_completed:
+
+        # Spawn tasks scheduled for the new tick after stepping.
+        externally_spawned = time_to_tasks.get(runner._t_now, [])
+        for spawn_task in externally_spawned:
+            store.add_task(spawn_task.task_to_spawn, spawn_task.task_state)
+
+        if outcome.tasks_spawned or outcome.tasks_completed or externally_spawned:
             invoke("Tasks changed. Reassign robots as needed.")
 
 
@@ -199,20 +212,18 @@ def main() -> None:
     rules_text = rules_path.read_text() if rules_path.exists() else None
     rules = rules_text if rules_text and rules_text.strip() else None
 
-    robots, robot_states, tasks, task_states, environment = load_definition(scenario)
+    robots, robot_states, task_spawns, environment = load_definition(scenario)
     run_dir = make_run_dir(scenario, override_variant, model)
-    runner, agent = wire_services(
+    runner, agent, store = wire_services(
         robots,
         robot_states,
-        tasks,
-        task_states,
         environment,
         run_dir / "artifacts",
         model,
         rules,
     )
 
-    run_loop(runner, agent)
+    run_loop(runner, agent, store, task_spawns)
     write_results(runner, agent, run_dir / "results.json", run_dir / "artifacts")
 
 
