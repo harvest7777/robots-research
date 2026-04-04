@@ -28,10 +28,9 @@
 
 from __future__ import annotations
 
+from experiments.models.task_spawn import SpawnTask
 from simulation.domain import TaskId
-from simulation.domain.base_task import BaseTask, BaseTaskState
 from simulation.domain.task import SpatialConstraint, WorkTask
-from simulation.domain.task_state import TaskState
 from simulation.primitives import Capability, Position
 from simulation.primitives.time import Time
 
@@ -44,65 +43,61 @@ T6_VISION_NEAR = TaskId(6)
 T7_MANIPULATION_NEAR = TaskId(7)
 T8_MANIPULATION_NEAR = TaskId(8)
 
-TASKS: dict[TaskId, BaseTask] = {
-    T1_MANIPULATION: WorkTask(
+TASK_SPAWNS = [
+    SpawnTask(task_to_spawn=WorkTask(
         id=T1_MANIPULATION,
         priority=1,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(8, 3), max_distance=0),
         required_capabilities=frozenset({Capability.MANIPULATION}),
-    ),
-    T2_VISION: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T2_VISION,
         priority=1,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(14, 3), max_distance=0),
         required_capabilities=frozenset({Capability.VISION}),
-    ),
-    T3_SENSING: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T3_SENSING,
         priority=1,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(14, 11), max_distance=0),
         required_capabilities=frozenset({Capability.SENSING}),
-    ),
-    T4_VISION_MANIPULATION: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T4_VISION_MANIPULATION,
         priority=1,
         required_work_time=Time(5),
         spatial_constraint=SpatialConstraint(target=Position(12, 11), max_distance=0),
         required_capabilities=frozenset({Capability.VISION, Capability.MANIPULATION}),
-    ),
-    T5_VISION_NEAR: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T5_VISION_NEAR,
         priority=1,
         required_work_time=Time(3),
         spatial_constraint=SpatialConstraint(target=Position(3, 7), max_distance=0),
         required_capabilities=frozenset({Capability.VISION}),
-    ),
-    T6_VISION_NEAR: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T6_VISION_NEAR,
         priority=1,
         required_work_time=Time(3),
         spatial_constraint=SpatialConstraint(target=Position(3, 5), max_distance=0),
         required_capabilities=frozenset({Capability.VISION}),
-    ),
-    T7_MANIPULATION_NEAR: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T7_MANIPULATION_NEAR,
         priority=1,
         required_work_time=Time(3),
         spatial_constraint=SpatialConstraint(target=Position(9, 7), max_distance=0),
         required_capabilities=frozenset({Capability.MANIPULATION}),
-    ),
-    T8_MANIPULATION_NEAR: WorkTask(
+    )),
+    SpawnTask(task_to_spawn=WorkTask(
         id=T8_MANIPULATION_NEAR,
         priority=1,
         required_work_time=Time(3),
         spatial_constraint=SpatialConstraint(target=Position(9, 5), max_distance=0),
         required_capabilities=frozenset({Capability.MANIPULATION}),
-    ),
-}
-
-TASK_STATES: dict[TaskId, BaseTaskState] = {
-    t_id: TaskState(task_id=t_id) for t_id in TASKS
-}
+    )),
+]

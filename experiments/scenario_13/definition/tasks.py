@@ -10,30 +10,32 @@
 
 from __future__ import annotations
 
+from experiments.models.task_spawn import SpawnTask
 from simulation.domain import TaskId, MoveTask, MoveTaskState
 from simulation.primitives import Position
 
 T1_CARGO_A = TaskId(1)
 T2_CARGO_B = TaskId(2)
 
-TASKS: dict[TaskId, MoveTask] = {
-    T1_CARGO_A: MoveTask(
-        id=T1_CARGO_A,
-        priority=1,
-        min_robots_required=3,
-        min_distance=1,
-        destination=Position(25, 4),
+TASK_SPAWNS = [
+    SpawnTask(
+        task_to_spawn=MoveTask(
+            id=T1_CARGO_A,
+            priority=1,
+            min_robots_required=3,
+            min_distance=1,
+            destination=Position(25, 4),
+        ),
+        task_state=MoveTaskState(task_id=T1_CARGO_A, current_position=Position(3, 4)),
     ),
-    T2_CARGO_B: MoveTask(
-        id=T2_CARGO_B,
-        priority=1,
-        min_robots_required=3,
-        min_distance=1,
-        destination=Position(25, 10),
+    SpawnTask(
+        task_to_spawn=MoveTask(
+            id=T2_CARGO_B,
+            priority=1,
+            min_robots_required=3,
+            min_distance=1,
+            destination=Position(25, 10),
+        ),
+        task_state=MoveTaskState(task_id=T2_CARGO_B, current_position=Position(3, 10)),
     ),
-}
-
-TASK_STATES: dict[TaskId, MoveTaskState] = {
-    T1_CARGO_A: MoveTaskState(task_id=T1_CARGO_A, current_position=Position(3, 4)),
-    T2_CARGO_B: MoveTaskState(task_id=T2_CARGO_B, current_position=Position(3, 10)),
-}
+]
