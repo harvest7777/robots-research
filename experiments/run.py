@@ -18,12 +18,13 @@ import argparse
 import asyncio
 import importlib
 import json
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
 from experiments.models.task_spawn import SpawnTask
 from llm.agent import AssignmentAgent
-from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner
+from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner, RobotState, Robot, Environment
 from experiments.agents import MODEL_REGISTRY
 from simulation.engine_rewrite import BaseSimulationStore
 from simulation.primitives import Time
@@ -57,8 +58,13 @@ def validate_run(scenario: str, override_variant: str, model: str) -> None:
 # 2. Load scenario definition
 # ---------------------------------------------------------------------------
 
-
-def load_definition(scenario: str):
+@dataclass(frozen=True)
+class ScenarioDefinition:
+    robots: list[Robot]
+    robot_states: list[RobotState]
+    task_spawns: list[SpawnTask]
+    environment: Environment
+def load_definition(scenario: str) -> ScenarioDefinition:
     base = f"experiments.{scenario}.definition"
     robots_mod = importlib.import_module(f"{base}.robots")
     tasks_mod = importlib.import_module(f"{base}.tasks")
@@ -73,7 +79,7 @@ def load_definition(scenario: str):
             if not hasattr(mod, name):
                 raise SystemExit(f"{mod.__name__} is missing '{name}'")
 
-    return (
+    return ScenarioDefinition(
         robots_mod.ROBOTS,
         robots_mod.ROBOT_STATES,
         tasks_mod.TASK_SPAWNS,
@@ -99,15 +105,23 @@ def make_run_dir(scenario: str, override_variant: str, model: str) -> Path:
 # 4. Wire simulation services and agent
 # ---------------------------------------------------------------------------
 
-
-def wire_services(
+@dataclass(frozen=True)
+class SimulationSetupArtifacts:
+    runner: SimulationRunner
+    agent: AssignmentAgent
+    simulation_store: JsonSimulationStore
+def _setup_simulation(
     robots,
     robot_states,
     environment,
     artifacts_dir: Path,
     model: str,
     rules: str | None,
-):
+) -> SimulationSetupArtifacts:
+    """
+    Take the bare inputs for a simulation, set up all services,
+    wire them, then return the services used by the public.
+    """
     assigner = JsonAssignmentService(artifacts_dir / "assignments.json")
     store = JsonSimulationStore(
         registry_path=artifacts_dir / "registry.json",
@@ -126,7 +140,7 @@ def wire_services(
 
     agent = MODEL_REGISTRY[model](store, assigner, rules=rules)
 
-    return runner, agent, store
+    return SimulationSetupArtifacts(runner, agent, store)
 
 
 # ---------------------------------------------------------------------------
@@ -135,7 +149,7 @@ def wire_services(
 
 
 def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimulationStore, tasks_to_spawn: list[SpawnTask]) -> None:
-    def invoke(prompt: str) -> None:
+    def _invoke(prompt: str) -> None:
         asyncio.run(agent.invoke(prompt, max_tool_calls=5))
 
     time_to_tasks: dict[Time, list[SpawnTask]] = {}
@@ -153,7 +167,7 @@ def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimula
 
         should_reassign = outcome.tasks_spawned or outcome.tasks_completed or len(tasks_to_spawn_this_tick) > 0
         if should_reassign:
-            invoke("Tasks changed. Reassign robots as needed.")
+            _invoke("Tasks changed. Reassign robots as needed.")
 
 
 # ---------------------------------------------------------------------------
@@ -207,9 +221,15 @@ def main() -> None:
     rules_text = rules_path.read_text() if rules_path.exists() else None
     rules = rules_text if rules_text and rules_text.strip() else None
 
-    robots, robot_states, task_spawns, environment = load_definition(scenario)
+    scenario_def =  load_definition(scenario)
+    robots = scenario_def.robots
+    robot_states = scenario_def.robot_states
+    environment = scenario_def.environment
+    task_spawns = scenario_def.task_spawns
+
     run_dir = make_run_dir(scenario, override_variant, model)
-    runner, agent, store = wire_services(
+
+    setup_artifacts = _setup_simulation(
         robots,
         robot_states,
         environment,
@@ -218,7 +238,12 @@ def main() -> None:
         rules,
     )
 
+    runner = setup_artifacts.runner
+    agent = setup_artifacts.agent
+    store = setup_artifacts.simulation_store
+
     run_loop(runner, agent, store, task_spawns)
+
     write_results(runner, agent, run_dir / "results.json", run_dir / "artifacts")
 
 
