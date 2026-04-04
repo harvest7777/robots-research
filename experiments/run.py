@@ -143,21 +143,16 @@ def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimula
     for s in tasks_to_spawn:
         time_to_tasks.setdefault(s.time_to_spawn, []).append(s)
 
-    # Spawn t=0 tasks before the first invoke so the LLM sees them immediately.
-    for spawn_task in time_to_tasks.get(runner._t_now, []):
-        store.add_task(spawn_task.task_to_spawn, spawn_task.task_state)
-
-    invoke("Simulation started. Assign all robots to tasks.")
 
     for _ in range(MAX_TICKS):
-        _, outcome = runner.step()
-
-        # Spawn tasks scheduled for the new tick after stepping.
-        externally_spawned = time_to_tasks.get(runner._t_now, [])
-        for spawn_task in externally_spawned:
+        tasks_to_spawn_this_tick: list[SpawnTask] = time_to_tasks.get(runner._t_now, [])
+        for spawn_task in tasks_to_spawn_this_tick:
             store.add_task(spawn_task.task_to_spawn, spawn_task.task_state)
 
-        if outcome.tasks_spawned or outcome.tasks_completed or externally_spawned:
+        _, outcome = runner.step()
+
+        should_reassign = outcome.tasks_spawned or outcome.tasks_completed or len(tasks_to_spawn_this_tick) > 0
+        if should_reassign:
             invoke("Tasks changed. Reassign robots as needed.")
 
 
