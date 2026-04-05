@@ -29,25 +29,48 @@ def _create_run_id(meta: dict) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Headers
+# ---------------------------------------------------------------------------
+
+SUMMARY_HEADERS = [
+    "scenario", "override_type", "llm", "run_id",
+    "total_ticks", "makespan", "tasks_completed", "tasks_failed",
+    "work_tasks_never_started_count",
+    "agent_total_calls", "tokens_in", "tokens_out",
+    "mean_latency_ms", "min_latency_ms", "max_latency_ms",
+    "mean_tool_rounds", "decisions_truncated_by_tool_limit",
+]
+
+ROBOTS_HEADERS = [
+    "scenario", "override_type", "llm", "run_id", "robot_id",
+    "ticks_working", "ticks_moving", "ticks_idle", "ticks_stuck",
+    "battery_remaining",
+]
+
+TASKS_HEADERS = [
+    "scenario", "override_type", "llm", "run_id", "task_id",
+    "completion_tick", "ticks_to_complete", "ticks_actively_worked",
+]
+
+ASSIGNMENT_IGNORES_HEADERS = [
+    "scenario", "override_type", "llm", "run_id", "reason", "count",
+]
+
+TOOL_CALLS_HEADERS = [
+    "scenario", "override_type", "llm", "run_id", "tool_name", "count",
+]
+
+
+# ---------------------------------------------------------------------------
 # Row builders
 # ---------------------------------------------------------------------------
 
-def _summary_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[str], list[list]]:
-    headers = [
-        "scenario", "override_type", "llm", "run_id",
-        # simulation
-        "total_ticks", "makespan", "tasks_completed", "tasks_failed",
-        "work_tasks_never_started_count",
-        # agent
-        "agent_total_calls", "tokens_in", "tokens_out",
-        "mean_latency_ms", "min_latency_ms", "max_latency_ms",
-        "mean_tool_rounds", "decisions_truncated_by_tool_limit",
-    ]
+def _summary_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
     run_id = _create_run_id(meta)
-    rows = [[
+    return [[
         scenario, override_type, llm, run_id,
         sim["total_ticks"], sim["makespan"],
         sim["tasks_completed"], sim["tasks_failed"],
@@ -56,15 +79,9 @@ def _summary_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[str], list[l
         agent["mean_latency_ms"], agent["min_latency_ms"], agent["max_latency_ms"],
         agent["mean_tool_rounds"], agent["decisions_truncated_by_tool_limit"],
     ]]
-    return headers, rows
 
 
-def _robots_rows(meta: dict, sim: dict, agent: dict, all_robot_ids: list[int]) -> tuple[list[str], list[list]]:
-    headers = [
-        "scenario", "override_type", "llm", "run_id", "robot_id",
-        "ticks_working", "ticks_moving", "ticks_idle", "ticks_stuck",
-        "battery_remaining",
-    ]
+def _robots_rows(meta: dict, sim: dict, agent: dict, all_robot_ids: list[int]) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -80,14 +97,10 @@ def _robots_rows(meta: dict, sim: dict, agent: dict, all_robot_ids: list[int]) -
             sim.get("robot_ticks_stuck", {}).get(key, 0),
             sim.get("robot_battery_remaining", {}).get(key),
         ])
-    return headers, rows
+    return rows
 
 
-def _tasks_rows(meta: dict, sim: dict, agent: dict, all_task_ids: list[int]) -> tuple[list[str], list[list]]:
-    headers = [
-        "scenario", "override_type", "llm", "run_id", "task_id",
-        "completion_tick", "ticks_to_complete", "ticks_actively_worked",
-    ]
+def _tasks_rows(meta: dict, sim: dict, agent: dict, all_task_ids: list[int]) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -101,33 +114,29 @@ def _tasks_rows(meta: dict, sim: dict, agent: dict, all_task_ids: list[int]) -> 
             sim.get("task_ticks_to_complete", {}).get(key),
             sim.get("task_ticks_actively_worked", {}).get(key),
         ])
-    return headers, rows
+    return rows
 
 
-def _assignment_ignores_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[str], list[list]]:
-    headers = ["scenario", "override_type", "llm", "run_id", "reason", "count"]
+def _assignment_ignores_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
     run_id = _create_run_id(meta)
-    rows = [
+    return [
         [scenario, override_type, llm, run_id, reason, count]
         for reason, count in sim.get("assignment_ignores_by_reason", {}).items()
     ]
-    return headers, rows
 
 
-def _tool_calls_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[str], list[list]]:
-    headers = ["scenario", "override_type", "llm", "run_id", "tool_name", "count"]
+def _tool_calls_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
     run_id = _create_run_id(meta)
-    rows = [
+    return [
         [scenario, override_type, llm, run_id, tool_name, count]
         for tool_name, count in agent.get("total_tool_calls_by_name", {}).items()
     ]
-    return headers, rows
 
 
 # ---------------------------------------------------------------------------
@@ -153,25 +162,16 @@ def export(path: Path, out_path: Path) -> None:
     wb.remove(wb.active)  # remove default empty sheet
 
     simple_sheets = [
-        ("summary", _summary_rows),
-        ("assignment_ignores", _assignment_ignores_rows),
-        ("tool_calls", _tool_calls_rows),
+        ("summary", SUMMARY_HEADERS, _summary_rows(meta, sim, agent)),
+        ("assignment_ignores", ASSIGNMENT_IGNORES_HEADERS, _assignment_ignores_rows(meta, sim, agent)),
+        ("tool_calls", TOOL_CALLS_HEADERS, _tool_calls_rows(meta, sim, agent)),
+        ("robots", ROBOTS_HEADERS, _robots_rows(meta, sim, agent, all_robot_ids)),
+        ("tasks", TASKS_HEADERS, _tasks_rows(meta, sim, agent, all_task_ids)),
     ]
-    for sheet_name, builder in simple_sheets:
-        headers, rows = builder(meta, sim, agent)
+    for sheet_name, headers, rows in simple_sheets:
         ws = wb.create_sheet(sheet_name)
         _write_sheet(ws, headers, rows)
         print(f"  {sheet_name}: {len(rows)} rows")
-
-    headers, rows = _robots_rows(meta, sim, agent, all_robot_ids)
-    ws = wb.create_sheet("robots")
-    _write_sheet(ws, headers, rows)
-    print(f"  robots: {len(rows)} rows")
-
-    headers, rows = _tasks_rows(meta, sim, agent, all_task_ids)
-    ws = wb.create_sheet("tasks")
-    _write_sheet(ws, headers, rows)
-    print(f"  tasks: {len(rows)} rows")
 
     wb.save(out_path)
     print(f"\nSaved to {out_path}")
