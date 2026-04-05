@@ -1,16 +1,16 @@
 """
 experiments/export_excel.py
 
-Exports a single results.json file into an Excel workbook with five sheets:
-  - summary          (1 row — simulation + agent flat metrics)
-  - robots           (1 row per robot)
-  - tasks            (1 row per task)
-  - assignment_ignores (1 row per reason)
-  - tool_calls       (1 row per tool name)
+Exports all runs for a scenario into an Excel workbook with five sheets:
+  - summary          (1 row per run — simulation + agent flat metrics)
+  - robots           (1 row per robot per run)
+  - tasks            (1 row per task per run)
+  - assignment_ignores (1 row per reason per run)
+  - tool_calls       (1 row per tool name per run)
 
 Usage (from repo root):
-    python -m experiments.export_excel --path experiments/scenario_06/baseline/runs/asi1-20260401-211439/results.json
-    python -m experiments.export_excel --path path/to/results.json --out my_output.xlsx
+    python -m experiments.export_excel --scenario scenario_05
+    python -m experiments.export_excel --scenario scenario_05 --out my_output.xlsx
 """
 
 import argparse
@@ -140,6 +140,24 @@ def _build_tool_call_rows(meta: dict, agent: dict) -> list[list]:
 
 
 # ---------------------------------------------------------------------------
+# Collect
+# ---------------------------------------------------------------------------
+
+EXPERIMENTS_DIR = Path(__file__).parent
+
+
+def _collect_results(scenario: str) -> list[dict]:
+    results = []
+    for results_path in sorted((EXPERIMENTS_DIR / scenario).glob("*/runs/*/results.json")):
+        data = json.loads(results_path.read_text())
+        if "metadata" not in data:
+            print(f"  skipping {results_path} (no metadata)")
+            continue
+        results.append(data)
+    return results
+
+
+# ---------------------------------------------------------------------------
 # Excel writer
 # ---------------------------------------------------------------------------
 
@@ -149,26 +167,40 @@ def _write_sheet(ws, headers: list[str], rows: list[list]) -> None:
         ws.append(row)
 
 
-def export(path: Path, out_path: Path) -> None:
-    data = json.loads(path.read_text())
-    meta = data["metadata"]
-    sim = data["simulation"]
-    agent = data["agent"]
+def export(scenario: str, out_path: Path) -> None:
+    runs = _collect_results(scenario)
+    if not runs:
+        raise SystemExit(f"No results with metadata found for {scenario}")
 
-    all_robot_ids: list[int] = meta["all_robot_ids"]
-    all_task_ids: list[int] = meta["all_task_ids"]
+    print(f"Found {len(runs)} run(s) for {scenario}")
+
+    summary_rows: list[list] = []
+    assignment_ignore_rows: list[list] = []
+    tool_call_rows: list[list] = []
+    robot_rows: list[list] = []
+    task_rows: list[list] = []
+
+    for data in runs:
+        meta = data["metadata"]
+        sim = data["simulation"]
+        agent = data["agent"]
+        summary_rows += _build_summary_rows(meta, sim, agent)
+        assignment_ignore_rows += _build_assignment_ignore_rows(meta, sim)
+        tool_call_rows += _build_tool_call_rows(meta, agent)
+        robot_rows += _build_robot_rows(meta, sim, meta["all_robot_ids"])
+        task_rows += _build_task_rows(meta, sim, meta["all_task_ids"])
 
     wb = openpyxl.Workbook()
     wb.remove(wb.active)  # remove default empty sheet
 
-    simple_sheets = [
-        ("summary", SUMMARY_HEADERS, _build_summary_rows(meta, sim, agent)),
-        ("assignment_ignores", ASSIGNMENT_IGNORES_HEADERS, _build_assignment_ignore_rows(meta, sim)),
-        ("tool_calls", TOOL_CALLS_HEADERS, _build_tool_call_rows(meta, agent)),
-        ("robots", ROBOTS_HEADERS, _build_robot_rows(meta, sim, all_robot_ids)),
-        ("tasks", TASKS_HEADERS, _build_task_rows(meta, sim, all_task_ids)),
+    sheets = [
+        ("summary", SUMMARY_HEADERS, summary_rows),
+        ("assignment_ignores", ASSIGNMENT_IGNORES_HEADERS, assignment_ignore_rows),
+        ("tool_calls", TOOL_CALLS_HEADERS, tool_call_rows),
+        ("robots", ROBOTS_HEADERS, robot_rows),
+        ("tasks", TASKS_HEADERS, task_rows),
     ]
-    for sheet_name, headers, rows in simple_sheets:
+    for sheet_name, headers, rows in sheets:
         ws = wb.create_sheet(sheet_name)
         _write_sheet(ws, headers, rows)
         print(f"  {sheet_name}: {len(rows)} rows")
@@ -179,10 +211,11 @@ def export(path: Path, out_path: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="python -m experiments.export_excel")
-    parser.add_argument("--path", required=True, metavar="FILE", help="Path to results.json")
-    parser.add_argument("--out", default="results.xlsx", metavar="FILE")
+    parser.add_argument("--scenario", required=True, metavar="SCENARIO")
+    parser.add_argument("--out", default=None, metavar="FILE")
     args = parser.parse_args()
-    export(Path(args.path), Path(args.out))
+    out_path = Path(args.out) if args.out else Path(f"{args.scenario}.xlsx")
+    export(args.scenario, out_path)
 
 
 if __name__ == "__main__":
