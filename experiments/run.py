@@ -92,8 +92,28 @@ def load_definition(scenario: str) -> ScenarioDefinition:
 # ---------------------------------------------------------------------------
 
 
-def make_run_dir(scenario: str, override_variant: str, model: str) -> Path:
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+@dataclass(frozen=True)
+class RunMetadata:
+    run_dir: Path
+    scenario: str
+    override_variant: str
+    model: str
+    time: datetime
+    all_robot_ids: list[int]
+    all_task_ids: list[int]
+
+    def to_json_dict(self) -> dict:
+        return {
+            "scenario": self.scenario,
+            "override_type": self.override_variant,
+            "llm": self.model,
+            "timestamp": self.time.isoformat(),
+            "all_robot_ids": self.all_robot_ids,
+            "all_task_ids": self.all_task_ids,
+        }
+
+def make_run_dir(scenario: str, override_variant: str, model: str, time: datetime) -> Path:
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
     run_dir = (
         EXPERIMENTS_DIR / scenario / override_variant / "runs" / f"{model}-{timestamp}"
     )
@@ -175,22 +195,22 @@ def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimula
 # ---------------------------------------------------------------------------
 
 
-def write_results(runner, agent, results_path: Path, artifacts_dir: Path) -> None:
+def create_results(runner, agent, run_metadata: RunMetadata) -> str:
     sim = runner.stop()
     llm = agent.get_analysis()
 
     results = {
+        "metadata": run_metadata.to_json_dict(),
         "simulation": sim.to_json_dict(),
         "agent": llm.to_json_dict(),
     }
 
-    results_path.write_text(json.dumps(results, indent=2))
-    print(f"results written to {results_path}")
+    return json.dumps(results, indent=2)
 
-    replay = runner.get_replay()
-    replay_path = artifacts_dir / "simulation_replay.json"
-    replay_path.write_text(json.dumps(replay, indent=2))
-    print(f"simulation replay written to {replay_path}")
+def write_results(results_str: str, run_dir: Path) -> None:
+    results_path = run_dir / "results.json"
+    results_path.write_text(results_str)
+    print(f"results written to {results_path}")
 
 
 # ---------------------------------------------------------------------------
@@ -227,7 +247,9 @@ def main() -> None:
     environment = scenario_def.environment
     task_spawns = scenario_def.task_spawns
 
-    run_dir = make_run_dir(scenario, override_variant, model)
+    time = datetime.now()
+
+    run_dir = make_run_dir(scenario, override_variant, model, time)
 
     setup_artifacts = _setup_simulation(
         robots,
@@ -244,7 +266,23 @@ def main() -> None:
 
     run_loop(runner, agent, store, task_spawns)
 
-    write_results(runner, agent, run_dir / "results.json", run_dir / "artifacts")
+    run_metadata = RunMetadata(
+        run_dir=run_dir,
+        scenario=scenario,
+        override_variant=override_variant,
+        model=model,
+        time=datetime.now(),
+        all_robot_ids=sorted(r.id for r in store.all_robots()),
+        all_task_ids=sorted(t.id for t in store.all_tasks()),
+    )
+
+    results_str = create_results(runner, agent, run_metadata)
+    write_results(results_str, run_dir)
+
+    replay = runner.get_replay()
+    replay_path = run_dir / "artifacts" / "simulation_replay.json"
+    replay_path.write_text(json.dumps(replay, indent=2))
+    print(f"simulation replay written to {replay_path}")
 
 
 if __name__ == "__main__":
