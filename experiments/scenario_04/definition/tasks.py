@@ -22,6 +22,15 @@ T2_REGULAR = TaskId(2)
 T3_REGULAR = TaskId(3)
 T4_REGULAR = TaskId(4)
 T5_SEARCH  = TaskId(5)
+RESCUE_POINT_ID = TaskId(6)
+
+_rescue_task = WorkTask(
+    id=RESCUE_POINT_ID,
+    priority=10,
+    required_work_time=Time(10),
+    spatial_constraint=SpatialConstraint(target=Position(18, 7), max_distance=1),
+    required_capabilities=frozenset({Capability.VISION}),
+)
 
 TASK_SPAWNS = [
     SpawnTask(task_to_spawn=WorkTask(
@@ -58,7 +67,7 @@ TASK_SPAWNS = [
             priority=10,
             required_capabilities=frozenset({Capability.VISION}),
         ),
-        time_to_spawn=Time(15),
+        time_to_spawn=Time(10),
         task_state=SearchTaskState(task_id=T5_SEARCH),
     ),
 ]

@@ -1,0 +1,71 @@
+{
+  "scenario_id": "",
+  "max_tick": 0,
+  "robots": [
+    {
+      "robot_id": 1,
+      "x": 1,
+      "y": 4,
+      "battery_level": 0.9995
+    },
+    {
+      "robot_id": 2,
+      "x": 2,
+      "y": 5,
+      "battery_level": 0.9995
+    },
+    {
+      "robot_id": 3,
+      "x": 1,
+      "y": 7,
+      "battery_level": 0.9995
+    },
+    {
+      "robot_id": 4,
+      "x": 2,
+      "y": 9,
+      "battery_level": 0.9995
+    },
+    {
+      "robot_id": 5,
+      "x": 1,
+      "y": 10,
+      "battery_level": 0.9995
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "priority": 1,
+      "status": null,
+      "assigned_robot_ids": [],
+      "task_type": "move",
+      "destination": [
+        25,
+        4
+      ],
+      "min_robots_required": 3,
+      "current_position": [
+        3,
+        4
+      ]
+    },
+    {
+      "task_id": 2,
+      "priority": 1,
+      "status": null,
+      "assigned_robot_ids": [],
+      "task_type": "move",
+      "destination": [
+        25,
+        10
+      ],
+      "min_robots_required": 3,
+      "current_position": [
+        3,
+        10
+      ]
+    }
+  ],
+  "assignments": []
+}
