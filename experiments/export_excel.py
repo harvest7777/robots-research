@@ -21,6 +21,14 @@ import openpyxl
 
 
 # ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _create_run_id(meta: dict) -> str:
+    return f'{meta["llm"]}-{meta["timestamp"]}'
+
+
+# ---------------------------------------------------------------------------
 # Row builders
 # ---------------------------------------------------------------------------
 
@@ -38,7 +46,7 @@ def _summary_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[str], list[l
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
-    run_id = f'{meta["llm"]}-{meta["timestamp"]}'
+    run_id = _create_run_id(meta)
     rows = [[
         scenario, override_type, llm, run_id,
         sim["total_ticks"], sim["makespan"],
@@ -60,7 +68,7 @@ def _robots_rows(meta: dict, sim: dict, agent: dict, all_robot_ids: list[int]) -
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
-    run_id = f'{meta["llm"]}-{meta["timestamp"]}'
+    run_id = _create_run_id(meta)
     rows = []
     for rid in all_robot_ids:
         key = str(rid)
@@ -83,7 +91,7 @@ def _tasks_rows(meta: dict, sim: dict, agent: dict, all_task_ids: list[int]) -> 
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
-    run_id = f'{meta["llm"]}-{meta["timestamp"]}'
+    run_id = _create_run_id(meta)
     rows = []
     for tid in all_task_ids:
         key = str(tid)
@@ -101,7 +109,7 @@ def _assignment_ignores_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[s
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
-    run_id = f'{meta["llm"]}-{meta["timestamp"]}'
+    run_id = _create_run_id(meta)
     rows = [
         [scenario, override_type, llm, run_id, reason, count]
         for reason, count in sim.get("assignment_ignores_by_reason", {}).items()
@@ -114,7 +122,7 @@ def _tool_calls_rows(meta: dict, sim: dict, agent: dict) -> tuple[list[str], lis
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
-    run_id = f'{meta["llm"]}-{meta["timestamp"]}'
+    run_id = _create_run_id(meta)
     rows = [
         [scenario, override_type, llm, run_id, tool_name, count]
         for tool_name, count in agent.get("total_tool_calls_by_name", {}).items()
