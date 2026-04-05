@@ -65,7 +65,7 @@ TOOL_CALLS_HEADERS = [
 # Row builders
 # ---------------------------------------------------------------------------
 
-def _summary_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
+def _build_summary_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -81,7 +81,7 @@ def _summary_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
     ]]
 
 
-def _robots_rows(meta: dict, sim: dict, agent: dict, all_robot_ids: list[int]) -> list[list]:
+def _build_robot_rows(meta: dict, sim: dict, all_robot_ids: list[int]) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -100,7 +100,7 @@ def _robots_rows(meta: dict, sim: dict, agent: dict, all_robot_ids: list[int]) -
     return rows
 
 
-def _tasks_rows(meta: dict, sim: dict, agent: dict, all_task_ids: list[int]) -> list[list]:
+def _build_task_rows(meta: dict, sim: dict, all_task_ids: list[int]) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -117,7 +117,7 @@ def _tasks_rows(meta: dict, sim: dict, agent: dict, all_task_ids: list[int]) -> 
     return rows
 
 
-def _assignment_ignores_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
+def _build_assignment_ignore_rows(meta: dict, sim: dict) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -128,7 +128,7 @@ def _assignment_ignores_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
     ]
 
 
-def _tool_calls_rows(meta: dict, sim: dict, agent: dict) -> list[list]:
+def _build_tool_call_rows(meta: dict, agent: dict) -> list[list]:
     scenario = meta["scenario"]
     override_type = meta["override_type"]
     llm = meta["llm"]
@@ -162,11 +162,11 @@ def export(path: Path, out_path: Path) -> None:
     wb.remove(wb.active)  # remove default empty sheet
 
     simple_sheets = [
-        ("summary", SUMMARY_HEADERS, _summary_rows(meta, sim, agent)),
-        ("assignment_ignores", ASSIGNMENT_IGNORES_HEADERS, _assignment_ignores_rows(meta, sim, agent)),
-        ("tool_calls", TOOL_CALLS_HEADERS, _tool_calls_rows(meta, sim, agent)),
-        ("robots", ROBOTS_HEADERS, _robots_rows(meta, sim, agent, all_robot_ids)),
-        ("tasks", TASKS_HEADERS, _tasks_rows(meta, sim, agent, all_task_ids)),
+        ("summary", SUMMARY_HEADERS, _build_summary_rows(meta, sim, agent)),
+        ("assignment_ignores", ASSIGNMENT_IGNORES_HEADERS, _build_assignment_ignore_rows(meta, sim)),
+        ("tool_calls", TOOL_CALLS_HEADERS, _build_tool_call_rows(meta, agent)),
+        ("robots", ROBOTS_HEADERS, _build_robot_rows(meta, sim, all_robot_ids)),
+        ("tasks", TASKS_HEADERS, _build_task_rows(meta, sim, all_task_ids)),
     ]
     for sheet_name, headers, rows in simple_sheets:
         ws = wb.create_sheet(sheet_name)
