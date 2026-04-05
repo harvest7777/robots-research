@@ -1,5 +1,5 @@
 """
-experiments/export_excel.py
+experiments/data_aggregator/export_excel.py
 
 Exports all runs for a scenario into an Excel workbook with five sheets:
   - summary          (1 row per run — simulation + agent flat metrics)
@@ -9,15 +9,16 @@ Exports all runs for a scenario into an Excel workbook with five sheets:
   - tool_calls       (1 row per tool name per run)
 
 Usage (from repo root):
-    python -m experiments.export_excel --scenario scenario_05
-    python -m experiments.export_excel --scenario scenario_05 --out my_output.xlsx
+    python -m experiments.data_aggregator.export_excel --scenario scenario_05
+    python -m experiments.data_aggregator.export_excel --scenario scenario_05 --out my_output.xlsx
 """
 
 import argparse
-import json
 from pathlib import Path
 
 import openpyxl
+
+from experiments.data_aggregator.util import collect_results
 
 
 # ---------------------------------------------------------------------------
@@ -140,24 +141,6 @@ def _build_tool_call_rows(meta: dict, agent: dict) -> list[list]:
 
 
 # ---------------------------------------------------------------------------
-# Collect
-# ---------------------------------------------------------------------------
-
-EXPERIMENTS_DIR = Path(__file__).parent
-
-
-def _collect_results(scenario: str) -> list[dict]:
-    results = []
-    for results_path in sorted((EXPERIMENTS_DIR / scenario).glob("*/runs/*/results.json")):
-        data = json.loads(results_path.read_text())
-        if "metadata" not in data:
-            print(f"  skipping {results_path} (no metadata)")
-            continue
-        results.append(data)
-    return results
-
-
-# ---------------------------------------------------------------------------
 # Excel writer
 # ---------------------------------------------------------------------------
 
@@ -168,7 +151,7 @@ def _write_sheet(ws, headers: list[str], rows: list[list]) -> None:
 
 
 def export(scenario: str, out_path: Path) -> None:
-    runs = _collect_results(scenario)
+    runs = collect_results(scenario)
     if not runs:
         raise SystemExit(f"No results with metadata found for {scenario}")
 
@@ -210,7 +193,7 @@ def export(scenario: str, out_path: Path) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="python -m experiments.export_excel")
+    parser = argparse.ArgumentParser(prog="python -m experiments.data_aggregator.export_excel")
     parser.add_argument("--scenario", required=True, metavar="SCENARIO")
     parser.add_argument("--out", default=None, metavar="FILE")
     args = parser.parse_args()
