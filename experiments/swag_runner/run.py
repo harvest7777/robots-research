@@ -4,11 +4,11 @@ experiments/run.py
 Entrypoint for running a single experiment.
 
 Usage (from repo root):
-    python -m experiments.run <scenario>/<override_variant> --model <model>
+    python -m experiments.swag_runner.run <scenario>/<override_variant> --model <model>
 
 Example:
-    python -m experiments.run scenario_01/baseline --model gpt-4o
-    python -m experiments.run scenario_01/structured_override --model gpt-4o
+    python -m experiments.swag_runner.run scenario_01/baseline --model gpt-4o
+    python -m experiments.swag_runner.run scenario_01/structured_override --model gpt-4o
 
 Outputs artifacts and results.json into:
     experiments/<scenario>/<override_variant>/runs/<model>-<timestamp>/
@@ -30,7 +30,7 @@ from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRun
 from experiments.agents import MODEL_REGISTRY
 from simulation.engine_rewrite import BaseSimulationStore
 from simulation.primitives import Time
-from experiments.swag_runner.models import Run
+from experiments.swag_runner.models import Run, Override
 from experiments.swag_runner.utils import EXPERIMENTS_DIR
 
 MAX_TICKS = 100
@@ -238,21 +238,28 @@ def _parse_arguments() -> Run:
     model = args.model
     return Run(
         scenario=scenario,
-        override_type=override_variant,
+        override_type=Override(override_variant),
         model=model
     )
 
 def main() -> None:
     run_params = _parse_arguments()
+
+    replay_path = run(run_params)
+
+    print(f"simulation replay written to {replay_path}")
+
+
+def run(run_params: Run) -> Path:
     scenario = run_params.scenario
-    override_variant = run_params.override_type
+    override_variant = run_params.override_type.value
     model = run_params.model
 
     rules_path = EXPERIMENTS_DIR / scenario / override_variant / "rules.md"
     rules_text = rules_path.read_text() if rules_path.exists() else None
     rules = rules_text if rules_text and rules_text.strip() else None
 
-    scenario_def =  _load_definition(scenario)
+    scenario_def = _load_definition(scenario)
     robots = scenario_def.robots
     robot_states = scenario_def.robot_states
     environment = scenario_def.environment
@@ -275,7 +282,13 @@ def main() -> None:
     agent = setup_artifacts.agent
     store = setup_artifacts.simulation_store
 
-    _run_loop(runner, agent, store, task_spawns)
+    try:
+        _run_loop(runner, agent, store, task_spawns)
+    except:
+        import shutil
+        shutil.rmtree(run_dir)
+        raise
+
 
     run_metadata = RunMetadata(
         run_dir=run_dir,
@@ -293,7 +306,7 @@ def main() -> None:
     replay = runner.get_replay()
     replay_path = run_dir / "artifacts" / "simulation_replay.json"
     replay_path.write_text(json.dumps(replay, indent=2))
-    print(f"simulation replay written to {replay_path}")
+    return replay_path
 
 
 if __name__ == "__main__":
