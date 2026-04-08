@@ -37,6 +37,21 @@ def ASI1_AGENT(
         system=_build_system(rules),
     )
 
+def GEMMA_3_27B(
+        store: BaseSimulationStore,
+        assignment_service: BaseAssignmentService,
+        rules: str | None = None,
+) -> AssignmentAgent:
+    return AssignmentAgent(
+        model="huggingface/google/gemma-3-27b-it:fastest",
+        api_base="https://router.huggingface.co/v1",
+        api_key=os.getenv("HF_TOKEN"),
+        store=store,
+        assignment_service=assignment_service,
+        system=_build_system(rules),
+    )
+
+
 
 def GPT4O_AGENT(
     store: BaseSimulationStore,
@@ -85,4 +100,5 @@ MODEL_REGISTRY = {
     "gemini-2.0-flash": GEMINI_AGENT,
     "claude-haiku": CLAUDE_AGENT,
     "asi1": ASI1_AGENT,
+    "gemma-3-27b": GEMMA_3_27B,
 }
