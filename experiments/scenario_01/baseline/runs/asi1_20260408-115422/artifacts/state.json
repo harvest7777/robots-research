@@ -1,0 +1,61 @@
+{
+  "scenario_id": "",
+  "max_tick": 0,
+  "robots": [
+    {
+      "robot_id": 1,
+      "x": 2,
+      "y": 9,
+      "battery_level": 0.9195000000000031
+    },
+    {
+      "robot_id": 2,
+      "x": 3,
+      "y": 9,
+      "battery_level": 0.8855000000000018
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "priority": 10,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 2,
+      "priority": 3,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 3,
+      "priority": 3,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 4,
+      "priority": 3,
+      "status": "done",
+      "assigned_robot_ids": [
+        1,
+        2
+      ],
+      "task_type": "work"
+    }
+  ],
+  "assignments": [
+    {
+      "robot_id": 1,
+      "task_id": 4
+    },
+    {
+      "robot_id": 2,
+      "task_id": 4
+    }
+  ]
+}

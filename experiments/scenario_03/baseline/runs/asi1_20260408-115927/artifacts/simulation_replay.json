@@ -1,0 +1,9903 @@
+[
+  {
+    "state": {
+      "t_now": 1,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 9,
+            "y": 6
+          },
+          "battery": 0.9995
+        },
+        "2": {
+          "position": {
+            "x": 10,
+            "y": 7
+          },
+          "battery": 0.9995
+        },
+        "3": {
+          "position": {
+            "x": 9,
+            "y": 8
+          },
+          "battery": 0.9995
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": []
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": []
+  },
+  {
+    "state": {
+      "t_now": 2,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 9,
+            "y": 5
+          },
+          "battery": 0.9985
+        },
+        "2": {
+          "position": {
+            "x": 9,
+            "y": 7
+          },
+          "battery": 0.9985
+        },
+        "3": {
+          "position": {
+            "x": 8,
+            "y": 8
+          },
+          "battery": 0.9985
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 9,
+            "y": 5
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 9,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 8,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 3,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 9,
+            "y": 4
+          },
+          "battery": 0.9975
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 7
+          },
+          "battery": 0.9975
+        },
+        "3": {
+          "position": {
+            "x": 7,
+            "y": 8
+          },
+          "battery": 0.9975
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 9,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 7,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 4,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 9,
+            "y": 3
+          },
+          "battery": 0.9965
+        },
+        "2": {
+          "position": {
+            "x": 7,
+            "y": 7
+          },
+          "battery": 0.9965
+        },
+        "3": {
+          "position": {
+            "x": 6,
+            "y": 8
+          },
+          "battery": 0.9965
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 9,
+            "y": 3
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 7,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 6,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 5,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 9,
+            "y": 2
+          },
+          "battery": 0.9955
+        },
+        "2": {
+          "position": {
+            "x": 6,
+            "y": 7
+          },
+          "battery": 0.9955
+        },
+        "3": {
+          "position": {
+            "x": 5,
+            "y": 8
+          },
+          "battery": 0.9955
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 9,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 6,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 5,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 6,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 10,
+            "y": 2
+          },
+          "battery": 0.9945
+        },
+        "2": {
+          "position": {
+            "x": 5,
+            "y": 7
+          },
+          "battery": 0.9945
+        },
+        "3": {
+          "position": {
+            "x": 4,
+            "y": 8
+          },
+          "battery": 0.9945
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 10,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 5,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 4,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 7,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 11,
+            "y": 2
+          },
+          "battery": 0.9935
+        },
+        "2": {
+          "position": {
+            "x": 4,
+            "y": 7
+          },
+          "battery": 0.9935
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 8
+          },
+          "battery": 0.9935
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 11,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 4,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 8,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 12,
+            "y": 2
+          },
+          "battery": 0.9925
+        },
+        "2": {
+          "position": {
+            "x": 3,
+            "y": 7
+          },
+          "battery": 0.9925
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 9
+          },
+          "battery": 0.9925
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 12,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 3,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 9
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 9,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 13,
+            "y": 2
+          },
+          "battery": 0.9915
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 7
+          },
+          "battery": 0.9915
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9915
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 13,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 2,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 10,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 14,
+            "y": 2
+          },
+          "battery": 0.9905
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 6
+          },
+          "battery": 0.9905
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9895
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 14,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 2,
+            "y": 6
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 11,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 2
+          },
+          "battery": 0.9895
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 5
+          },
+          "battery": 0.9895
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9875
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 2,
+            "y": 5
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 12,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 16,
+            "y": 2
+          },
+          "battery": 0.9885
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9885
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9855
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 16,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 2,
+            "y": 4
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 13,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9875
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9865
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9835
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 17,
+            "y": 2
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 14,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9855
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9845
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9815
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 15,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9835
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9825
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9795
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 16,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9815
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9805
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9775
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 17,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9795
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9785
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9755
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": null
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 18,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9775
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9765
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9735
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 3
+        }
+      ],
+      "tasks_completed": [
+        3
+      ],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 3
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 19,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9755
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9745
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 9
+          },
+          "battery": 0.9725
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 4
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 9
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 4
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 20,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9735
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9725
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 8
+          },
+          "battery": 0.9715
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": null
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 4
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 4
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 21,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9715
+        },
+        "2": {
+          "position": {
+            "x": 2,
+            "y": 4
+          },
+          "battery": 0.9705
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 7
+          },
+          "battery": 0.9705
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        },
+        {
+          "robot_id": 3,
+          "task_id": 4
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 7
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 2
+        }
+      ],
+      "tasks_completed": [
+        2
+      ],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 2
+      },
+      {
+        "robot_id": 3,
+        "task_id": 4
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 22,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9695
+        },
+        "2": {
+          "position": {
+            "x": 3,
+            "y": 4
+          },
+          "battery": 0.9695
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 8
+          },
+          "battery": 0.9695
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 3,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 4
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 23,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9675
+        },
+        "2": {
+          "position": {
+            "x": 4,
+            "y": 4
+          },
+          "battery": 0.9685
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 9
+          },
+          "battery": 0.9685
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 4,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 9
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 4
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 24,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9655
+        },
+        "2": {
+          "position": {
+            "x": 5,
+            "y": 4
+          },
+          "battery": 0.9675
+        },
+        "3": {
+          "position": {
+            "x": 3,
+            "y": 10
+          },
+          "battery": 0.9675
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 5,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 3,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 4
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 25,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9635
+        },
+        "2": {
+          "position": {
+            "x": 6,
+            "y": 4
+          },
+          "battery": 0.9665
+        },
+        "3": {
+          "position": {
+            "x": 4,
+            "y": 10
+          },
+          "battery": 0.9665
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 6,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 4,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 4
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 26,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9615
+        },
+        "2": {
+          "position": {
+            "x": 7,
+            "y": 4
+          },
+          "battery": 0.9655
+        },
+        "3": {
+          "position": {
+            "x": 5,
+            "y": 10
+          },
+          "battery": 0.9655
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": null
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 7,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 5,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 4
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 27,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 17,
+            "y": 2
+          },
+          "battery": 0.9595
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 4
+          },
+          "battery": 0.9645
+        },
+        "3": {
+          "position": {
+            "x": 6,
+            "y": 10
+          },
+          "battery": 0.9645
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        },
+        {
+          "robot_id": 2,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 6,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 1
+        }
+      ],
+      "tasks_completed": [
+        1
+      ],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 1
+      },
+      {
+        "robot_id": 2,
+        "task_id": 4
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 28,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 16,
+            "y": 2
+          },
+          "battery": 0.9585
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 5
+          },
+          "battery": 0.9635
+        },
+        "3": {
+          "position": {
+            "x": 7,
+            "y": 10
+          },
+          "battery": 0.9635
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 16,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 5
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 7,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 29,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 2
+          },
+          "battery": 0.9575
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 6
+          },
+          "battery": 0.9625
+        },
+        "3": {
+          "position": {
+            "x": 8,
+            "y": 10
+          },
+          "battery": 0.9625
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 2
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 6
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 8,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 30,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 3
+          },
+          "battery": 0.9565
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 7
+          },
+          "battery": 0.9615
+        },
+        "3": {
+          "position": {
+            "x": 9,
+            "y": 10
+          },
+          "battery": 0.9615
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 3
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 7
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 9,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 31,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9555
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 8
+          },
+          "battery": 0.9605
+        },
+        "3": {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "battery": 0.9605
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 4
+          }
+        },
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 8
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 10,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 32,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9535
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 9
+          },
+          "battery": 0.9595
+        },
+        "3": {
+          "position": {
+            "x": 11,
+            "y": 10
+          },
+          "battery": 0.9595
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 9
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 11,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 33,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9515
+        },
+        "2": {
+          "position": {
+            "x": 8,
+            "y": 10
+          },
+          "battery": 0.9585
+        },
+        "3": {
+          "position": {
+            "x": 12,
+            "y": 10
+          },
+          "battery": 0.9585
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 8,
+            "y": 10
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 12,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 34,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9495
+        },
+        "2": {
+          "position": {
+            "x": 9,
+            "y": 10
+          },
+          "battery": 0.9575
+        },
+        "3": {
+          "position": {
+            "x": 13,
+            "y": 10
+          },
+          "battery": 0.9575
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 9,
+            "y": 10
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 13,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 35,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9475
+        },
+        "2": {
+          "position": {
+            "x": 10,
+            "y": 10
+          },
+          "battery": 0.9565
+        },
+        "3": {
+          "position": {
+            "x": 14,
+            "y": 10
+          },
+          "battery": 0.9565
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 10,
+            "y": 10
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 14,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 36,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9455
+        },
+        "2": {
+          "position": {
+            "x": 11,
+            "y": 10
+          },
+          "battery": 0.9555
+        },
+        "3": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9555
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 11,
+            "y": 10
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 15,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 37,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9435
+        },
+        "2": {
+          "position": {
+            "x": 12,
+            "y": 10
+          },
+          "battery": 0.9545
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9545
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 12,
+            "y": 10
+          }
+        },
+        {
+          "robot_id": 3,
+          "position": {
+            "x": 16,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 38,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9415
+        },
+        "2": {
+          "position": {
+            "x": 13,
+            "y": 10
+          },
+          "battery": 0.9535
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9525
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 13,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 39,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9395
+        },
+        "2": {
+          "position": {
+            "x": 14,
+            "y": 10
+          },
+          "battery": 0.9525
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9505
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": null
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 14,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 40,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 4
+          },
+          "battery": 0.9375
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9515
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9485
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 2,
+          "position": {
+            "x": 15,
+            "y": 10
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 1,
+          "task_id": 4
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [
+        4
+      ],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 4
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 41,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 5
+          },
+          "battery": 0.9365
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9510000000000001
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9465
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 5
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": [
+        2
+      ]
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 42,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 6
+          },
+          "battery": 0.9355
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9505000000000001
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9445
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 6
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": [
+        2
+      ]
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 43,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 7
+          },
+          "battery": 0.9345
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9500000000000002
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9425
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 7
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": [
+        2
+      ]
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 44,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 8
+          },
+          "battery": 0.9335
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9495000000000002
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9405
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 8
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": [
+        2
+      ]
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 45,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9325
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9490000000000003
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9385
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": null
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [
+        {
+          "robot_id": 1,
+          "position": {
+            "x": 15,
+            "y": 9
+          }
+        }
+      ],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": [
+        2
+      ]
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 46,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.932
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9485000000000003
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9365
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ],
+      "tasks_completed": [
+        5
+      ],
+      "tasks_spawned": [],
+      "assignments_ignored": [],
+      "rescue_points_found": [],
+      "robots_stuck": [
+        1,
+        2
+      ]
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 47,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9315000000000001
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9480000000000004
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.936
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 48,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9310000000000002
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9475000000000005
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9355000000000001
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 49,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9305000000000002
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9470000000000005
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9350000000000002
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 50,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9300000000000003
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9465000000000006
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9345000000000002
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 51,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9295000000000003
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9460000000000006
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9340000000000003
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 52,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9290000000000004
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9455000000000007
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9335000000000003
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 53,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9285000000000004
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9450000000000007
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9330000000000004
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 54,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9280000000000005
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9445000000000008
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9325000000000004
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 55,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9275000000000005
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9440000000000008
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9320000000000005
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 56,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9270000000000006
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9435000000000009
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9315000000000005
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 57,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9265000000000007
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.943000000000001
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9310000000000006
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 58,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9260000000000007
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.942500000000001
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9305000000000007
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 59,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9255000000000008
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9420000000000011
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9300000000000007
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 60,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9250000000000008
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9415000000000011
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9295000000000008
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 61,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9245000000000009
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9410000000000012
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9290000000000008
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 62,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9240000000000009
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9405000000000012
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9285000000000009
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 63,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.923500000000001
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9400000000000013
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9280000000000009
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 64,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.923000000000001
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9395000000000013
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.927500000000001
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 65,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9225000000000011
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9390000000000014
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.927000000000001
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 66,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9220000000000012
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9385000000000014
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9265000000000011
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 67,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9215000000000012
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9380000000000015
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9260000000000012
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 68,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9210000000000013
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9375000000000016
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9255000000000012
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 69,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9205000000000013
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9370000000000016
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9250000000000013
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 70,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9200000000000014
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9365000000000017
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9245000000000013
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 71,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9195000000000014
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9360000000000017
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9240000000000014
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 72,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9190000000000015
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9355000000000018
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9235000000000014
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 73,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9185000000000015
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9350000000000018
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9230000000000015
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 74,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9180000000000016
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9345000000000019
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9225000000000015
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 75,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9175000000000016
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9340000000000019
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9220000000000016
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 76,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9170000000000017
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.933500000000002
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9215000000000017
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 77,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9165000000000018
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.933000000000002
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9210000000000017
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 78,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9160000000000018
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9325000000000021
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9205000000000018
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 79,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9155000000000019
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9320000000000022
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9200000000000018
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 80,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9150000000000019
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9315000000000022
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9195000000000019
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 81,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.914500000000002
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9310000000000023
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9190000000000019
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 82,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.914000000000002
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9305000000000023
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.918500000000002
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 83,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9135000000000021
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9300000000000024
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.918000000000002
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 84,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9130000000000021
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9295000000000024
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9175000000000021
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 85,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9125000000000022
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9290000000000025
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9170000000000021
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 86,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9120000000000023
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9285000000000025
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9165000000000022
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 87,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9115000000000023
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9280000000000026
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9160000000000023
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 88,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9110000000000024
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9275000000000027
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9155000000000023
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 89,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9105000000000024
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9270000000000027
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9150000000000024
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 90,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9100000000000025
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9265000000000028
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9145000000000024
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 91,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9095000000000025
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9260000000000028
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9140000000000025
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 92,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9090000000000026
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9255000000000029
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9135000000000025
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 93,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9085000000000026
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9250000000000029
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9130000000000026
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 94,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9080000000000027
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.924500000000003
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9125000000000026
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 95,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9075000000000027
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.924000000000003
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9120000000000027
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 96,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9070000000000028
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9235000000000031
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9115000000000028
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 97,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9065000000000029
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9230000000000032
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9110000000000028
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 98,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.9060000000000029
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9225000000000032
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9105000000000029
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 99,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.905500000000003
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9220000000000033
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.9100000000000029
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  },
+  {
+    "state": {
+      "t_now": 100,
+      "robots": {
+        "1": {
+          "position": {
+            "x": 15,
+            "y": 9
+          },
+          "battery": 0.905000000000003
+        },
+        "2": {
+          "position": {
+            "x": 15,
+            "y": 10
+          },
+          "battery": 0.9215000000000033
+        },
+        "3": {
+          "position": {
+            "x": 16,
+            "y": 10
+          },
+          "battery": 0.909500000000003
+        }
+      },
+      "tasks": {
+        "1": {
+          "status": "done"
+        },
+        "2": {
+          "status": "done"
+        },
+        "3": {
+          "status": "done"
+        },
+        "4": {
+          "status": "done"
+        },
+        "5": {
+          "status": "done"
+        }
+      },
+      "assignments": [
+        {
+          "robot_id": 1,
+          "task_id": 5
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5
+        }
+      ]
+    },
+    "outcome": {
+      "moved": [],
+      "worked": [],
+      "tasks_completed": [],
+      "tasks_spawned": [],
+      "assignments_ignored": [
+        {
+          "robot_id": 1,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 2,
+          "task_id": 5,
+          "reason": "task_terminal"
+        },
+        {
+          "robot_id": 3,
+          "task_id": 5,
+          "reason": "task_terminal"
+        }
+      ],
+      "rescue_points_found": [],
+      "robots_stuck": []
+    },
+    "assignments": [
+      {
+        "robot_id": 1,
+        "task_id": 5
+      },
+      {
+        "robot_id": 2,
+        "task_id": 5
+      },
+      {
+        "robot_id": 3,
+        "task_id": 5
+      }
+    ]
+  }
+]

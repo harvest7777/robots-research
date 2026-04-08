@@ -22,24 +22,25 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+from litellm.proxy.client.cli.commands.models import models
+
 from experiments.models.task_spawn import SpawnTask
 from llm.agent import AssignmentAgent
 from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner, RobotState, Robot, Environment
 from experiments.agents import MODEL_REGISTRY
 from simulation.engine_rewrite import BaseSimulationStore
 from simulation.primitives import Time
+from experiments.swag_runner.models import Run
+from experiments.swag_runner.utils import EXPERIMENTS_DIR
 
 MAX_TICKS = 100
-
-EXPERIMENTS_DIR = Path(__file__).parent
-
 
 # ---------------------------------------------------------------------------
 # 1. Validation
 # ---------------------------------------------------------------------------
 
 
-def validate_run(scenario: str, override_variant: str, model: str) -> None:
+def _validate_run(scenario: str, override_variant: str, model: str) -> None:
     defn_dir = EXPERIMENTS_DIR / scenario / "definition"
     for required in ("robots.py", "tasks.py", "environment.py"):
         if not (defn_dir / required).exists():
@@ -64,7 +65,7 @@ class ScenarioDefinition:
     robot_states: list[RobotState]
     task_spawns: list[SpawnTask]
     environment: Environment
-def load_definition(scenario: str) -> ScenarioDefinition:
+def _load_definition(scenario: str) -> ScenarioDefinition:
     base = f"experiments.{scenario}.definition"
     robots_mod = importlib.import_module(f"{base}.robots")
     tasks_mod = importlib.import_module(f"{base}.tasks")
@@ -112,10 +113,10 @@ class RunMetadata:
             "all_task_ids": self.all_task_ids,
         }
 
-def make_run_dir(scenario: str, override_variant: str, model: str, time: datetime) -> Path:
+def _make_run_dir(scenario: str, override_variant: str, model: str, time: datetime) -> Path:
     timestamp = time.strftime("%Y%m%d-%H%M%S")
     run_dir = (
-        EXPERIMENTS_DIR / scenario / override_variant / "runs" / f"{model}-{timestamp}"
+        EXPERIMENTS_DIR / scenario / override_variant / "runs" / f"{model}_{timestamp}"
     )
     (run_dir / "artifacts").mkdir(parents=True)
     return run_dir
@@ -168,7 +169,7 @@ def _setup_simulation(
 # ---------------------------------------------------------------------------
 
 
-def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimulationStore, tasks_to_spawn: list[SpawnTask]) -> None:
+def _run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimulationStore, tasks_to_spawn: list[SpawnTask]) -> None:
     def _invoke(prompt: str) -> None:
         asyncio.run(agent.invoke(prompt, max_tool_calls=5))
 
@@ -195,7 +196,7 @@ def run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimula
 # ---------------------------------------------------------------------------
 
 
-def create_results(runner, agent, run_metadata: RunMetadata) -> str:
+def _create_results(runner, agent, run_metadata: RunMetadata) -> str:
     sim = runner.stop()
     llm = agent.get_analysis()
 
@@ -207,7 +208,7 @@ def create_results(runner, agent, run_metadata: RunMetadata) -> str:
 
     return json.dumps(results, indent=2)
 
-def write_results(results_str: str, run_dir: Path) -> None:
+def _write_results(results_str: str, run_dir: Path) -> None:
     results_path = run_dir / "results.json"
     results_path.write_text(results_str)
     print(f"results written to {results_path}")
@@ -217,8 +218,7 @@ def write_results(results_str: str, run_dir: Path) -> None:
 # Main
 # ---------------------------------------------------------------------------
 
-
-def main() -> None:
+def _parse_arguments() -> Run:
     parser = argparse.ArgumentParser(
         prog="python -m experiments.run",
         usage="%(prog)s <scenario>/<override_variant> --model <model>",
@@ -234,14 +234,25 @@ def main() -> None:
         )
     scenario, override_variant = parts
 
-    validate_run(scenario, override_variant, args.model)
+    _validate_run(scenario, override_variant, args.model)
     model = args.model
+    return Run(
+        scenario=scenario,
+        override_type=override_variant,
+        model=model
+    )
+
+def main() -> None:
+    run_params = _parse_arguments()
+    scenario = run_params.scenario
+    override_variant = run_params.override_type
+    model = run_params.model
 
     rules_path = EXPERIMENTS_DIR / scenario / override_variant / "rules.md"
     rules_text = rules_path.read_text() if rules_path.exists() else None
     rules = rules_text if rules_text and rules_text.strip() else None
 
-    scenario_def =  load_definition(scenario)
+    scenario_def =  _load_definition(scenario)
     robots = scenario_def.robots
     robot_states = scenario_def.robot_states
     environment = scenario_def.environment
@@ -249,7 +260,7 @@ def main() -> None:
 
     time = datetime.now()
 
-    run_dir = make_run_dir(scenario, override_variant, model, time)
+    run_dir = _make_run_dir(scenario, override_variant, model, time)
 
     setup_artifacts = _setup_simulation(
         robots,
@@ -264,7 +275,7 @@ def main() -> None:
     agent = setup_artifacts.agent
     store = setup_artifacts.simulation_store
 
-    run_loop(runner, agent, store, task_spawns)
+    _run_loop(runner, agent, store, task_spawns)
 
     run_metadata = RunMetadata(
         run_dir=run_dir,
@@ -276,8 +287,8 @@ def main() -> None:
         all_task_ids=sorted(t.id for t in store.all_tasks()),
     )
 
-    results_str = create_results(runner, agent, run_metadata)
-    write_results(results_str, run_dir)
+    results_str = _create_results(runner, agent, run_metadata)
+    _write_results(results_str, run_dir)
 
     replay = runner.get_replay()
     replay_path = run_dir / "artifacts" / "simulation_replay.json"
