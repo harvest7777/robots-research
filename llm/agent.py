@@ -25,6 +25,9 @@ import json
 import time
 
 import litellm
+
+litellm.suppress_debug_info = True
+
 from langsmith import traceable
 
 from llm.agent_analysis import AgentAnalysis
