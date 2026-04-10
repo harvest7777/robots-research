@@ -22,8 +22,6 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
-from litellm.proxy.client.cli.commands.models import models
-
 from experiments.models.task_spawn import SpawnTask
 from llm.agent import AssignmentAgent
 from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRunner, RobotState, Robot, Environment
@@ -31,7 +29,7 @@ from experiments.agents import MODEL_REGISTRY
 from simulation.engine_rewrite import BaseSimulationStore
 from simulation.primitives import Time
 from experiments.swag_runner.models import Run, Override
-from experiments.swag_runner.utils import EXPERIMENTS_DIR
+from experiments.utils import EXPERIMENTS_DIR
 
 MAX_TICKS = 100
 

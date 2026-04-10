@@ -1,5 +1,5 @@
 from experiments.swag_runner.models import Run, Override
-from experiments.swag_runner.utils import EXPERIMENTS_DIR
+from experiments.utils import EXPERIMENTS_DIR
 from experiments.agents import MODEL_REGISTRY
 from experiments.swag_runner.run import run
 
@@ -29,6 +29,8 @@ def _get_all_runs() -> list[Run]:
 
 def run_all() -> None:
     all_runs = _get_all_runs()
+    fail_cache = {}
+
     for r in all_runs:
         current = count_successful_runs(r)
         if current >= DESIRED_RUNS_PER_EXPERIMENT:
@@ -37,9 +39,13 @@ def run_all() -> None:
         needed = DESIRED_RUNS_PER_EXPERIMENT - current
         for i in range(needed):
             print(f"running {r.scenario}/{r.override_type.value}/{r.model} (run {current + i + 1}/{DESIRED_RUNS_PER_EXPERIMENT})")
+            if r.model in fail_cache:
+                print(f"   FAILED: cached failure")
+                continue
             try:
                 run(r)
             except Exception as e:
+                fail_cache[r.model] = e
                 print(f"  FAILED: {str(e)[:100]}...")
 
 
