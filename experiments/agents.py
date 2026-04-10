@@ -38,19 +38,18 @@ def ASI1_AGENT(
     )
 
 def GEMMA_3_27B(
-        store: BaseSimulationStore,
-        assignment_service: BaseAssignmentService,
-        rules: str | None = None,
+    store: BaseSimulationStore,
+    assignment_service: BaseAssignmentService,
+    rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="huggingface/google/gemma-3-27b-it:fastest",
-        api_base="https://router.huggingface.co/v1",
-        api_key=os.getenv("HF_TOKEN"),
+        model="openrouter/google/gemma-3-27b-it:free",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
         assignment_service=assignment_service,
         system=_build_system(rules),
     )
-
 
 
 def GPT_OSS_20B(
@@ -59,9 +58,9 @@ def GPT_OSS_20B(
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="huggingface/openai/gpt-oss-20b:groq",
-        api_base="https://router.huggingface.co/v1",
-        api_key=os.getenv("HF_TOKEN"),
+        model="openrouter/openai/gpt-oss-20b",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
         assignment_service=assignment_service,
         system=_build_system(rules),
@@ -74,8 +73,9 @@ def GPT4O_AGENT(
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="openai/gpt-4o",
-        api_key=os.getenv("OPENAI_API_KEY"),
+        model="openrouter/openai/gpt-4o",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
         assignment_service=assignment_service,
         system=_build_system(rules),
@@ -88,8 +88,9 @@ def GEMINI_AGENT(
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="gemini/gemini-2.0-flash",
-        api_key=os.getenv("GOOGLE_API_KEY"),
+        model="openrouter/google/gemini-2.0-flash-exp:free",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
         assignment_service=assignment_service,
         system=_build_system(rules),
@@ -102,8 +103,9 @@ def CLAUDE_AGENT(
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="anthropic/claude-haiku-4-5-20251001",
-        api_key=os.getenv("ANTHROPIC_API_KEY"),
+        model="openrouter/anthropic/claude-3-haiku",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
         assignment_service=assignment_service,
         system=_build_system(rules),
