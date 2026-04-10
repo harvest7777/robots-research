@@ -58,7 +58,7 @@ def GPT_OSS_20B(
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="openrouter/openai/gpt-oss-20b",
+        model="openrouter/openai/gpt-oss-20b:free",
         api_base="https://openrouter.ai/api/v1",
         api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
