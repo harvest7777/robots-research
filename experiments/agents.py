@@ -110,6 +110,66 @@ def CLAUDE_AGENT(
     )
 
 
+def DEEPSEEK_V3_AGENT(
+    store: BaseSimulationStore,
+    assignment_service: BaseAssignmentService,
+    rules: str | None = None,
+) -> AssignmentAgent:
+    return AssignmentAgent(
+        model="openrouter/deepseek/deepseek-chat-v3-5",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        store=store,
+        assignment_service=assignment_service,
+        system=_build_system(rules),
+    )
+
+
+def DEEPSEEK_R1_AGENT(
+    store: BaseSimulationStore,
+    assignment_service: BaseAssignmentService,
+    rules: str | None = None,
+) -> AssignmentAgent:
+    return AssignmentAgent(
+        model="openrouter/deepseek/deepseek-r1",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        store=store,
+        assignment_service=assignment_service,
+        system=_build_system(rules),
+    )
+
+
+def LLAMA_3_3_70B_AGENT(
+    store: BaseSimulationStore,
+    assignment_service: BaseAssignmentService,
+    rules: str | None = None,
+) -> AssignmentAgent:
+    return AssignmentAgent(
+        model="openrouter/meta-llama/llama-3.3-70b-instruct",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        store=store,
+        assignment_service=assignment_service,
+        system=_build_system(rules),
+    )
+
+
+def QWEN3_32B_AGENT(
+    store: BaseSimulationStore,
+    assignment_service: BaseAssignmentService,
+    rules: str | None = None,
+) -> AssignmentAgent:
+    return AssignmentAgent(
+        model="openrouter/qwen/qwen3-32b",
+        api_base="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        store=store,
+        assignment_service=assignment_service,
+        system=_build_system(rules),
+    )
+
+
 MODEL_REGISTRY = {
     "gpt-4o": GPT4O_AGENT,
     "gemini-2.0-flash": GEMINI_AGENT,
@@ -117,4 +177,8 @@ MODEL_REGISTRY = {
     "asi1": ASI1_AGENT,
     "gemma-3-27b": GEMMA_3_27B,
     "gpt-oss-20b": GPT_OSS_20B,
+    "deepseek-v3": DEEPSEEK_V3_AGENT,
+    "deepseek-r1": DEEPSEEK_R1_AGENT,
+    "llama-3.3-70b": LLAMA_3_3_70B_AGENT,
+    "qwen3-32b": QWEN3_32B_AGENT,
 }
