@@ -1,22 +1,13 @@
-from experiments.swag_runner.models import Run, Override
-from experiments.agents import MODEL_REGISTRY
-from experiments.swag_runner.utils import count_successful_runs
+from experiments.swag_runner.models import Override
+from experiments.swag_runner.utils import count_successful_runs, get_all_runs_for_scenario
 
 import argparse
 
 DESIRED_RUN_COUNT = 1
 
 
-def _get_all_runs_for_scenario(scenario_name: str) -> list[Run]:
-    return [
-        Run(scenario=scenario_name, override_type=override, model=model)
-        for override in Override
-        for model in MODEL_REGISTRY
-    ]
-
-
 def evaluate_scenario(scenario_name: str) -> None:
-    all_runs = _get_all_runs_for_scenario(scenario_name)
+    all_runs = get_all_runs_for_scenario(scenario_name)
 
     for override in Override:
         runs = [r for r in all_runs if r.override_type == override]
