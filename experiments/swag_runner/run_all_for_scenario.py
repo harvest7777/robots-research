@@ -1,8 +1,8 @@
 from experiments.swag_runner.models import Run, Override
-from experiments.utils import EXPERIMENTS_DIR
 from experiments.agents import MODEL_REGISTRY
 from experiments.swag_runner.run import run
-from experiments.swag_runner.run_all import count_successful_runs, DESIRED_RUNS_PER_EXPERIMENT
+from experiments.swag_runner.utils import count_successful_runs
+from experiments.swag_runner.run_all import DESIRED_RUNS_PER_EXPERIMENT
 
 import argparse
 
