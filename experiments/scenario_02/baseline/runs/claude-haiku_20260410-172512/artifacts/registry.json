@@ -1,0 +1,113 @@
+{
+  "version": 1,
+  "robots": [
+    {
+      "robot_id": 1,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    },
+    {
+      "robot_id": 2,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    },
+    {
+      "robot_id": 3,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "priority": 5,
+      "required_capabilities": [
+        "vision"
+      ],
+      "task_type": "work",
+      "required_work_time": 10,
+      "spatial_constraint": {
+        "target": {
+          "type": "position",
+          "x": 2,
+          "y": 4
+        },
+        "max_distance": 0
+      },
+      "deadline": null,
+      "min_robots_needed": 1
+    },
+    {
+      "task_id": 2,
+      "priority": 5,
+      "required_capabilities": [
+        "vision"
+      ],
+      "task_type": "work",
+      "required_work_time": 10,
+      "spatial_constraint": {
+        "target": {
+          "type": "position",
+          "x": 4,
+          "y": 10
+        },
+        "max_distance": 0
+      },
+      "deadline": null,
+      "min_robots_needed": 1
+    },
+    {
+      "task_id": 3,
+      "priority": 5,
+      "required_capabilities": [
+        "vision"
+      ],
+      "task_type": "work",
+      "required_work_time": 10,
+      "spatial_constraint": {
+        "target": {
+          "type": "position",
+          "x": 14,
+          "y": 4
+        },
+        "max_distance": 0
+      },
+      "deadline": null,
+      "min_robots_needed": 1
+    },
+    {
+      "task_id": 4,
+      "priority": 5,
+      "required_capabilities": [
+        "vision"
+      ],
+      "task_type": "work",
+      "required_work_time": 10,
+      "spatial_constraint": {
+        "target": {
+          "type": "position",
+          "x": 16,
+          "y": 10
+        },
+        "max_distance": 0
+      },
+      "deadline": null,
+      "min_robots_needed": 1
+    }
+  ]
+}

@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "robots": [
+    {
+      "robot_id": 1,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    },
+    {
+      "robot_id": 2,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    },
+    {
+      "robot_id": 3,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    },
+    {
+      "robot_id": 4,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    },
+    {
+      "robot_id": 5,
+      "capabilities": [
+        "vision"
+      ],
+      "speed": 1,
+      "battery_drain_per_unit_of_movement": 0.001,
+      "battery_drain_per_unit_of_work_execution": 0.002,
+      "battery_drain_per_tick_idle": 0.0005
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "priority": 1,
+      "required_capabilities": [],
+      "task_type": "move",
+      "destination": {
+        "x": 25,
+        "y": 4
+      },
+      "min_robots_required": 3,
+      "min_distance": 1
+    },
+    {
+      "task_id": 2,
+      "priority": 1,
+      "required_capabilities": [],
+      "task_type": "move",
+      "destination": {
+        "x": 25,
+        "y": 10
+      },
+      "min_robots_required": 3,
+      "min_distance": 1
+    }
+  ]
+}

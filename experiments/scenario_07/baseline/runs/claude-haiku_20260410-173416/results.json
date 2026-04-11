@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "scenario": "scenario_07",
+    "override_type": "baseline",
+    "llm": "claude-haiku",
+    "timestamp": "2026-04-10T17:35:02.639072",
+    "all_robot_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "all_task_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ]
+  },
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 21,
+    "tasks_completed": 7,
+    "tasks_failed": 0,
+    "robot_ticks_working": {
+      "3": 4,
+      "4": 5,
+      "6": 3,
+      "5": 3,
+      "2": 3,
+      "1": 3
+    },
+    "robot_ticks_moving": {
+      "3": 12,
+      "4": 10,
+      "1": 9,
+      "2": 8,
+      "5": 6,
+      "6": 5
+    },
+    "robot_ticks_idle": {
+      "1": 88,
+      "2": 89,
+      "3": 84,
+      "4": 85,
+      "5": 91,
+      "6": 92
+    },
+    "robot_ticks_stuck": {
+      "1": 9,
+      "2": 9,
+      "5": 9,
+      "6": 9
+    },
+    "robot_battery_remaining": {
+      "1": 0.9425000000000049,
+      "2": 0.943000000000005,
+      "3": 0.9410000000000047,
+      "4": 0.9405000000000048,
+      "5": 0.9440000000000051,
+      "6": 0.9445000000000051
+    },
+    "task_completion_tick": {
+      "3": 9,
+      "5": 13,
+      "4": 14,
+      "7": 16,
+      "6": 17,
+      "2": 19,
+      "1": 20
+    },
+    "task_ticks_to_complete": {
+      "1": 3,
+      "2": 3,
+      "3": 3,
+      "4": 7,
+      "5": 3,
+      "6": 3,
+      "7": 3
+    },
+    "task_ticks_actively_worked": {
+      "3": 3,
+      "4": 3,
+      "5": 3,
+      "7": 3,
+      "6": 3,
+      "2": 3,
+      "1": 3
+    },
+    "work_tasks_never_started_count": 0,
+    "assignment_ignores_by_reason": {
+      "task_terminal": 495
+    }
+  },
+  "agent": {
+    "total_calls": 8,
+    "total_tokens_in": 163825,
+    "total_tokens_out": 1962,
+    "mean_latency_ms": 5732.0,
+    "min_latency_ms": 4186,
+    "max_latency_ms": 9635,
+    "mean_tool_rounds": 2.0,
+    "total_tool_calls_by_name": {
+      "get_state": 8,
+      "write_assignments": 8
+    },
+    "decisions_truncated_by_tool_limit": 0
+  }
+}

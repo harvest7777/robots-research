@@ -1,0 +1,111 @@
+{
+  "scenario_id": "",
+  "max_tick": 0,
+  "robots": [
+    {
+      "robot_id": 1,
+      "x": 18,
+      "y": 7,
+      "battery_level": 0.8865
+    },
+    {
+      "robot_id": 2,
+      "x": 15,
+      "y": 7,
+      "battery_level": 0.881
+    },
+    {
+      "robot_id": 3,
+      "x": 10,
+      "y": 7,
+      "battery_level": 0.8845000000000001
+    },
+    {
+      "robot_id": 4,
+      "x": 17,
+      "y": 7,
+      "battery_level": 0.8870000000000006
+    },
+    {
+      "robot_id": 5,
+      "x": 5,
+      "y": 7,
+      "battery_level": 0.8980000000000007
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 2,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 3,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 4,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 5,
+      "priority": 10,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "search",
+      "rescue_found": [
+        6
+      ]
+    },
+    {
+      "task_id": 6,
+      "priority": 10,
+      "status": null,
+      "assigned_robot_ids": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "task_type": "work"
+    }
+  ],
+  "assignments": [
+    {
+      "robot_id": 1,
+      "task_id": 6
+    },
+    {
+      "robot_id": 2,
+      "task_id": 6
+    },
+    {
+      "robot_id": 3,
+      "task_id": 6
+    },
+    {
+      "robot_id": 4,
+      "task_id": 6
+    },
+    {
+      "robot_id": 5,
+      "task_id": 6
+    }
+  ]
+}

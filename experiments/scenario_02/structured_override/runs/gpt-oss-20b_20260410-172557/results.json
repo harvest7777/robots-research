@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "scenario": "scenario_02",
+    "override_type": "structured_override",
+    "llm": "gpt-oss-20b",
+    "timestamp": "2026-04-10T17:27:15.580528",
+    "all_robot_ids": [
+      1,
+      2,
+      3
+    ],
+    "all_task_ids": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 34,
+    "tasks_completed": 4,
+    "tasks_failed": 0,
+    "robot_ticks_working": {
+      "1": 12,
+      "2": 18,
+      "3": 10
+    },
+    "robot_ticks_moving": {
+      "1": 10,
+      "2": 16,
+      "3": 16
+    },
+    "robot_ticks_idle": {
+      "1": 78,
+      "2": 66,
+      "3": 74
+    },
+    "robot_ticks_stuck": {
+      "3": 8
+    },
+    "robot_battery_remaining": {
+      "1": 0.9300000000000044,
+      "2": 0.9180000000000037,
+      "3": 0.9285000000000041
+    },
+    "task_completion_tick": {
+      "1": 11,
+      "2": 20,
+      "4": 32,
+      "3": 33
+    },
+    "task_ticks_to_complete": {
+      "1": 10,
+      "2": 17,
+      "3": 10,
+      "4": 10
+    },
+    "task_ticks_actively_worked": {
+      "1": 10,
+      "2": 10,
+      "4": 10,
+      "3": 10
+    },
+    "work_tasks_never_started_count": 0,
+    "assignment_ignores_by_reason": {
+      "task_terminal": 212
+    }
+  },
+  "agent": {
+    "total_calls": 5,
+    "total_tokens_in": 23750,
+    "total_tokens_out": 2209,
+    "mean_latency_ms": 15629.6,
+    "min_latency_ms": 7119,
+    "max_latency_ms": 30299,
+    "mean_tool_rounds": 1.4,
+    "total_tool_calls_by_name": {
+      "get_state": 4,
+      "write_assignments": 3
+    },
+    "decisions_truncated_by_tool_limit": 0
+  }
+}

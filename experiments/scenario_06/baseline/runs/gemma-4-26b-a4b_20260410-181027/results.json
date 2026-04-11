@@ -1,0 +1,116 @@
+{
+  "metadata": {
+    "scenario": "scenario_06",
+    "override_type": "baseline",
+    "llm": "gemma-4-26b-a4b",
+    "timestamp": "2026-04-10T18:12:15.983199",
+    "all_robot_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "all_task_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 21,
+    "tasks_completed": 8,
+    "tasks_failed": 0,
+    "robot_ticks_working": {
+      "1": 6,
+      "4": 6,
+      "3": 5,
+      "5": 5,
+      "6": 10
+    },
+    "robot_ticks_moving": {
+      "1": 8,
+      "3": 4,
+      "4": 3,
+      "5": 4,
+      "6": 12,
+      "2": 7
+    },
+    "robot_ticks_idle": {
+      "1": 86,
+      "2": 93,
+      "3": 91,
+      "4": 91,
+      "5": 91,
+      "6": 78
+    },
+    "robot_ticks_stuck": {
+      "2": 13,
+      "1": 8
+    },
+    "robot_battery_remaining": {
+      "1": 0.9400000000000048,
+      "2": 0.9465000000000051,
+      "3": 0.9420000000000051,
+      "4": 0.9425000000000051,
+      "5": 0.9420000000000051,
+      "6": 0.9320000000000044
+    },
+    "task_completion_tick": {
+      "5": 3,
+      "7": 3,
+      "6": 7,
+      "8": 7,
+      "1": 8,
+      "4": 8,
+      "3": 8,
+      "2": 20
+    },
+    "task_ticks_to_complete": {
+      "1": 5,
+      "2": 5,
+      "3": 5,
+      "4": 5,
+      "5": 3,
+      "6": 3,
+      "7": 3,
+      "8": 3
+    },
+    "task_ticks_actively_worked": {
+      "5": 3,
+      "7": 3,
+      "1": 5,
+      "4": 5,
+      "3": 5,
+      "6": 3,
+      "8": 3,
+      "2": 5
+    },
+    "work_tasks_never_started_count": 0,
+    "assignment_ignores_by_reason": {
+      "wrong_capability": 1,
+      "task_terminal": 510
+    }
+  },
+  "agent": {
+    "total_calls": 5,
+    "total_tokens_in": 73528,
+    "total_tokens_out": 1066,
+    "mean_latency_ms": 21623.8,
+    "min_latency_ms": 19185,
+    "max_latency_ms": 30338,
+    "mean_tool_rounds": 2.2,
+    "total_tool_calls_by_name": {
+      "get_state": 5,
+      "write_assignments": 6
+    },
+    "decisions_truncated_by_tool_limit": 0
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "scenario": "scenario_06",
+    "override_type": "structured_override",
+    "llm": "gemma-4-26b-a4b",
+    "timestamp": "2026-04-10T18:14:07.752773",
+    "all_robot_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "all_task_ids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ]
+  },
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 9,
+    "tasks_completed": 7,
+    "tasks_failed": 0,
+    "robot_ticks_working": {
+      "4": 6,
+      "2": 6,
+      "5": 5,
+      "3": 5,
+      "6": 5
+    },
+    "robot_ticks_moving": {
+      "5": 4,
+      "3": 4,
+      "4": 3,
+      "6": 4,
+      "1": 9,
+      "2": 3
+    },
+    "robot_ticks_idle": {
+      "1": 91,
+      "2": 91,
+      "3": 91,
+      "4": 91,
+      "5": 91,
+      "6": 91
+    },
+    "robot_ticks_stuck": {
+      "1": 90
+    },
+    "robot_battery_remaining": {
+      "1": 0.945500000000005,
+      "2": 0.9425000000000051,
+      "3": 0.9420000000000051,
+      "4": 0.9425000000000051,
+      "5": 0.9420000000000051,
+      "6": 0.9420000000000051
+    },
+    "task_completion_tick": {
+      "7": 3,
+      "5": 3,
+      "8": 7,
+      "6": 7,
+      "4": 8,
+      "1": 8,
+      "3": 8
+    },
+    "task_ticks_to_complete": {
+      "1": 5,
+      "3": 5,
+      "4": 5,
+      "5": 3,
+      "6": 3,
+      "7": 3,
+      "8": 3
+    },
+    "task_ticks_actively_worked": {
+      "7": 3,
+      "5": 3,
+      "4": 5,
+      "1": 5,
+      "3": 5,
+      "8": 3,
+      "6": 3
+    },
+    "work_tasks_never_started_count": 1,
+    "assignment_ignores_by_reason": {
+      "task_terminal": 457
+    }
+  },
+  "agent": {
+    "total_calls": 4,
+    "total_tokens_in": 56836,
+    "total_tokens_out": 1041,
+    "mean_latency_ms": 11382.25,
+    "min_latency_ms": 7399,
+    "max_latency_ms": 15989,
+    "mean_tool_rounds": 2.5,
+    "total_tool_calls_by_name": {
+      "get_state": 4,
+      "write_assignments": 6
+    },
+    "decisions_truncated_by_tool_limit": 0
+  }
+}

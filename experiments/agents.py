@@ -37,13 +37,13 @@ def ASI1_AGENT(
         system=_build_system(rules),
     )
 
-def GEMMA_3_27B(
+def GEMMA_4_26B_A4B(
     store: BaseSimulationStore,
     assignment_service: BaseAssignmentService,
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="openrouter/google/gemma-3-27b-it:free",
+        model="openrouter/google/gemma-4-26b-a4b-it",
         api_base="https://openrouter.ai/api/v1",
         api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
@@ -58,7 +58,7 @@ def GPT_OSS_20B(
     rules: str | None = None,
 ) -> AssignmentAgent:
     return AssignmentAgent(
-        model="openrouter/openai/gpt-oss-20b:free",
+        model="openrouter/openai/gpt-oss-20b",
         api_base="https://openrouter.ai/api/v1",
         api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
@@ -104,21 +104,6 @@ def CLAUDE_AGENT(
 ) -> AssignmentAgent:
     return AssignmentAgent(
         model="openrouter/anthropic/claude-3-haiku",
-        api_base="https://openrouter.ai/api/v1",
-        api_key=os.getenv("OPENROUTER_API_KEY"),
-        store=store,
-        assignment_service=assignment_service,
-        system=_build_system(rules),
-    )
-
-
-def DEEPSEEK_V3_AGENT(
-    store: BaseSimulationStore,
-    assignment_service: BaseAssignmentService,
-    rules: str | None = None,
-) -> AssignmentAgent:
-    return AssignmentAgent(
-        model="openrouter/deepseek/deepseek-chat-v3-5",
         api_base="https://openrouter.ai/api/v1",
         api_key=os.getenv("OPENROUTER_API_KEY"),
         store=store,
@@ -177,9 +162,8 @@ MODEL_REGISTRY = {
     "gemini-2.0-flash": GEMINI_AGENT,
     "claude-haiku": CLAUDE_AGENT,
     "asi1": ASI1_AGENT,
-    "gemma-3-27b": GEMMA_3_27B,
+    "gemma-4-26b-a4b": GEMMA_4_26B_A4B,
     "gpt-oss-20b": GPT_OSS_20B,
-    "deepseek-v3": DEEPSEEK_V3_AGENT,
     "deepseek-r1": DEEPSEEK_R1_AGENT,
     "llama-3.3-70b": LLAMA_3_3_70B_AGENT,
     "qwen3-32b": QWEN3_32B_AGENT,

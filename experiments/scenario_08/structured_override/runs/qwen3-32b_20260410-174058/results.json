@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "scenario": "scenario_08",
+    "override_type": "structured_override",
+    "llm": "qwen3-32b",
+    "timestamp": "2026-04-10T17:46:10.593302",
+    "all_robot_ids": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "all_task_ids": [
+      1,
+      2
+    ]
+  },
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 81,
+    "tasks_completed": 2,
+    "tasks_failed": 0,
+    "robot_ticks_working": {},
+    "robot_ticks_moving": {
+      "3": 74,
+      "4": 75,
+      "5": 76
+    },
+    "robot_ticks_idle": {
+      "1": 100,
+      "2": 100,
+      "3": 26,
+      "4": 25,
+      "5": 24
+    },
+    "robot_ticks_stuck": {
+      "5": 47,
+      "3": 21,
+      "4": 26
+    },
+    "robot_battery_remaining": {
+      "1": 0.9500000000000055,
+      "2": 0.9500000000000055,
+      "3": 0.9130000000000014,
+      "4": 0.9125000000000013,
+      "5": 0.9120000000000013
+    },
+    "task_completion_tick": {
+      "2": 25,
+      "1": 80
+    },
+    "task_ticks_to_complete": {},
+    "task_ticks_actively_worked": {},
+    "work_tasks_never_started_count": 0,
+    "assignment_ignores_by_reason": {
+      "task_terminal": 57
+    }
+  },
+  "agent": {
+    "total_calls": 3,
+    "total_tokens_in": 14843,
+    "total_tokens_out": 8631,
+    "mean_latency_ms": 104042.0,
+    "min_latency_ms": 62166,
+    "max_latency_ms": 157522,
+    "mean_tool_rounds": 2.0,
+    "total_tool_calls_by_name": {
+      "get_state": 3,
+      "write_assignments": 3
+    },
+    "decisions_truncated_by_tool_limit": 0
+  }
+}

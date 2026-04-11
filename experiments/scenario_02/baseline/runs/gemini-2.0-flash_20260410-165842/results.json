@@ -1,0 +1,85 @@
+{
+  "metadata": {
+    "scenario": "scenario_02",
+    "override_type": "baseline",
+    "llm": "gemini-2.0-flash",
+    "timestamp": "2026-04-10T16:58:57.865200",
+    "all_robot_ids": [
+      1,
+      2,
+      3
+    ],
+    "all_task_ids": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "simulation": {
+    "total_ticks": 100,
+    "makespan": 41,
+    "tasks_completed": 4,
+    "tasks_failed": 0,
+    "robot_ticks_working": {
+      "1": 20,
+      "2": 10,
+      "3": 10
+    },
+    "robot_ticks_moving": {
+      "1": 22,
+      "2": 19,
+      "3": 16
+    },
+    "robot_ticks_idle": {
+      "1": 58,
+      "2": 71,
+      "3": 74
+    },
+    "robot_ticks_stuck": {
+      "3": 8,
+      "2": 5
+    },
+    "robot_battery_remaining": {
+      "1": 0.9120000000000033,
+      "2": 0.9270000000000039,
+      "3": 0.9285000000000041
+    },
+    "task_completion_tick": {
+      "1": 11,
+      "2": 13,
+      "3": 33,
+      "4": 40
+    },
+    "task_ticks_to_complete": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 10
+    },
+    "task_ticks_actively_worked": {
+      "1": 10,
+      "2": 10,
+      "3": 10,
+      "4": 10
+    },
+    "work_tasks_never_started_count": 0,
+    "assignment_ignores_by_reason": {
+      "task_terminal": 191
+    }
+  },
+  "agent": {
+    "total_calls": 5,
+    "total_tokens_in": 22058,
+    "total_tokens_out": 491,
+    "mean_latency_ms": 3045.6,
+    "min_latency_ms": 2256,
+    "max_latency_ms": 5261,
+    "mean_tool_rounds": 2.6,
+    "total_tool_calls_by_name": {
+      "get_state": 7,
+      "write_assignments": 6
+    },
+    "decisions_truncated_by_tool_limit": 1
+  }
+}
