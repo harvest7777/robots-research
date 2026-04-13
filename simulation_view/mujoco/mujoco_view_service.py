@@ -92,9 +92,10 @@ def _build_xml(state: SimulationState, num_robots: int) -> str:
         for pos in zone.cells
     )
 
-    # WorkTask targets — green cylinders
+    # WorkTask targets — green cylinders (named so alpha can be toggled at runtime)
     work_task_geoms = "\n".join(
-        f'    <geom type="cylinder" pos="{tw(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[0]} '
+        f'    <geom name="task_{task.id}_target" type="cylinder" '
+        f'pos="{tw(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[0]} '
         f'{tw(task.spatial_constraint.target.x, task.spatial_constraint.target.y)[1]} 0.05" '
         f'size="0.3 0.05" rgba="0.1 0.8 0.2 1"/>'
         for task in state.tasks.values()
@@ -160,6 +161,8 @@ class MujocoViewService(BaseViewService):
         self._move_obj_qpos_start = 0
         # fingerprint of the last scene built — rebuild when it changes
         self._scene_key: tuple = ()
+        # WorkTask geom indices for alpha toggling: task_id -> geom index
+        self._task_geom_ids: dict = {}
 
     def _get_leg_params(self, robot_id):
         if robot_id not in self._leg_params:
@@ -187,6 +190,7 @@ class MujocoViewService(BaseViewService):
         self._anim_time += dt * ANIM_SPEED
 
         self._update_robots(simulation_state)
+        self._update_work_tasks(simulation_state)
         self._update_move_objects(simulation_state)
 
         mujoco.mj_forward(self._model, self._data)
@@ -230,6 +234,16 @@ class MujocoViewService(BaseViewService):
         self._data = mujoco.MjData(self._model)
         self._viewer = mujoco.viewer.launch_passive(self._model, self._data)
 
+        # Build geom index map for WorkTask targets
+        self._task_geom_ids = {}
+        for task in state.tasks.values():
+            if (isinstance(task, WorkTask)
+                    and task.spatial_constraint is not None
+                    and isinstance(task.spatial_constraint.target, Position)):
+                geom_id = mujoco.mj_name2id(self._model, mujoco.mjtObj.mjOBJ_GEOM, f"task_{task.id}_target")
+                if geom_id >= 0:
+                    self._task_geom_ids[task.id] = geom_id
+
     def _update_robots(self, state: SimulationState) -> None:
         for i, robot_id in enumerate(self._robot_ids):
             rs = state.robot_states.get(robot_id)
@@ -258,6 +272,12 @@ class MujocoViewService(BaseViewService):
                 self._data.qpos[start + 7:start + 15] = joints
             else:
                 self._data.qpos[start + 7:start + 15] = [0, -0.4, 0, -0.4, 0, -0.4, 0, -0.4]
+
+    def _update_work_tasks(self, state: SimulationState) -> None:
+        for task_id, geom_id in self._task_geom_ids.items():
+            ts = state.task_states.get(task_id)
+            done = ts is not None and ts.status in (TaskStatus.DONE, TaskStatus.FAILED)
+            self._model.geom_rgba[geom_id, 3] = 0.0 if done else 1.0
 
     def _update_move_objects(self, state: SimulationState) -> None:
         for task_id, slot in self._move_task_slots.items():
