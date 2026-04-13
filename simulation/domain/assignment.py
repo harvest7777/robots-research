@@ -20,3 +20,6 @@ from simulation.domain.robot_state import RobotId
 class Assignment:
     task_id: TaskId
     robot_id: RobotId
+
+    def to_json_dict(self) -> dict:
+        return {"robot_id": int(self.robot_id), "task_id": int(self.task_id)}

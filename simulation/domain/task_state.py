@@ -42,6 +42,16 @@ class TaskState(BaseTaskState):
     work_done: Time = Time(0)
     started_at: Time | None = None
 
+    def to_json_dict(self) -> dict:
+        return {
+            "type": "task_state",
+            "task_id": int(self.task_id),
+            "status": self.status.value if self.status else None,
+            "completed_at": self.completed_at.tick if self.completed_at else None,
+            "work_done": self.work_done.tick,
+            "started_at": self.started_at.tick if self.started_at else None,
+        }
+
 
 # ---------------------------------------------------------------------------
 # Work-accumulation transition

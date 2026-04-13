@@ -43,3 +43,12 @@ class RescuePoint:
         if not isinstance(self.spatial_constraint.target, Position):
             raise TypeError(f"RescuePoint {self.id} target is not a Position")
         return self.spatial_constraint.target
+
+    def to_json_dict(self) -> dict:
+        return {
+            "id": int(self.id),
+            "name": self.name,
+            "spatial_constraint": self.spatial_constraint.to_json_dict(),
+            "task": self.task.to_json_dict(),
+            "initial_task_state": self.initial_task_state.to_json_dict(),
+        }

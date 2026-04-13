@@ -38,6 +38,13 @@ class SpatialConstraint:
     target: Position | ZoneId
     max_distance: int = 0  # 0 = exact, > 0 = within distance
 
+    def to_json_dict(self) -> dict:
+        if isinstance(self.target, Position):
+            target_dict = {"target_type": "position", "target": {"x": self.target.x, "y": self.target.y}}
+        else:
+            target_dict = {"target_type": "zone_id", "target": int(self.target)}
+        return {**target_dict, "max_distance": self.max_distance}
+
 
 @dataclass(frozen=True)
 class WorkTask(BaseTask):
@@ -54,3 +61,15 @@ class WorkTask(BaseTask):
     spatial_constraint: SpatialConstraint | None = None
     deadline: Time | None = None
     min_robots_needed: int = 1
+
+    def to_json_dict(self) -> dict:
+        return {
+            "type": "work_task",
+            "id": int(self.id),
+            "priority": self.priority,
+            "required_capabilities": sorted(c.value for c in self.required_capabilities),
+            "required_work_time": self.required_work_time.tick,
+            "spatial_constraint": self.spatial_constraint.to_json_dict() if self.spatial_constraint else None,
+            "deadline": self.deadline.tick if self.deadline else None,
+            "min_robots_needed": self.min_robots_needed,
+        }

@@ -28,6 +28,15 @@ class MoveTaskState(BaseTaskState):
 
     current_position: Position = Position(0, 0)
 
+    def to_json_dict(self) -> dict:
+        return {
+            "type": "move_task_state",
+            "task_id": int(self.task_id),
+            "status": self.status.value if self.status else None,
+            "completed_at": self.completed_at.tick if self.completed_at else None,
+            "current_position": {"x": self.current_position.x, "y": self.current_position.y},
+        }
+
 
 @dataclass(frozen=True)
 class MoveTask(BaseTask):
@@ -36,4 +45,15 @@ class MoveTask(BaseTask):
     destination: Position = Position(0, 0)
     min_robots_required: int = 1
     min_distance: int = 1
+
+    def to_json_dict(self) -> dict:
+        return {
+            "type": "move_task",
+            "id": int(self.id),
+            "priority": self.priority,
+            "required_capabilities": sorted(c.value for c in self.required_capabilities),
+            "destination": {"x": self.destination.x, "y": self.destination.y},
+            "min_robots_required": self.min_robots_required,
+            "min_distance": self.min_distance,
+        }
 

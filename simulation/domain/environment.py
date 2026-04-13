@@ -225,6 +225,15 @@ class Environment:
                 return zone_id
         return None
 
+    def to_json_dict(self) -> dict:
+        return {
+            "width": self._width,
+            "height": self._height,
+            "obstacles": [{"x": p.x, "y": p.y} for p in sorted(self._obstacles, key=lambda p: (p.x, p.y))],
+            "zones": {str(zid): z.to_json_dict() for zid, z in self._zones.items()},
+            "rescue_points": {str(tid): rp.to_json_dict() for tid, rp in self._rescue_points.items()},
+        }
+
     def _position_in_bounds(self, pos: Position) -> bool:
         """
         Check whether a Position maps to a valid grid cell.

@@ -31,6 +31,15 @@ class SearchTaskState(BaseTaskState):
 
     rescue_found: frozenset[TaskId] = frozenset()
 
+    def to_json_dict(self) -> dict:
+        return {
+            "type": "search_task_state",
+            "task_id": int(self.task_id),
+            "status": self.status.value if self.status else None,
+            "completed_at": self.completed_at.tick if self.completed_at else None,
+            "rescue_found": sorted(int(tid) for tid in self.rescue_found),
+        }
+
 
 @dataclass(frozen=True)
 class SearchTask(BaseTask):
@@ -45,4 +54,12 @@ class SearchTask(BaseTask):
     Proximity-lock radius is controlled per rescue point via
     RescuePoint.spatial_constraint.max_distance.
     """
+
+    def to_json_dict(self) -> dict:
+        return {
+            "type": "search_task",
+            "id": int(self.id),
+            "priority": self.priority,
+            "required_capabilities": sorted(c.value for c in self.required_capabilities),
+        }
 

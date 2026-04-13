@@ -33,44 +33,10 @@ class SimulationState:
         """Convert to JSON-serializable dict."""
         return {
             "t_now": self.t_now.tick,
-            "robots": {
-                str(rid): {
-                    "position": {"x": rs.position.x, "y": rs.position.y},
-                    "battery": rs.battery_level,
-                }
-                for rid, rs in self.robot_states.items()
-            },
-            "tasks": {
-                str(tid): {
-                    "status": ts.status.value if ts.status else None,
-                }
-                for tid, ts in self.task_states.items()
-            },
-            "assignments": [
-                {"robot_id": int(a.robot_id), "task_id": int(a.task_id)}
-                for a in self.assignments
-            ],
-        }
-
-    def to_json_dict(self) -> dict[str, Any]:
-        """Convert to JSON-serializable dict."""
-        return {
-            "t_now": self.t_now.tick,
-            "robots": {
-                str(rid): {
-                    "position": {"x": rs.position.x, "y": rs.position.y},
-                    "battery": rs.battery_level,
-                }
-                for rid, rs in self.robot_states.items()
-            },
-            "tasks": {
-                str(tid): {
-                    "status": ts.status.value if ts.status else None,
-                }
-                for tid, ts in self.task_states.items()
-            },
-            "assignments": [
-                {"robot_id": int(a.robot_id), "task_id": int(a.task_id)}
-                for a in self.assignments
-            ],
+            "environment": self.environment.to_json_dict(),
+            "robots": {str(rid): r.to_json_dict() for rid, r in self.robots.items()},
+            "robot_states": {str(rid): rs.to_json_dict() for rid, rs in self.robot_states.items()},
+            "tasks": {str(tid): t.to_json_dict() for tid, t in self.tasks.items()},
+            "task_states": {str(tid): ts.to_json_dict() for tid, ts in self.task_states.items()},
+            "assignments": [a.to_json_dict() for a in self.assignments],
         }

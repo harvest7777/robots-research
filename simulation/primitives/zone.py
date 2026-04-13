@@ -58,3 +58,10 @@ class Zone:
     def cells(self) -> frozenset[Position]:
         """Return the positions covered by this zone."""
         return self._positions
+
+    def to_json_dict(self) -> dict:
+        return {
+            "id": int(self.id),
+            "zone_type": self.zone_type.value,
+            "cells": [{"x": p.x, "y": p.y} for p in sorted(self._positions, key=lambda p: (p.x, p.y))],
+        }

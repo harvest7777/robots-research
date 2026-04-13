@@ -34,3 +34,14 @@ class RobotState:
     position: Position
     battery_level: float = 1.0
     current_waypoint: Position | None = None
+
+    def to_json_dict(self) -> dict:
+        return {
+            "robot_id": int(self.robot_id),
+            "position": {"x": self.position.x, "y": self.position.y},
+            "battery_level": self.battery_level,
+            "current_waypoint": (
+                {"x": self.current_waypoint.x, "y": self.current_waypoint.y}
+                if self.current_waypoint is not None else None
+            ),
+        }

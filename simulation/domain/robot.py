@@ -49,6 +49,16 @@ class Robot:
     battery_drain_per_unit_of_work_execution: float = _DRAIN_WORK_PER_TICK
     battery_drain_per_tick_idle:              float = _DRAIN_IDLE_PER_TICK
 
+    def to_json_dict(self) -> dict:
+        return {
+            "id": int(self.id),
+            "capabilities": sorted(c.value for c in self.capabilities),
+            "speed": self.speed,
+            "battery_drain_per_unit_of_movement": self.battery_drain_per_unit_of_movement,
+            "battery_drain_per_unit_of_work_execution": self.battery_drain_per_unit_of_work_execution,
+            "battery_drain_per_tick_idle": self.battery_drain_per_tick_idle,
+        }
+
 
 # ---------------------------------------------------------------------------
 # State-mutation functions
