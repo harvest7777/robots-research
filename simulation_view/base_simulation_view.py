@@ -19,3 +19,7 @@ class BaseViewService(ABC):
     def handle_exit(self):
         """Gracefully call any cleanup/shutdown behaviors."""
 
+    def is_running(self) -> bool:
+        """Return False if the view has been closed and rendering should stop."""
+        return True
+

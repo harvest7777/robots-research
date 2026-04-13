@@ -88,7 +88,7 @@ def _build_xml(state: SimulationState, num_robots: int) -> str:
     zone_geoms = "\n".join(
         f'    <geom type="box" pos="{tw(pos.x, pos.y)[0]} {tw(pos.x, pos.y)[1]} 0.02" '
         f'size="{half} {half} 0.02" rgba="{ZONE_COLORS.get(zone.zone_type, "0.5 0.5 0.5 0.3")}"/>'
-        for zone in env._zones.values()
+        for zone in env.zones.values()
         for pos in zone.cells
     )
 
@@ -158,6 +158,8 @@ class MujocoViewService(BaseViewService):
         self._move_task_slots: dict = {}
         # qpos offset where move object data starts
         self._move_obj_qpos_start = 0
+        # fingerprint of the last scene built — rebuild when it changes
+        self._scene_key: tuple = ()
 
     def _get_leg_params(self, robot_id):
         if robot_id not in self._leg_params:
@@ -167,9 +169,14 @@ class MujocoViewService(BaseViewService):
             ]
         return self._leg_params[robot_id]
 
+    def is_running(self) -> bool:
+        return self._viewer is None or self._viewer.is_running()
+
     def render(self, simulation_state: SimulationState) -> None:
-        if self._model is None:
+        scene_key = self._compute_scene_key(simulation_state)
+        if self._model is None or scene_key != self._scene_key:
             self._init_scene(simulation_state)
+            self._scene_key = scene_key
 
         if not self._viewer.is_running():
             return
@@ -189,7 +196,22 @@ class MujocoViewService(BaseViewService):
         if self._viewer is not None:
             self._viewer.close()
 
+    def _compute_scene_key(self, state: SimulationState) -> tuple:
+        """Fingerprint of everything baked into the XML — rebuild scene when this changes."""
+        env = state.environment
+        return (
+            env.width,
+            env.height,
+            frozenset(env.obstacles),
+            frozenset((zid, z.zone_type, z.cells) for zid, z in env.zones.items()),
+            frozenset(env.rescue_points.keys()),
+            frozenset(state.robots.keys()),
+        )
+
     def _init_scene(self, state: SimulationState) -> None:
+        if self._viewer is not None:
+            self._viewer.close()
+
         self._robot_ids = list(state.robots.keys())
         env = state.environment
         self._env_width = env.width

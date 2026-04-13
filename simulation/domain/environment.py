@@ -210,6 +210,11 @@ class Environment:
         """Return a read-only view of the rescue points dict (TaskId → RescuePoint)."""
         return MappingProxyType(self._rescue_points)
 
+    @property
+    def zones(self) -> Mapping[ZoneId, Zone]:
+        """Return a read-only view of the zones dict (ZoneId → Zone)."""
+        return MappingProxyType(self._zones)
+
     def in_bounds(self, pos: Position) -> bool:
         """Return True if `pos` is within the grid bounds."""
         return self._position_in_bounds(pos)

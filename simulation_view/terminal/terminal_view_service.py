@@ -16,5 +16,5 @@ class TerminalViewService(BaseViewService):
         frame = self._view_assembler.render(new_state, self._cols, self._rows)
         self._view_renderer.draw(frame)
 
-    def handle_event(self):
+    def handle_exit(self):
         self._view_renderer.cleanup()
