@@ -16,4 +16,4 @@ class SpawnTask:
 
     def __post_init__(self):
         if self.task_state is None:
-            self.task_state = TaskState(self.task_to_spawn)
+            self.task_state = TaskState(task_id=self.task_to_spawn.id)
