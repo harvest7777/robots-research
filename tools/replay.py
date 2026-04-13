@@ -33,6 +33,7 @@ from simulation.primitives.capability import Capability
 from simulation.primitives.position import Position
 from simulation.primitives.time import Time
 from simulation.primitives.zone import Zone, ZoneId, ZoneType
+from simulation_view.base_simulation_view import BaseViewService
 from simulation_view.terminal.terminal_view_service import TerminalViewService
 
 
@@ -172,18 +173,29 @@ def _state(d: dict) -> SimulationState:
 # Entry point
 # ---------------------------------------------------------------------------
 
+def _make_view(viewer: str) -> BaseViewService:
+    if viewer == "mujoco":
+        from simulation_view.mujoco.mujoco_view_service import MujocoViewService
+        return MujocoViewService()
+    return TerminalViewService()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Replay a simulation in the terminal.")
     parser.add_argument("replay", type=Path, help="Path to simulation_replay.json")
+    parser.add_argument("--viewer", choices=["terminal", "mujoco"], default="terminal",
+                        help="Viewer to use (default: terminal)")
     parser.add_argument("--delay", type=float, default=0.1, help="Seconds between frames (default: 0.1)")
     parser.add_argument("--step", action="store_true", help="Press Enter to advance each frame")
     args = parser.parse_args()
 
     frames = json.loads(args.replay.read_text())
-    view = TerminalViewService()
+    view = _make_view(args.viewer)
 
     try:
         for frame in frames:
+            if not view.is_running():
+                break
             view.render(_state(frame["state"]))
             if args.step:
                 input()
