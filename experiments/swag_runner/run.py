@@ -18,6 +18,7 @@ import argparse
 import asyncio
 import importlib
 import json
+import shutil
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -28,8 +29,11 @@ from simulation import JsonAssignmentService, JsonSimulationStore, SimulationRun
 from experiments.agents import MODEL_REGISTRY
 from simulation.engine_rewrite import BaseSimulationStore
 from simulation.primitives import Time
+from simulation.domain.robot_state import RobotId
 from experiments.swag_runner.models import Run, Override
 from experiments.utils import EXPERIMENTS_DIR
+from docker_telemetry.service import DockerService, ContainerId
+from docker_telemetry.adapter import build_telemetry
 
 MAX_TICKS = 100
 
@@ -167,7 +171,14 @@ def _setup_simulation(
 # ---------------------------------------------------------------------------
 
 
-def _run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimulationStore, tasks_to_spawn: list[SpawnTask]) -> None:
+def _run_loop(
+    runner: SimulationRunner,
+    agent: AssignmentAgent,
+    store: BaseSimulationStore,
+    tasks_to_spawn: list[SpawnTask],
+    docker_service: DockerService | None = None,
+    containers: dict[RobotId, ContainerId] | None = None,
+) -> None:
     def _invoke(prompt: str) -> None:
         asyncio.run(agent.invoke(prompt, max_tool_calls=5))
 
@@ -176,13 +187,20 @@ def _run_loop(runner: SimulationRunner, agent: AssignmentAgent, store: BaseSimul
     for s in tasks_to_spawn:
         time_to_tasks.setdefault(s.time_to_spawn, []).append(s)
 
-
     for _ in range(MAX_TICKS):
         tasks_to_spawn_this_tick: list[SpawnTask] = time_to_tasks.get(runner._t_now, [])
         for spawn_task in tasks_to_spawn_this_tick:
             store.add_task(spawn_task.task_to_spawn, spawn_task.task_state)
 
-        _, outcome = runner.step()
+        state, outcome = runner.step()
+
+        if docker_service is not None and containers is not None:
+            for robot_id in state.robot_states:
+                telemetry = build_telemetry(robot_id, state, outcome)
+                docker_service.write_log(
+                    containers[robot_id],
+                    json.dumps(telemetry.to_json_dict()),
+                )
 
         should_reassign = outcome.tasks_spawned or outcome.tasks_completed or len(tasks_to_spawn_this_tick) > 0
         if should_reassign:
@@ -223,6 +241,7 @@ def _parse_arguments() -> Run:
     )
     parser.add_argument("condition", metavar="<scenario>/<override_variant>")
     parser.add_argument("--model", required=True)
+    parser.add_argument("--docker", action="store_true", default=False)
     args = parser.parse_args()
 
     parts = args.condition.split("/")
@@ -237,7 +256,8 @@ def _parse_arguments() -> Run:
     return Run(
         scenario=scenario,
         override_type=Override(override_variant),
-        model=model
+        model=model,
+        docker=args.docker,
     )
 
 def main() -> None:
@@ -280,12 +300,24 @@ def run(run_params: Run) -> Path:
     agent = setup_artifacts.agent
     store = setup_artifacts.simulation_store
 
+    docker_service = DockerService() if run_params.docker else None
+    containers: dict[RobotId, ContainerId] = {}
+
     try:
-        _run_loop(runner, agent, store, task_spawns)
-    except:
-        import shutil
-        shutil.rmtree(run_dir)
-        raise
+        if docker_service is not None:
+            for robot in store.all_robots():
+                containers[robot.id] = docker_service.create_and_start(
+                    name=f"robot-{robot.id}",
+                    image="robot-telemetry:latest",
+                )
+        try:
+            _run_loop(runner, agent, store, task_spawns, docker_service, containers)
+        except:
+            shutil.rmtree(run_dir)
+            raise
+    finally:
+        for cid in containers.values():
+            docker_service.stop_and_remove(cid)
 
 
     run_metadata = RunMetadata(

@@ -10,3 +10,4 @@ class Run:
     scenario: str
     override_type: Override
     model: str  # must be a key of MODEL_REGISTRY
+    docker: bool = False
