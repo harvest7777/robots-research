@@ -1,0 +1,128 @@
+{
+  "scenario_id": "",
+  "max_tick": 0,
+  "robots": [
+    {
+      "robot_id": 1,
+      "x": 5,
+      "y": 7,
+      "battery_level": 0.9900000000000004
+    },
+    {
+      "robot_id": 2,
+      "x": 6,
+      "y": 7,
+      "battery_level": 0.9870000000000003
+    },
+    {
+      "robot_id": 3,
+      "x": 10,
+      "y": 7,
+      "battery_level": 0.9825
+    },
+    {
+      "robot_id": 4,
+      "x": 12,
+      "y": 8,
+      "battery_level": 0.9845000000000002
+    },
+    {
+      "robot_id": 5,
+      "x": 6,
+      "y": 9,
+      "battery_level": 0.9870000000000003
+    },
+    {
+      "robot_id": 6,
+      "x": 3,
+      "y": 9,
+      "battery_level": 0.9920000000000007
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": 1,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 2,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [
+        3
+      ],
+      "task_type": "work"
+    },
+    {
+      "task_id": 3,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 4,
+      "priority": 1,
+      "status": null,
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 5,
+      "priority": 1,
+      "status": null,
+      "assigned_robot_ids": [
+        4
+      ],
+      "task_type": "work"
+    },
+    {
+      "task_id": 6,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [],
+      "task_type": "work"
+    },
+    {
+      "task_id": 7,
+      "priority": 1,
+      "status": "done",
+      "assigned_robot_ids": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "task_type": "work"
+    }
+  ],
+  "assignments": [
+    {
+      "robot_id": 4,
+      "task_id": 5
+    },
+    {
+      "robot_id": 3,
+      "task_id": 2
+    },
+    {
+      "robot_id": 1,
+      "task_id": 7
+    },
+    {
+      "robot_id": 2,
+      "task_id": 7
+    },
+    {
+      "robot_id": 5,
+      "task_id": 7
+    },
+    {
+      "robot_id": 6,
+      "task_id": 7
+    }
+  ]
+}
