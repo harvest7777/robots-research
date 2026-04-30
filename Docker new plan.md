@@ -6,17 +6,17 @@ Docker is opt-in via a `--docker` CLI flag. When enabled, one container is spun 
 
 ---
 
-## Step 1 — Create the `docker/` package
+## Step 1 — Create the `docker_telemetry/` package
 
 Four files. No imports from this package touch `experiments/`.
 
-### `docker/__init__.py`
+### `docker_telemetry/__init__.py`
 
 Empty. Makes `docker` a package.
 
 ---
 
-### `docker/service.py`
+### `docker_telemetry/service.py`
 
 Owns the `ContainerId` type and the `DockerService` class. No simulation imports.
 
@@ -59,7 +59,7 @@ class DockerService:
 
 ---
 
-### `docker/telemetry.py`
+### `docker_telemetry/telemetry.py`
 
 Defines `RobotAction` and `RobotTelemetry`. Imports from simulation domain only.
 
@@ -119,7 +119,7 @@ class RobotTelemetry:
 
 ---
 
-### `docker/adapter.py`
+### `docker_telemetry/adapter.py`
 
 Pure function. Takes one robot's slice of `SimulationState` and `StepOutcome` and returns a `RobotTelemetry`. No Docker SDK imports.
 
@@ -198,7 +198,7 @@ def build_telemetry(
 
 ## Step 2 — Create the Dockerfile
 
-Lives at `docker/Dockerfile`. PID 1 is `sleep infinity` — its only job is to keep the container alive and own the stdout file descriptor that Docker watches. Log lines are written to `/proc/1/fd/1` by exec'd processes, not by PID 1 itself.
+Lives at `docker_telemetry/Dockerfile`. PID 1 is `sleep infinity` — its only job is to keep the container alive and own the stdout file descriptor that Docker watches. Log lines are written to `/proc/1/fd/1` by exec'd processes, not by PID 1 itself.
 
 ```dockerfile
 FROM alpine:3.19
@@ -207,7 +207,7 @@ CMD ["sleep", "infinity"]
 
 Build command (run once):
 ```bash
-docker build -t robot-telemetry:latest -f docker/Dockerfile .
+docker build -t robot-telemetry:latest -f docker_telemetry/Dockerfile .
 ```
 
 ---
@@ -306,11 +306,11 @@ finally:
 
 | File | Action |
 |---|---|
-| `docker/__init__.py` | Create |
-| `docker/service.py` | Create |
-| `docker/telemetry.py` | Create |
-| `docker/adapter.py` | Create |
-| `docker/Dockerfile` | Create |
+| `docker_telemetry/__init__.py` | Create |
+| `docker_telemetry/service.py` | Create |
+| `docker_telemetry/telemetry.py` | Create |
+| `docker_telemetry/adapter.py` | Create |
+| `docker_telemetry/Dockerfile` | Create |
 | `experiments/swag_runner/models.py` | Add `docker: bool = False` to `Run` |
 | `experiments/swag_runner/run.py` | Add `--docker` flag, modify `_run_loop`, add container lifecycle |
 | `requirements.txt` | Already updated — `docker>=7.0.0` |
